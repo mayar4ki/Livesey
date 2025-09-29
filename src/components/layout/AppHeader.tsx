@@ -17,7 +17,8 @@ import {
 } from "@/components/ui/sheet";
 import { ModeToggle } from "../common/ModeToggle";
 import { AppLogo } from "../common/AppLogo";
-import { siteName } from "@/_constants";
+import { siteName } from "@/white-label";
+import { ConnectWallet } from "../common/ConnectWallet";
 
 interface MenuItem {
   title: string;
@@ -101,7 +102,7 @@ export const AppHeader = ({
             </div>
           </div>
           <div className="flex gap-2">
-            <ModeToggle />
+            <ModeToggle /> <ConnectWallet />
           </div>
         </nav>
 

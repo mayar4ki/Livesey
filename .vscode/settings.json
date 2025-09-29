@@ -1,0 +1,9 @@
+{
+    "cSpell.words": [
+        "Wagmi"
+    ]
+    ,
+    "editor.codeActionsOnSave": {
+  "source.organizeImports": true
+}
+}
