@@ -1,6 +1,6 @@
-import { createConfig, http, cookieStorage, createStorage } from "wagmi";
+import { cookieStorage, createConfig, createStorage, http } from "wagmi";
 import { mainnet, sepolia } from "wagmi/chains";
-import { walletConnect, injected, safe } from "wagmi/connectors";
+import { walletConnect } from "wagmi/connectors";
 
 const connectors = () => {
   // Only create connectors on client-side to avoid SSR issues
@@ -19,8 +19,8 @@ export const getConfig = () => {
   return createConfig({
     chains: [mainnet, sepolia],
     transports: {
-      [mainnet.id]: http(),
-      [sepolia.id]: http(),
+      [mainnet.id]: http(process.env.NEXT_PUBLIC_ETH_CHAIN_RPC_URL),
+      [sepolia.id]: http(process.env.NEXT_PUBLIC_ETH_SEPOLIA_CHAIN_RPC_URL),
     },
     ssr: true,
     storage: createStorage({

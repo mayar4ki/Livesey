@@ -1,6 +1,8 @@
 import { ChainId, Token } from "@uniswap/sdk-core";
 import { SwapExactInSingle } from "@uniswap/v4-sdk";
 import { parseUnits } from "ethers";
+import { address } from "./address";
+import { abi } from "./quoter-abi";
 
 export const ETH_TOKEN = new Token(
   ChainId.MAINNET,
@@ -31,3 +33,6 @@ export const CurrentConfig: SwapExactInSingle = {
   amountOutMinimum: "0",
   hookData: "0x00",
 };
+
+export const QUOTER_ABI = abi;
+export const QUOTER_CONTRACT_ADDRESS = address.Quoter;

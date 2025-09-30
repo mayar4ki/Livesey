@@ -1,4 +1,4 @@
-export const pp = {
+export const address = {
   PoolManager: "0x000000000004444c5dc75cB358380D2e3dE08A90",
   PositionDescriptor: "0xd1428ba554f4c8450b763a0b2040a4935c63f06c",
   PositionManager: "0xbd216513d74c8cf14cf4747e6aaa6420ff64ee9e",
@@ -6,4 +6,4 @@ export const pp = {
   StateView: "0x7ffe42c4a5deea5b0fec41c94c136cf115597227",
   Universal_Router: "0x66a9893cc07d91d95644aedd05d03f95e1dba8af",
   Permit2: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
-};
+} as const;

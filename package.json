@@ -17,6 +17,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@tanstack/react-query": "^5.90.2",
     "@uniswap/sdk-core": "^7.7.2",
+    "@uniswap/universal-router-sdk": "^4.19.7",
     "@uniswap/v4-sdk": "^1.21.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
