@@ -1,16 +1,10 @@
-"use client";
+'use client';
 
-import React from "react";
-import { Connector, useAccount, useConnect, useDisconnect } from "wagmi";
-import { Button } from "../ui/button";
+import React from 'react';
+import { Connector, useAccount, useConnect, useDisconnect } from 'wagmi';
+import { Button } from '../ui/button';
 
-function WalletOption({
-  connector,
-  onClick,
-}: {
-  connector: Connector;
-  onClick: () => void;
-}) {
+function WalletOption({ connector, onClick }: { connector: Connector; onClick: () => void }) {
   const [ready, setReady] = React.useState(false);
 
   React.useEffect(() => {
@@ -32,6 +26,7 @@ export const ConnectWallet = () => {
   const { isConnected } = useAccount();
   const { disconnect } = useDisconnect();
 
+  return null;
   if (isConnected)
     return (
       <div>
@@ -41,11 +36,5 @@ export const ConnectWallet = () => {
       </div>
     );
 
-  return connectors.map((connector) => (
-    <WalletOption
-      key={connector.uid}
-      connector={connector}
-      onClick={() => connect({ connector })}
-    />
-  ));
+  return connectors.map((connector) => <WalletOption key={connector.uid} connector={connector} onClick={() => connect({ connector })} />);
 };

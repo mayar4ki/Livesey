@@ -1,4 +1,4 @@
-import React, { SVGProps } from "react";
+import { SVGProps } from "react";
 
 export const AppLogo = (props: SVGProps<any>) => {
   return (
