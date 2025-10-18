@@ -1,8 +1,12 @@
+import { LightRays } from '@/components/ui/light-rays';
+import { cn } from '@/lib/utils';
 import { compliantWithSection } from '@/white-label/home';
 
 export const CompliantWithSection = () => {
   return (
-    <section className="py-32">
+    <section className="py-32 relative  ">
+      <LightRays className={cn(' absolute top-0 bottom-0 right-0 left-0  ', '[mask-image:linear-gradient(to_top,transparent,black,transparent)]')} />
+
       <div className="container">
         <div className="flex flex-col items-center text-center">
           <h2 className="text-3xl font-bold">{compliantWithSection.title}</h2>

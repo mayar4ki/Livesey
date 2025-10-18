@@ -4,16 +4,13 @@ import { Accordion } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from '@/components/ui/navigation-menu';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { siteName } from '@/white-label';
 import Link from 'next/link';
-import { AppLogo } from '../common/AppLogo';
-import { ChainsMenu } from '../common/ChainsMenu';
-import { ConnectWallet } from '../common/ConnectWallet';
+import { AppBrand } from '../common/AppBrand';
 import { ModeToggle } from '../common/ModeToggle';
 
 const menu = [
   {
-    title: 'Home',
+    title: 'Docs',
     url: '/',
   },
 ];
@@ -25,10 +22,8 @@ export const AppHeader = () => {
         <nav className="hidden justify-between lg:flex">
           <div className="flex items-center gap-6 ">
             {/* Logo */}
-            <Link href={'/'} className="flex items-center gap-2">
-              <AppLogo />
-              <span className="text-lg font-semibold tracking-tighter">{siteName}</span>
-            </Link>
+            <AppBrand />
+
             <div className="flex items-center">
               <NavigationMenu>
                 <NavigationMenuList>
@@ -47,8 +42,8 @@ export const AppHeader = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            <ModeToggle /> <ConnectWallet />
-            {/* <ChainsMenu /> */}
+            <Button> Open dApp</Button>
+            <ModeToggle />
           </div>
         </nav>
 
@@ -56,13 +51,9 @@ export const AppHeader = () => {
         <div className="block lg:hidden">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2">
-              <AppLogo />
-            </Link>
+            <AppBrand />
 
             <div className=" flex gap-2 ">
-              <ConnectWallet />
-              <ChainsMenu />
               <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="outline" size="icon">
@@ -72,9 +63,7 @@ export const AppHeader = () => {
                 <SheetContent className="overflow-y-auto">
                   <SheetHeader>
                     <SheetTitle>
-                      <Link href={'/'} className="flex items-center gap-2">
-                        <AppLogo />
-                      </Link>
+                      <AppBrand />
                     </SheetTitle>
                   </SheetHeader>
                   <div className="flex flex-col gap-6 p-4">

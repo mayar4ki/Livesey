@@ -1,6 +1,6 @@
 export const siteName = 'Livesey';
 
-export const tagline = 'Components made easy.';
+export const tagline = 'Decentralized, Open-source';
 
 export const menuItems = [
   {

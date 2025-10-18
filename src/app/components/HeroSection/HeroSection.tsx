@@ -2,12 +2,14 @@ import { ArrowUpRight } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { LightRays } from '@/components/ui/light-rays';
 import { badge, buttons, description, heading } from '@/white-label/home';
 import { HeroCard } from './HeroCard';
 
 export const HeroSection = () => {
   return (
-    <section className="py-32">
+    <section className="py-32  w-full relative  ">
+      <LightRays className=" absolute top-0 bottom-0 right-0 left-0  [mask-image:linear-gradient(to_top,transparent,black,transparent)]" />
       <div className="container">
         <div className="grid items-center gap-8 lg:grid-cols-2">
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left">

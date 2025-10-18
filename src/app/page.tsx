@@ -5,7 +5,7 @@ import { StatsSection } from './components/StatsSection';
 
 export default function Home() {
   return (
-    <div className=" container pb-26 ">
+    <div className=" pb-26">
       <HeroSection />
       <CompliantWithSection />
       <StatsSection />

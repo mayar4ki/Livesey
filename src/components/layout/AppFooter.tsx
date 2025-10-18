@@ -1,6 +1,5 @@
-import { bottomLinks, copyright, menuItems, siteName, tagline } from '@/white-label';
-import Link from 'next/link';
-import { AppLogo } from '../common/AppLogo';
+import { bottomLinks, copyright, menuItems, tagline } from '@/white-label';
+import { AppBrand } from '../common/AppBrand';
 
 export const AppFooter = () => {
   return (
@@ -10,10 +9,7 @@ export const AppFooter = () => {
           <div className="grid grid-cols-2 gap-8 lg:grid-cols-6">
             <div className="col-span-2 mb-8 lg:mb-0">
               <div className="flex items-center gap-2 lg:justify-start">
-                <Link href={'/'} className="flex items-center gap-2">
-                  <AppLogo />
-                  <span className="text-lg font-semibold tracking-tighter">{siteName}</span>
-                </Link>
+                <AppBrand />
               </div>
               <p className="mt-4 font-bold">{tagline}</p>
             </div>
