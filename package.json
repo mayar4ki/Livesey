@@ -34,7 +34,7 @@
     "typescript": "catalog:"
   },
   "prettier": "@acme/prettier-config",
-  "packageManager": "npm@10.9.4",
+  "packageManager": "yarn@1.22.22",
   "workspaces": [
     "apps/*",
     "packages/*",
