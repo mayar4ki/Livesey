@@ -1,12 +1,12 @@
 import { Menu } from 'lucide-react';
 
+import { AppBrand } from '@/components/common/AppBrand';
+import { ModeToggle } from '@/components/common/ModeToggle';
 import { Accordion } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from '@/components/ui/navigation-menu';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import Link from 'next/link';
-import { AppBrand } from '../common/AppBrand';
-import { ModeToggle } from '../common/ModeToggle';
 
 const menu = [
   {
@@ -42,7 +42,9 @@ export const AppHeader = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            <Button> Open dApp</Button>
+            <Link href="/dashboard">
+              <Button> Open dApp</Button>
+            </Link>
             <ModeToggle />
           </div>
         </nav>

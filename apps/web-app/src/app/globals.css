@@ -78,9 +78,9 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-
 .dark {
-  --background: oklch(0.1784 0.0173 268.64);
+  --background: oklch(0.141 0.005 285.823);
+   /* oklch(0.1784 0.0173 268.64); */
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
@@ -113,9 +113,6 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-
-
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -131,4 +128,12 @@
   max-width: 1350px;
 }
 
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
 

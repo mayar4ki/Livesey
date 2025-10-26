@@ -1,8 +1,9 @@
+import { cn } from '@/lib/utils';
 import { siteName } from '@/white-label';
-import Link from 'next/link';
+import Link, { LinkProps } from 'next/link';
 import { SVGProps } from 'react';
 
-const AppLogo = (props: SVGProps<any>) => {
+export const AppLogo = (props: SVGProps<any>) => {
   return (
     <svg
       version="1.1"
@@ -10,7 +11,7 @@ const AppLogo = (props: SVGProps<any>) => {
       xmlns="http://www.w3.org/2000/svg"
       x="0px"
       y="0px"
-      width="40px"
+      width="35px"
       viewBox="-100 0 780 790"
       enableBackground="new 0 0 1024 1024"
       {...props}
@@ -23,9 +24,21 @@ const AppLogo = (props: SVGProps<any>) => {
   );
 };
 
-export const AppBrand = () => {
+export interface AppBrandProps {
+  slotProps?: {
+    link?: LinkProps & { className?: string };
+  };
+}
+export const AppBrand = (props: AppBrandProps) => {
   return (
-    <Link href={'/'} className="flex items-center gap-2 fill-foreground hover:fill-primary hover:text-primary transition-colors duration-100">
+    <Link
+      href={'/'}
+      {...props.slotProps?.link}
+      className={cn(
+        'flex items-center gap-2 fill-foreground hover:fill-primary hover:text-primary transition-colors duration-100',
+        props.slotProps?.link?.className
+      )}
+    >
       <AppLogo />
       <span className="text-lg font-semibold tracking-tighter">{siteName}</span>
     </Link>

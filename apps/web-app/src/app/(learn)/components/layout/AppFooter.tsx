@@ -1,5 +1,5 @@
+import { AppBrand } from '@/components/common/AppBrand';
 import { bottomLinks, copyright, menuItems, tagline } from '@/white-label';
-import { AppBrand } from '../common/AppBrand';
 
 export const AppFooter = () => {
   return (

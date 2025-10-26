@@ -1,6 +1,4 @@
 import { getConfig } from '@/_config/wagmi';
-import { AppFooter } from '@/components/layout/AppFooter';
-import { AppHeader } from '@/components/layout/AppHeader';
 import { ReactQueryProvider } from '@/components/providers/ReactQueryProvider';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { WagmiProvider } from '@/components/providers/WagmiProvider';
@@ -39,9 +37,7 @@ export default async function RootLayout({
         <WagmiProvider initialState={wagmiInitialState}>
           <ReactQueryProvider>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-              <AppHeader />
               {children}
-              <AppFooter />
             </ThemeProvider>
           </ReactQueryProvider>
         </WagmiProvider>
