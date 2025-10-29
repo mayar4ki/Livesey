@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRightLeft, BookOpen, Calendar, ChartArea, Compass, Handshake, HelpCircle, Landmark, Settings } from 'lucide-react';
+import { ArrowRightLeft, BookOpen, Calendar, ChartArea, Compass, FilePlus, Handshake, HelpCircle, Landmark, Settings } from 'lucide-react';
 import * as React from 'react';
 
 import { AppLogo } from '@/components/common/AppBrand';
@@ -14,7 +14,9 @@ import {
   SidebarMenuItem,
   SidebarRail,
   SidebarSeparator,
+  useSidebar,
 } from '@/components/ui/sidebar';
+import { cn } from '@/lib/utils';
 import { siteName } from '@/white-label';
 import Link from 'next/link';
 
@@ -25,6 +27,11 @@ const items = [
     url: '/dashboard',
     icon: Compass,
     isActive: true,
+  },
+  {
+    title: 'New Token',
+    url: '/dashboard/token/create',
+    icon: FilePlus,
   },
   {
     title: 'Fund Campaign',
@@ -72,23 +79,25 @@ const items = [
 export const SidebarMenuItem2 = ({ item }: { item: (typeof items)[number] }) => {
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton tooltip={item.title}>
-        {item.icon && <item.icon />}
-        <Link href={item.url}>
+      <Link href={item.url}>
+        <SidebarMenuButton tooltip={item.title}>
+          {item.icon && <item.icon />}
           <span>{item.title}</span>
-        </Link>
-      </SidebarMenuButton>
+        </SidebarMenuButton>
+      </Link>
     </SidebarMenuItem>
   );
 };
 
 export function DashboardSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { open } = useSidebar();
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuButton size="lg" asChild>
-            <Link href="/dashboard" className="min-w-0 overflow-hidden relative transition-all duration-300  ">
+            <Link href="/dashboard" className="min-w-0 overflow-hidden relative transition-all duration-300 shadow-xs">
               <span
                 className="absolute  opacity-3  hover:opacity-5 transition-all duration-300  scale-[13] rotate-5 
                 -translate-x-3 z-1 
@@ -96,7 +105,7 @@ export function DashboardSidebar({ ...props }: React.ComponentProps<typeof Sideb
               >
                 {siteName}
               </span>
-              <div className=" fill-primary flex size-8 items-center justify-center   ">
+              <div className={cn(' fill-primary flex size-8 items-center justify-center ', { ' px-0.5 ': !open })}>
                 <AppLogo />
               </div>
               <span className=" text-primary font-semibold tracking-tighter">{siteName}</span>
