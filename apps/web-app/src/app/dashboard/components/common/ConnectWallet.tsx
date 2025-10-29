@@ -2,10 +2,16 @@
 
 import React from 'react';
 import { Connector, useAccount, useConnect, useDisconnect } from 'wagmi';
-import { Button } from '../ui/button';
+import { Button } from '../../../../components/ui/button';
 
-import { LogOut } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu';
+import { LogOut, Wallet } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '../../../../components/ui/dropdown-menu';
 
 function WalletOption({ connector, onClick }: { connector: Connector; onClick: () => void }) {
   const [ready, setReady] = React.useState(false);
@@ -31,16 +37,17 @@ export const ConnectWallet = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger as-child>
+      <DropdownMenuTrigger asChild>
         <Button variant="default" className="px-2">
+          <Wallet />
           {isConnected ? (
             <span className="font-sans">
-              {address?.slice(0, 2)}...{address?.slice(-4)}
+              {address?.slice(0, 4)}...{address?.slice(-4)}
             </span>
           ) : (
             <>
               <span className=""> Connect</span>
-              <span className="hidden sm:block"> Wallet</span>
+              <span className="hidden sm:block">Wallet</span>
             </>
           )}
         </Button>

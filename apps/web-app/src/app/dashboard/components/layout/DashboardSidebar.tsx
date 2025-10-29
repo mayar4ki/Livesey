@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRightLeft, BookOpen, Calendar, ChartArea, Compass, Handshake, HelpCircle, Landmark } from 'lucide-react';
+import { ArrowRightLeft, BookOpen, Calendar, ChartArea, Compass, Handshake, HelpCircle, Landmark, Settings } from 'lucide-react';
 import * as React from 'react';
 
 import { AppLogo } from '@/components/common/AppBrand';
@@ -53,6 +53,11 @@ const items = [
   },
 
   {
+    title: 'Settings',
+    url: '/dashboard/settings',
+    icon: Settings,
+  },
+  {
     title: 'Learn',
     url: '/',
     icon: BookOpen,
@@ -82,18 +87,21 @@ export function DashboardSidebar({ ...props }: React.ComponentProps<typeof Sideb
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <Link href="/dashboard">
-                <div className=" fill-primary flex aspect-square size-8 items-center justify-center rounded-lg  ">
-                  <AppLogo />
-                </div>
-                <div className="flex flex-col gap-0.5 leading-none text-primary">
-                  <span className="font-semibold tracking-tighter">{siteName}</span>
-                </div>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          <SidebarMenuButton size="lg" asChild>
+            <Link href="/dashboard" className="min-w-0 overflow-hidden relative transition-all duration-300  ">
+              <span
+                className="absolute  opacity-3  hover:opacity-5 transition-all duration-300  scale-[13] rotate-5 
+                -translate-x-3 z-1 
+      bg-linear-to-r from-primary via-foreground to-primary text-transparent bg-clip-text "
+              >
+                {siteName}
+              </span>
+              <div className=" fill-primary flex size-8 items-center justify-center   ">
+                <AppLogo />
+              </div>
+              <span className=" text-primary font-semibold tracking-tighter">{siteName}</span>
+            </Link>
+          </SidebarMenuButton>
         </SidebarMenu>
       </SidebarHeader>
 
@@ -118,7 +126,7 @@ export function DashboardSidebar({ ...props }: React.ComponentProps<typeof Sideb
 
         <SidebarGroup>
           <SidebarMenu>
-            {items.slice(-2).map((item) => (
+            {items.slice(6).map((item) => (
               <SidebarMenuItem2 key={item.title} item={item} />
             ))}
           </SidebarMenu>

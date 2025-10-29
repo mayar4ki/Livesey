@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import { siteName } from '@/white-label';
 import Link, { LinkProps } from 'next/link';
-import { SVGProps } from 'react';
+import { HTMLAttributes, SVGProps } from 'react';
 
 export const AppLogo = (props: SVGProps<any>) => {
   return (
@@ -27,6 +27,7 @@ export const AppLogo = (props: SVGProps<any>) => {
 export interface AppBrandProps {
   slotProps?: {
     link?: LinkProps & { className?: string };
+    span?: HTMLAttributes<HTMLSpanElement>;
   };
 }
 export const AppBrand = (props: AppBrandProps) => {
@@ -40,7 +41,9 @@ export const AppBrand = (props: AppBrandProps) => {
       )}
     >
       <AppLogo />
-      <span className="text-lg font-semibold tracking-tighter">{siteName}</span>
+      <span {...props.slotProps?.span} className={cn('text-lg font-semibold tracking-tighter', props.slotProps?.span?.className)}>
+        {siteName}
+      </span>
     </Link>
   );
 };

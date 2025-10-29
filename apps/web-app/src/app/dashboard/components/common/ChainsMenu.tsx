@@ -2,13 +2,13 @@
 import { useAccount, useChainId, useSwitchChain } from 'wagmi';
 
 import { Check, Network } from 'lucide-react';
-import { Button } from '../ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
+import { Button } from '../../../../components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../../../components/ui/dropdown-menu';
 
 export const ChainsMenu = () => {
   const chainId = useChainId();
 
-  const { isConnecting, isReconnecting, chain } = useAccount();
+  const { isConnecting, isReconnecting } = useAccount();
 
   const { chains, switchChain } = useSwitchChain();
 
@@ -17,10 +17,11 @@ export const ChainsMenu = () => {
   return (
     <div>
       <DropdownMenu>
-        <DropdownMenuTrigger as-child disabled={isLoading}>
-          <Button variant="ghost" className="px-2 ">
+        <DropdownMenuTrigger asChild disabled={isLoading}>
+          <Button variant="ghost" className="px-2 hover:underline ">
+            <Network />
+
             <span className="hidden sm:block"> {chains.find((el) => el.id == chainId)?.name}</span>
-            <Network size="20" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">

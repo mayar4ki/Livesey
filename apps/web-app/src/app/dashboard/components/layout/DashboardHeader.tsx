@@ -1,6 +1,5 @@
-import { ChainsMenu } from '@/components/common/ChainsMenu';
-import { ConnectWallet } from '@/components/common/ConnectWallet';
-import { ModeToggle } from '@/components/common/ModeToggle';
+import { ChainsMenu } from '@/app/dashboard/components/common/ChainsMenu';
+import { ConnectWallet } from '@/app/dashboard/components/common/ConnectWallet';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
@@ -21,7 +20,6 @@ export const DashboardHeader = () => {
 
         <ChainsMenu />
         <ConnectWallet />
-        <ModeToggle />
       </div>
     </section>
   );
