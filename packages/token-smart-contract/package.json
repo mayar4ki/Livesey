@@ -1,8 +1,10 @@
 {
-  "name": "smart-contract",
+  "name": "@acme/token-smart-contract",
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
   "scripts": {
     "clear": "rm -rf cache/ artifacts/ ignition/deployments/",
     "deploy:sepolia": "dotenv -e .env.sepolia -- hardhat run scripts/deploy.ts --network sepolia",
@@ -18,11 +20,11 @@
     "@nomicfoundation/hardhat-node-test-runner": "^3.0.4",
     "@nomicfoundation/hardhat-verify": "^3.0.4",
     "@nomicfoundation/ignition-core": "^3.0.3",
+    "ethers": "^6.15.0",
+    "hardhat": "^3.0.9",
     "@openzeppelin/contracts": "^5.4.0",
     "@types/node": "^22.18.12",
     "dotenv-cli": "^10.0.0",
-    "ethers": "^6.15.0",
-    "hardhat": "^3.0.9",
     "typescript": "~5.8.0"
   },
   "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610",
