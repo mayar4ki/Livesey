@@ -25,11 +25,8 @@ export function useContractVerification(contractAddress: Address | string | unde
                 throw new Error('No contract address provided');
             }
 
-            // Determine the correct Etherscan API endpoint
-            const explorerApiUrl =
-                chainId === sepolia.id
-                    ? 'https://api-sepolia.etherscan.io/api'
-                    : 'https://api.etherscan.io/api';
+            // Use Etherscan API v2 unified endpoint
+            const explorerApiUrl = 'https://api.etherscan.io/v2/api';
 
             // Get API key from environment (optional for public endpoints, but recommended)
             const apiKey = process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY || 'YourApiKeyToken';
@@ -37,6 +34,7 @@ export function useContractVerification(contractAddress: Address | string | unde
             try {
                 const response = await axios.get(explorerApiUrl, {
                     params: {
+                        chainid: chainId.toString(),
                         module: 'contract',
                         action: 'getsourcecode',
                         address: contractAddress,

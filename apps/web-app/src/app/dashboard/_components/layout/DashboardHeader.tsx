@@ -1,5 +1,5 @@
-import { ChainsMenu } from '@/app/dashboard/components/common/ChainsMenu';
-import { ConnectWallet } from '@/app/dashboard/components/common/ConnectWallet';
+import { ChainsMenu } from '@/app/dashboard/_components/common/ChainsMenu';
+import { ConnectWallet } from '@/app/dashboard/_components/common/ConnectWallet';
 import { ModeToggle } from '@/components/common/ModeToggle';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';

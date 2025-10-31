@@ -1,7 +1,7 @@
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
-import { DashboardFooter } from './components/layout/DashboardFooter';
-import { DashboardHeader } from './components/layout/DashboardHeader';
-import { DashboardSidebar } from './components/layout/DashboardSidebar';
+import { DashboardFooter } from './_components/layout/DashboardFooter';
+import { DashboardHeader } from './_components/layout/DashboardHeader';
+import { DashboardSidebar } from './_components/layout/DashboardSidebar';
 
 export default function Layout({
   children,
