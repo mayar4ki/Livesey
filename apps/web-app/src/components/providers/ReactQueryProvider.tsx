@@ -1,11 +1,8 @@
-"use client";
+'use client';
 // Since QueryClientProvider relies on useContext under the hood, we have to put 'use client' on top
-import {
-  isServer,
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
-import { JSX } from "react";
+import { isServer, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { JSX } from 'react';
+import { toast } from 'sonner';
 
 function makeQueryClient() {
   return new QueryClient({
@@ -19,7 +16,36 @@ function makeQueryClient() {
   });
 }
 
-const tt = new QueryClient();
+const client = new QueryClient({
+  defaultOptions: {
+    queries: {
+      throwOnError(error) {
+        toast.error(`${(error as unknown as Record<string, string>).shortMessage ?? error.name}`, {
+          description: `${(typeof error?.cause === 'string' ? error?.cause : '') ?? error.name}`,
+          action: {
+            label: 'Close',
+            onClick: () => {},
+          },
+        });
+
+        return false;
+      },
+    },
+    mutations: {
+      onError(error) {
+        toast.error(`${(error as unknown as Record<string, string>).shortMessage ?? error.name}`, {
+          description: `${(typeof error?.cause === 'string' ? error?.cause : '') ?? error.name}`,
+          action: {
+            label: 'Close',
+            onClick: () => {},
+          },
+        });
+
+        console.log(error);
+      },
+    },
+  },
+});
 let browserQueryClient: QueryClient | undefined = undefined;
 
 function getQueryClient() {
@@ -41,7 +67,7 @@ export const ReactQueryProvider = ({ children }: { children: JSX.Element }) => {
   //       have a suspense boundary between this and the code that may
   //       suspend because React will throw away the client on the initial
   //       render if it suspends and there is no boundary
-  const queryClient = getQueryClient();
+  // const queryClient = getQueryClient();
 
-  return <QueryClientProvider client={tt}>{children}</QueryClientProvider>;
+  return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
 };

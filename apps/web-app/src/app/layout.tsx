@@ -2,6 +2,7 @@ import { getConfig } from '@/_config/wagmi';
 import { ReactQueryProvider } from '@/components/providers/ReactQueryProvider';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { WagmiProvider } from '@/components/providers/WagmiProvider';
+import { Toaster } from '@/components/ui/sonner';
 import { siteName } from '@/white-label';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
@@ -37,6 +38,7 @@ export default async function RootLayout({
         <WagmiProvider initialState={wagmiInitialState}>
           <ReactQueryProvider>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+              <Toaster />
               {children}
             </ThemeProvider>
           </ReactQueryProvider>
