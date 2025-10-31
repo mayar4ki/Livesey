@@ -2,92 +2,125 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { ShieldCheck, ShieldAlert, ExternalLink, Loader2 } from 'lucide-react';
-import { useContractVerification } from '@/hooks/useContractVerification';
+import { ShieldCheck, ShieldAlert, ExternalLink, Loader2, Clock, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
+import { useCheckContractVerification } from '@/hooks/useCheckContractVerification';
 import type { Address } from 'viem';
+import { useChainId } from 'wagmi';
+import { useParams } from 'next/navigation';
+import { useVerifyTokenStatus } from '@/hooks/useVerifyTokenStatus';
+import { Separator } from '@/components/ui/separator';
 
 type ContractVerificationCardProps = {
-    contractAddress: Address | string;
+  contractAddress: Address | string;
 };
 
 export function ContractVerificationCard({ contractAddress }: ContractVerificationCardProps) {
+  const chainId = useChainId();
+  const params = useParams();
+  const tx = params?.tx as string;
 
-    const { data: verification, isLoading: isCheckingVerification } = useContractVerification(contractAddress);
+  // Hook for verification process status src redis queue
+  const { data: verificationStatusResponse, isLoading: isCheckingVerificationStatus } = useVerifyTokenStatus({ tx, chainId });
 
-    const handleVerify = () => {
-        // TODO: Implement verification logic
-        console.log('Verify button clicked for:', contractAddress);
-    };
+  // Hook for contract verification status src block explorer
+  const { data: verification, isLoading: isCheckingVerification } = useCheckContractVerification(contractAddress);
 
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle>Contract Verification</CardTitle>
-                <CardDescription>Verify your smart contract on the block explorer</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            {isCheckingVerification ? (
-                                <>
-                                    <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                                    <span className="font-medium">Checking Status...</span>
-                                </>
-                            ) : verification?.isVerified ? (
-                                <>
-                                    <ShieldCheck className="h-5 w-5 text-green-500" />
-                                    <span className="font-medium">Verification Status</span>
-                                </>
-                            ) : (
-                                <>
-                                    <ShieldAlert className="h-5 w-5 text-yellow-500" />
-                                    <span className="font-medium">Verification Status</span>
-                                </>
-                            )}
-                        </div>
-                        {!isCheckingVerification && verification && (
-                            <Badge variant={verification.isVerified ? 'default' : 'secondary'}>
-                                {verification.isVerified ? 'Verified' : 'Not Verified'}
-                            </Badge>
-                        )}
-                    </div>
+  const task = verificationStatusResponse?.data?.task;
+  const verificationStatus = task?.status;
 
-                    {verification && (
-                        <div className="flex flex-col gap-2">
-                            <div className="flex items-center gap-2 flex-wrap">
-                                <code className="text-xs bg-muted px-3 py-2 rounded font-mono break-all flex-1">
-                                    {contractAddress}
-                                </code>
-                                {verification.verificationUrl && (
-                                    <a
-                                        href={verification.verificationUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-primary hover:underline inline-flex items-center gap-1 text-xs"
-                                    >
-                                        View on Explorer
-                                        <ExternalLink className="h-3 w-3" />
-                                    </a>
-                                )}
-                            </div>
-                        </div>
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Contract Verification</CardTitle>
+        <CardDescription>Verify your smart contract on the block explorer</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-6">
+          {/* Section 1: Verification Process */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4 text-muted-foreground" />
+              <h3 className="font-semibold text-sm">Verification Process</h3>
+            </div>
+            {isCheckingVerificationStatus ? (
+              <div className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                <span className="text-sm text-muted-foreground">Checking verification process...</span>
+              </div>
+            ) : verificationStatus ? (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    {verificationStatus === 'completed' ? (
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                    ) : verificationStatus === 'failed' ? (
+                      <XCircle className="h-4 w-4 text-red-500" />
+                    ) : (
+                      <Loader2 className="h-4 w-4 animate-spin text-primary" />
                     )}
-
-                    <div className="pt-2">
-                        <Button
-                            onClick={handleVerify}
-                            variant={verification?.isVerified ? 'outline' : 'default'}
-                            className="w-full"
-                            disabled={isCheckingVerification}
-                        >
-                            {verification?.isVerified ? 'Re-verify Contract' : 'Verify Contract'}
-                        </Button>
-                    </div>
+                    <span className="text-xs font-medium">{verificationStatus.charAt(0).toUpperCase() + verificationStatus.slice(1)}</span>
+                  </div>
+                  <Badge variant={verificationStatus === 'completed' ? 'default' : verificationStatus === 'failed' ? 'destructive' : 'secondary'}>
+                    {verificationStatus.charAt(0).toUpperCase() + verificationStatus.slice(1)}
+                  </Badge>
                 </div>
-            </CardContent>
-        </Card>
-    );
-}
+                {task?.errorMessage && <div className="text-sm text-destructive bg-destructive/10 p-2 rounded">{task.errorMessage}</div>}
+              </div>
+            ) : (
+              <div className="text-sm text-muted-foreground">No verification process found. Start verification to track progress.</div>
+            )}
+          </div>
 
+          <Separator />
+
+          {/* Section 2: Contract Verification Status */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-muted-foreground" />
+              <h3 className="font-semibold text-sm">Contract Verification Status</h3>
+            </div>
+            {isCheckingVerification ? (
+              <div className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                <span className="text-sm text-muted-foreground">Checking verification status...</span>
+              </div>
+            ) : verification ? (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    {verification.isVerified ? (
+                      <ShieldCheck className="h-5 w-5 text-green-500" />
+                    ) : (
+                      <ShieldAlert className="h-5 w-5 text-yellow-500" />
+                    )}
+                    <span className="text-sm font-medium">Status</span>
+                  </div>
+                  <Badge variant={verification.isVerified ? 'default' : 'secondary'}>{verification.isVerified ? 'Verified' : 'Not Verified'}</Badge>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <code className="text-xs bg-muted px-3 py-2 rounded font-mono break-all flex-1">{contractAddress}</code>
+                    {verification.verificationUrl && (
+                      <a
+                        href={verification.verificationUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline inline-flex items-center gap-1 text-xs"
+                      >
+                        View on Explorer
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-sm text-muted-foreground">Unable to check verification status.</div>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}

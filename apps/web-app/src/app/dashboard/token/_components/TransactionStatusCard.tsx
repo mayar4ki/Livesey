@@ -5,90 +5,97 @@ import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, Loader2, XCircle, ExternalLink } from 'lucide-react';
 import { Hash } from 'viem';
 import { useBlockNumber, useChainId, useWaitForTransactionReceipt } from 'wagmi';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getExplorerUrl } from '@/lib/helpers';
-import { useContractVerification } from '@/hooks/useContractVerification';
 
 type TransactionStatusCardProps = {
-    txHash: Hash;
+  txHash: Hash;
 };
 
 export function TransactionStatusCard({ txHash }: TransactionStatusCardProps) {
-    const chainId = useChainId();
-    const { data: currentBlockNumber } = useBlockNumber({ watch: true });
+  const chainId = useChainId();
 
-    const { data: receipt, isLoading: isWaiting, isSuccess, isError } = useWaitForTransactionReceipt({
-        hash: txHash,
-        query: {
-            enabled: !!txHash,
-        },
-    });
+  const BLOCK_CONFIRMATIONS = 12; // TODO: Make this configurable
 
-    const isDeploying = isWaiting;
-    const contractAddress = receipt?.contractAddress;
+  const [watch, setWatch] = useState(true);
+  const { data: currentBlockNumber } = useBlockNumber({ watch });
 
-    const { data: verification, isLoading: isCheckingVerification } = useContractVerification(
-        contractAddress as string | undefined
-    );
+  const {
+    data: receipt,
+    isLoading: isWaiting,
+    isSuccess,
+    isError,
+  } = useWaitForTransactionReceipt({
+    hash: txHash,
+    query: {
+      enabled: !!txHash,
+    },
+  });
 
-    const confirmations = useMemo(() => {
-        if (!receipt?.blockNumber || !currentBlockNumber) {
-            return null;
-        }
-        return Number(currentBlockNumber - receipt.blockNumber);
-    }, [receipt?.blockNumber, currentBlockNumber]);
+  const isDeploying = isWaiting;
 
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle>Transaction Status</CardTitle>
-                <CardDescription>Your token deployment transaction details</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            {isDeploying && <Loader2 className="h-5 w-5 animate-spin text-primary" />}
-                            {isSuccess && <CheckCircle2 className="h-5 w-5 text-green-500" />}
-                            {isError && <XCircle className="h-5 w-5 text-red-500" />}
-                            <span className="font-medium">Status</span>
-                        </div>
-                        <Badge variant={isDeploying ? 'secondary' : isSuccess ? 'default' : 'destructive'}>
-                            {isDeploying ? 'Pending' : isSuccess ? 'Confirmed' : 'Failed'}
-                        </Badge>
-                    </div>
+  const confirmations = useMemo(() => {
+    if (!receipt?.blockNumber || !currentBlockNumber) {
+      return null;
+    }
+    return Number(currentBlockNumber - receipt.blockNumber);
+  }, [receipt?.blockNumber, currentBlockNumber]);
 
-                    <div className="space-y-3 text-sm">
-                        <div className="flex flex-col gap-2">
-                            <span className="text-muted-foreground font-medium">Transaction Hash:</span>
-                            <div className="flex items-center gap-2 flex-wrap">
-                                <code className="text-xs bg-muted px-3 py-2 rounded font-mono break-all">{txHash}</code>
-                                <a
-                                    href={getExplorerUrl(txHash, chainId)}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-primary hover:underline inline-flex items-center gap-1 text-xs"
-                                >
-                                    View on Explorer
-                                    <ExternalLink className="h-3 w-3" />
-                                </a>
-                            </div>
-                        </div>
+  useEffect(() => {
+    if (confirmations && confirmations >= BLOCK_CONFIRMATIONS) {
+      setWatch(false);
+    }
+  }, [confirmations]);
 
-                        {confirmations !== null && (
-                            <div className="flex flex-col gap-2">
-                                <span className="text-muted-foreground font-medium">Block Confirmations:</span>
-                                <div className="flex items-center gap-2">
-                                    <code className="text-xs bg-muted px-3 py-2 rounded font-mono">{confirmations}</code>
-                                    <span className="text-xs text-muted-foreground">blocks</span>
-                                </div>
-                            </div>
-                        )}
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Transaction Status</CardTitle>
+        <CardDescription>Your token deployment transaction details</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {isDeploying && <Loader2 className="h-5 w-5 animate-spin text-primary" />}
+              {isSuccess && <CheckCircle2 className="h-5 w-5 text-green-500" />}
+              {isError && <XCircle className="h-5 w-5 text-red-500" />}
+              <span className="font-medium">Status</span>
+            </div>
+            <Badge variant={isDeploying ? 'secondary' : isSuccess ? 'default' : 'destructive'}>
+              {isDeploying ? 'Pending' : isSuccess ? 'Confirmed' : 'Failed'}
+            </Badge>
+          </div>
 
-                    </div>
+          <div className="space-y-3 text-sm">
+            <div className="flex flex-col gap-2">
+              <span className="text-muted-foreground font-medium">Transaction Hash:</span>
+              <div className="flex items-center gap-2 flex-wrap">
+                <code className="text-xs bg-muted px-3 py-2 rounded font-mono break-all">{txHash}</code>
+                <a
+                  href={getExplorerUrl(txHash, chainId)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline inline-flex items-center gap-1 text-xs"
+                >
+                  View on Explorer
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
+            </div>
+
+            {confirmations !== null && (
+              <div className="flex flex-col gap-2">
+                <span className="text-muted-foreground font-medium">Block Confirmations:</span>
+                <div className="flex items-center gap-2">
+                  <code className="text-xs bg-muted px-3 py-2 rounded font-mono">{confirmations}</code>
+                  <span className="text-xs text-muted-foreground">blocks</span>
                 </div>
-            </CardContent>
-        </Card>
-    );
+              </div>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
 }
-

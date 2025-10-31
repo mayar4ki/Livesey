@@ -3,7 +3,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { tokenCreateForm, TokenCreateForm } from '../_libs/tokenCreateFormSchema';
-import { useDeployContract } from 'wagmi';
+import { useChainId, useDeployContract } from 'wagmi';
 import { ContractArtifacts } from '@acme/token-smart-contract';
 import { Hash } from 'viem';
 import { useRouter } from 'next/navigation';
@@ -12,7 +12,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
-
+import { useVerifyToken } from '@/hooks/useVerifyToken';
+import { toast } from 'sonner';
 
 export default function Page() {
   const form = useForm<TokenCreateForm>({
@@ -27,12 +28,24 @@ export default function Page() {
 
   const router = useRouter();
 
-  const { deployContract, isPending } = useDeployContract({
+  const chainId = useChainId();
+  const { mutate: verifyToken, isPending: isVerifyingToken } = useVerifyToken();
+
+  const { deployContract, isPending: isDeploying } = useDeployContract({
     mutation: {
       onSuccess: (data) => {
-        router.push(`/dashboard/token/show/${data}`);
+        toast.success('Token created successfully');
+        verifyToken(
+          { tx: data, chainId: chainId },
+          {
+            onSuccess() {
+              toast.success('Token verification started');
+              router.push(`/dashboard/token/show/${data}`);
+            },
+          }
+        );
       },
-    }
+    },
   });
 
   async function onSubmit(values: TokenCreateForm) {
@@ -42,6 +55,8 @@ export default function Page() {
       args: [values.name, values.symbol, BigInt(values.totalSupply)],
     });
   }
+
+  const isPending = isDeploying || isVerifyingToken;
 
   return (
     <div className="p-4 md:p-6 flex-1 relative">
