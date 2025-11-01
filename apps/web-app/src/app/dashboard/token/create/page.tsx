@@ -1,23 +1,36 @@
 'use client';
 
+import { motion, AnimatePresence } from 'motion/react';
+import { TokenCreateForm } from '../_components/TokenCreateForm';
+
+import { TransactionStatusCard } from '../_components/TransactionStatusCard';
+import { ContractVerificationCard } from '../_components/ContractVerificationCard';
+import { useChainId, useDeployContract, useWaitForTransactionReceipt } from 'wagmi';
+import { ContractArtifacts } from '@acme/token-smart-contract';
+import { Address, Hash } from 'viem';
+import { tokenCreateFormSchema, TokenCreateFormSchema } from '../_libs/tokenCreateFormSchema';
+import { useEffect } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { tokenCreateForm, TokenCreateForm } from '../_libs/tokenCreateFormSchema';
-import { useChainId, useDeployContract } from 'wagmi';
-import { ContractArtifacts } from '@acme/token-smart-contract';
-import { Hash } from 'viem';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Spinner } from '@/components/ui/spinner';
 import { useVerifyToken } from '@/hooks/useVerifyToken';
 import { toast } from 'sonner';
 
 export default function Page() {
-  const form = useForm<TokenCreateForm>({
-    resolver: yupResolver(tokenCreateForm),
+  const { deployContract, isPending: isDeploying, data: transactionHash } = useDeployContract({});
+
+  const chainId = useChainId();
+  // Get transaction receipt to extract contract address
+  const { data: receipt } = useWaitForTransactionReceipt({
+    hash: transactionHash,
+    query: {
+      enabled: !!transactionHash,
+    },
+  });
+
+  const contractAddress = receipt?.contractAddress;
+
+  const form = useForm<TokenCreateFormSchema>({
+    resolver: yupResolver(tokenCreateFormSchema),
     defaultValues: {
       name: 'Test Token',
       refNumber: 5666,
@@ -26,29 +39,7 @@ export default function Page() {
     },
   });
 
-  const router = useRouter();
-
-  const chainId = useChainId();
-  const { mutate: verifyToken, isPending: isVerifyingToken } = useVerifyToken();
-
-  const { deployContract, isPending: isDeploying } = useDeployContract({
-    mutation: {
-      onSuccess: (data) => {
-        toast.success('Token created successfully');
-        verifyToken(
-          { tx: data, chainId: chainId },
-          {
-            onSuccess() {
-              toast.success('Token verification started');
-              router.push(`/dashboard/token/show/${data}`);
-            },
-          }
-        );
-      },
-    },
-  });
-
-  async function onSubmit(values: TokenCreateForm) {
+  function onSubmit(values: TokenCreateFormSchema) {
     deployContract({
       abi: ContractArtifacts.abi,
       bytecode: ContractArtifacts.bytecode as Hash,
@@ -56,81 +47,80 @@ export default function Page() {
     });
   }
 
-  const isPending = isDeploying || isVerifyingToken;
+  const { mutate: verifyToken } = useVerifyToken();
 
+  useEffect(() => {
+    if (contractAddress) {
+      const formValues = form.getValues();
+      const args = [
+        formValues.name, // string: "Test Token" → will be quoted in command
+        formValues.symbol, // string: "XY" → used as-is
+        String(formValues.totalSupply), // number/string → converted to string: "1000"
+      ];
+
+      verifyToken(
+        {
+          contractAddress: contractAddress as Address,
+          chainId: chainId,
+          args: args,
+        },
+        {
+          onSuccess: () => {
+            toast.success('Token verification process started');
+          },
+        }
+      );
+
+      form.reset();
+    }
+  }, [contractAddress, chainId, form, verifyToken]);
   return (
     <div className="p-4 md:p-6 flex-1 relative">
-      <Card>
-        <CardHeader>
-          <CardTitle>Create Token</CardTitle>
-          <CardDescription>Fill out the details below. All fields are required.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <fieldset disabled={isPending} className="grid grid-cols-1 lg:grid-cols-2 gap-6  max-w-3xl">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="DXB:MY:526..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="symbol"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Symbol</FormLabel>
-                      <FormControl>
-                        <Input placeholder="DXB:MY:526..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="refNumber"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Ref Number</FormLabel>
-                      <FormControl>
-                        <Input placeholder="12345xxx..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="totalSupply"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Total supply</FormLabel>
-                      <FormControl>
-                        <Input placeholder="0" {...field} type="number" min={1} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </fieldset>
-            </form>
-          </Form>
-          <CardFooter className="px-0 mt-6">
-            <Button type="button" className="w-full sm:w-auto" disabled={isPending} onClick={() => form.handleSubmit(onSubmit)()}>
-              Create Token {isPending && <Spinner />}
-            </Button>
-          </CardFooter>
-        </CardContent>
-      </Card>
+      <div className="space-y-6">
+        <AnimatePresence mode="wait">
+          {!transactionHash ? (
+            <motion.div
+              key="form"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              transition={{
+                duration: 0.3,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+            >
+              <TokenCreateForm form={form} onSubmit={onSubmit} isPending={isDeploying} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="status"
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              transition={{
+                duration: 0.5,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              className="space-y-6"
+            >
+              <TransactionStatusCard txHash={transactionHash} />
+              {contractAddress && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{
+                    duration: 0.5,
+                    delay: 0.2,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                >
+                  <ContractVerificationCard contractAddress={contractAddress} />
+                </motion.div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

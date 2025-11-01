@@ -1,3 +1,4 @@
+import { Address } from 'viem';
 import { getVerificationTask } from '.';
 import { redis, ensureConnected } from './client';
 
@@ -8,7 +9,7 @@ const QUEUE_NAME = 'queue:verification';
  */
 export async function updateVerificationTask(
   chainId: number,
-  tx: string,
+  contractAddress: Address,
   updates: {
     status: 'pending' | 'processing' | 'completed' | 'failed';
     errorMessage?: string;
@@ -16,9 +17,9 @@ export async function updateVerificationTask(
 ) {
   try {
     await ensureConnected();
-    const task = await getVerificationTask(chainId, tx);
+    const task = await getVerificationTask(chainId, contractAddress);
     if (!task) {
-      throw new Error(`Task ${tx} on chain ${chainId} not found`);
+      throw new Error(`Task ${contractAddress} on chain ${chainId} not found`);
     }
 
     const updated = {
@@ -29,11 +30,11 @@ export async function updateVerificationTask(
       completedAt: updates.status === 'completed' || updates.status === 'failed' ? new Date().toISOString() : task.completedAt,
     };
 
-    await redis.set(`task:${chainId}:${tx}`, JSON.stringify(updated));
-    console.log(`Updated task ${tx} on chain ${chainId} status to: ${updates.status}`);
+    await redis.set(`task:${chainId}:${contractAddress}`, JSON.stringify(updated));
+    console.log(`⚠️ updated: task:${chainId}:${contractAddress} status to: ${updates.status}`);
     return updated;
   } catch (error) {
-    console.error('Error updating verification task:', error);
+    console.error('❌ error updating: task:${chainId}:${contractAddress}', error);
     throw error;
   }
 }
@@ -44,7 +45,7 @@ export async function updateVerificationTask(
  */
 export async function consumeTask(timeoutSeconds: number = 0): Promise<{
   chainId: number;
-  tx: string;
+  contractAddress: Address;
   task: any;
 } | null> {
   try {
@@ -58,15 +59,15 @@ export async function consumeTask(timeoutSeconds: number = 0): Promise<{
       return null;
     }
 
-    const [chainId, tx] = result.element.split(':');
-    const task = await getVerificationTask(Number(chainId), tx);
+    const [chainId, contractAddress] = result.element.split(':');
+    const task = await getVerificationTask(Number(chainId), contractAddress as Address);
 
     if (!task) {
-      console.warn(`Task ${tx} on chain ${chainId} not found in Redis`);
+      console.warn(`❌ task not found: task:${chainId}:${contractAddress}`);
       return null;
     }
 
-    return { chainId: Number(chainId), tx: tx as string, task };
+    return { chainId: Number(chainId), contractAddress: contractAddress as Address, task };
   } catch (error) {
     console.error('Error consuming task:', error);
     throw error;

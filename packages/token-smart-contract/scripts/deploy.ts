@@ -22,7 +22,7 @@ async function main() {
     {
       deploymentId: hre.globalOptions.network,
       displayUi: true,
-    }
+    },
   );
 
   const contractAddress = await contract.getAddress();
@@ -33,12 +33,9 @@ async function main() {
     {
       address: contractAddress,
       constructorArgs: deploymentArgs,
-      provider:
-        connection.networkConfig.chainId === 11155111
-          ? "blockscout"
-          : "etherscan",
+      provider: "blockscout",
     },
-    hre
+    hre,
   );
 }
 

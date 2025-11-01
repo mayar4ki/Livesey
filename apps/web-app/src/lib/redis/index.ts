@@ -1,3 +1,4 @@
+import { Address } from 'viem';
 import { redis, ensureConnected } from './client';
 
 const QUEUE_NAME = 'queue:verification';
@@ -5,26 +6,27 @@ const QUEUE_NAME = 'queue:verification';
 /**
  * Create a new verification task and add to queue
  */
-export async function createVerificationTask(data: { tx: string; chainId: number }) {
+export async function createVerificationTask(data: { contractAddress: Address; chainId: number; args: any[] }) {
   try {
     await ensureConnected();
 
-    const tx = data.tx;
+    const contractAddress = data.contractAddress;
     const chainId = data.chainId;
 
     const task = {
-      tx,
+      contractAddress,
       chainId,
       status: 'pending' as const,
+      args: data.args,
     };
 
     // Store task in Redis with key: task:{contractAddress}
-    await redis.set(`task:${chainId}:${tx}`, JSON.stringify(task));
+    await redis.set(`task:${chainId}:${contractAddress}`, JSON.stringify(task));
 
     // Add tx to queue (using Redis List)
-    await redis.lPush(QUEUE_NAME, `${chainId}:${tx}`);
+    await redis.lPush(QUEUE_NAME, `${chainId}:${contractAddress}`);
 
-    console.log(`Created verification task for tx contract: task:${chainId}:${tx}`);
+    console.log(`✅ new task: task:${chainId}:${contractAddress}`);
     return task;
   } catch (error) {
     console.error('Error creating verification task:', error);
@@ -35,10 +37,10 @@ export async function createVerificationTask(data: { tx: string; chainId: number
 /**
  * Get verification task by chainId and tx
  */
-export async function getVerificationTask(chainId: number, tx: string) {
+export async function getVerificationTask(chainId: number, contractAddress: Address) {
   try {
     await ensureConnected();
-    const data = await redis.get(`task:${chainId}:${tx}`);
+    const data = await redis.get(`task:${chainId}:${contractAddress}`);
     if (!data) {
       return null;
     }

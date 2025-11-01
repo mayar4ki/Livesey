@@ -2,11 +2,10 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ShieldCheck, ShieldAlert, ExternalLink, Loader2, Clock, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
+import { ShieldCheck, ShieldAlert, ExternalLink, Loader2, Clock, CheckCircle2, XCircle } from 'lucide-react';
 import { useCheckContractVerification } from '@/hooks/useCheckContractVerification';
 import type { Address } from 'viem';
 import { useChainId } from 'wagmi';
-import { useParams } from 'next/navigation';
 import { useVerifyTokenStatus } from '@/hooks/useVerifyTokenStatus';
 import { Separator } from '@/components/ui/separator';
 
@@ -16,17 +15,18 @@ type ContractVerificationCardProps = {
 
 export function ContractVerificationCard({ contractAddress }: ContractVerificationCardProps) {
   const chainId = useChainId();
-  const params = useParams();
-  const tx = params?.tx as string;
 
   // Hook for verification process status src redis queue
-  const { data: verificationStatusResponse, isLoading: isCheckingVerificationStatus } = useVerifyTokenStatus({ tx, chainId });
-
-  // Hook for contract verification status src block explorer
-  const { data: verification, isLoading: isCheckingVerification } = useCheckContractVerification(contractAddress);
+  const { data: verificationStatusResponse, isLoading: isCheckingVerificationStatus } = useVerifyTokenStatus({
+    contractAddress: contractAddress as `0x${string}`,
+    chainId,
+  });
 
   const task = verificationStatusResponse?.data?.task;
   const verificationStatus = task?.status;
+
+  // Hook for contract verification status src block explorer
+  const { data: verification, isLoading: isCheckingVerification } = useCheckContractVerification(contractAddress);
 
   return (
     <Card>
@@ -40,7 +40,7 @@ export function ContractVerificationCard({ contractAddress }: ContractVerificati
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-muted-foreground" />
-              <h3 className="font-semibold text-sm">Verification Process</h3>
+              <h3 className="font-semibold text-sm">Verification Process (Redis Queue)</h3>
             </div>
             {isCheckingVerificationStatus ? (
               <div className="flex items-center gap-2">
@@ -77,7 +77,7 @@ export function ContractVerificationCard({ contractAddress }: ContractVerificati
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <ShieldCheck className="h-4 w-4 text-muted-foreground" />
-              <h3 className="font-semibold text-sm">Contract Verification Status</h3>
+              <h3 className="font-semibold text-sm">Contract Verification Status (Block Explorer)</h3>
             </div>
             {isCheckingVerification ? (
               <div className="flex items-center gap-2">

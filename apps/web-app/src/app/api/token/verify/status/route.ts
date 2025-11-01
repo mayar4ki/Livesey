@@ -4,19 +4,19 @@ import { getVerificationTask } from '@/lib/redis';
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const tx = searchParams.get('tx');
+    const contractAddress = searchParams.get('contractAddress');
     const chainId = searchParams.get('chainId');
-    if (!tx || !chainId) {
+    if (!contractAddress || !chainId) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Missing required parameter: tx or chainId',
+          error: 'Missing required parameter: contractAddress or chainId',
         },
         { status: 400 }
       );
     }
 
-    const task = await getVerificationTask(Number(chainId), tx);
+    const task = await getVerificationTask(Number(chainId), contractAddress as `0x${string}`);
 
     if (!task) {
       return NextResponse.json(

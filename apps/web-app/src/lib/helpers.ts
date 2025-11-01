@@ -8,10 +8,10 @@ import { sepolia } from 'wagmi/chains';
  * @returns Block explorer URL for the transaction
  */
 export function getExplorerUrl(hash: Hash, chainId: number): string {
-    if (chainId === sepolia.id) {
-        return `https://sepolia.etherscan.io/tx/${hash}`;
-    }
-    return `https://etherscan.io/tx/${hash}`;
+  if (chainId === sepolia.id) {
+    return `https://sepolia.etherscan.io/tx/${hash}`;
+  }
+  return `https://etherscan.io/tx/${hash}`;
 }
 
 /**
@@ -21,9 +21,8 @@ export function getExplorerUrl(hash: Hash, chainId: number): string {
  * @returns Block explorer URL for the contract
  */
 export function getContractExplorerUrl(address: Address | string, chainId: number): string {
-    if (chainId === sepolia.id) {
-        return `https://sepolia.etherscan.io/address/${address}`;
-    }
-    return `https://etherscan.io/address/${address}`;
+  if (chainId === sepolia.id) {
+    return `https://eth-sepolia.blockscout.com/token/${address.toLowerCase()}?tab=contract`;
+  }
+  return `https://etherscan.io/address/${address}`;
 }
-

@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createVerificationTask } from '@/lib/redis';
 import { z } from 'zod';
+import { Address } from 'viem';
 
 const verificationRequestSchema = z.object({
-  tx: z.string(),
+  contractAddress: z.custom<Address>(),
   chainId: z.number().int().positive(),
+  args: z.array(z.any()),
 });
 
 export async function POST(request: NextRequest) {
@@ -14,15 +16,16 @@ export async function POST(request: NextRequest) {
 
     // Create task in Redis and add to queue
     const task = await createVerificationTask({
-      tx: validatedData.tx,
+      contractAddress: validatedData.contractAddress,
       chainId: validatedData.chainId,
+      args: validatedData.args,
     });
 
     return NextResponse.json(
       {
         success: true,
         message: 'Verification task queued successfully',
-        tx: task.tx,
+        contractAddress: task.contractAddress,
         chainId: task.chainId,
       },
       { status: 202 } // 202 Accepted - request accepted for processing

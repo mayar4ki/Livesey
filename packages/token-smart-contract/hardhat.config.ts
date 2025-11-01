@@ -28,30 +28,13 @@ const config: HardhatUserConfig = {
       url: configVariable("CHAIN_RPC_URL"),
       accounts: [configVariable("ACCOUNT_PRIVATE_KEY")],
     },
-    avalancheFujiTestnet: {
-      type: "http",
-      url: configVariable("CHAIN_RPC_URL"),
-      chainId: 43113,
-      accounts: [configVariable("ACCOUNT_PRIVATE_KEY")],
-    },
   },
   verify: {
     etherscan: {
       apiKey: configVariable("ETHERSCAN_API_KEY"),
+      enabled: false,
     },
     blockscout: {},
-  },
-  chainDescriptors: {
-    43113: {
-      name: "avalancheFujiTestnet",
-      blockExplorers: {
-        etherscan: {
-          apiUrl:
-            "https://api.routescan.io/v2/network/testnet/evm/43113/etherscan",
-          url: "https://testnet.snowtrace.io",
-        },
-      },
-    },
   },
   paths: {
     sources: "./contracts",
