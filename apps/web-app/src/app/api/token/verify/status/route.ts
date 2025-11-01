@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
       {
         success: false,
         error: 'Failed to fetch verification status',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: 'Unknown error',
       },
       { status: 500 }
     );

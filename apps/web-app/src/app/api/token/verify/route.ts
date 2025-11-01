@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createVerificationTask } from '@/lib/redis';
 import { z } from 'zod';
-import { Address } from 'viem';
+import { Address, isAddress } from 'viem';
 
 const verificationRequestSchema = z.object({
-  contractAddress: z.custom<Address>(),
+  contractAddress: z.string().refine(isAddress, {
+    message: 'Invalid contract address',
+  }) as z.ZodType<Address>,
   chainId: z.number().int().positive(),
-  args: z.array(z.any()),
+  args: z.array(z.string().regex(/^[a-zA-Z0-9]+$/, 'Only alphanumeric characters are allowed')),
 });
 
 export async function POST(request: NextRequest) {
@@ -48,7 +50,7 @@ export async function POST(request: NextRequest) {
       {
         success: false,
         error: 'Failed to queue verification task',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: 'Unknown error',
       },
       { status: 500 }
     );

@@ -17,20 +17,6 @@ import path from 'path';
 const execAsync = promisify(exec);
 
 /**
- * Get chain from chainId
- */
-function getChain(chainId: number) {
-  switch (chainId) {
-    case sepolia.id:
-      return sepolia;
-    case mainnet.id:
-      return mainnet;
-    default:
-      throw new Error(`Unsupported chainId: ${chainId}`);
-  }
-}
-
-/**
  * Get network name from chainId
  */
 function getNetworkName(chainId: number): string {
@@ -57,7 +43,7 @@ async function processVerificationTask(chainId: number, contractAddress: Address
     });
 
     // Verify contract
-    await contractVerification({ contractAddress, chainId, args: task.args || [] });
+    await runVerificationCommand({ contractAddress, chainId, args: task.args || [] });
 
     // Update status to completed
     await updateVerificationTask(chainId, contractAddress, {
@@ -79,7 +65,7 @@ async function processVerificationTask(chainId: number, contractAddress: Address
 /**
  * Verify contract using Hardhat
  */
-async function contractVerification({ contractAddress, chainId, args }: { contractAddress: Address; chainId: number; args: any[] }): Promise<void> {
+async function runVerificationCommand({ contractAddress, chainId, args }: { contractAddress: Address; chainId: number; args: any[] }): Promise<void> {
   // Get network name
   const networkName = getNetworkName(chainId);
 
@@ -107,7 +93,7 @@ async function contractVerification({ contractAddress, chainId, args }: { contra
 
   const verifyCommand = `dotenv -e .env.${networkName} -- hardhat verify --force --network ${networkName} ${contractAddress} ${argsString ? `${argsString}` : ''}`;
 
-  console.log(`Executing Hardhat verify command: ${verifyCommand}`);
+  console.log(`🚀Executing Hardhat verify command: ${verifyCommand}`);
 
   try {
     const { stdout, stderr } = await execAsync(verifyCommand, {
@@ -121,9 +107,9 @@ async function contractVerification({ contractAddress, chainId, args }: { contra
 
     // Check if verification was successful
     if (stdout.includes('Successfully verified') || stdout.includes('already verified')) {
-      console.log(`✓ Contract verified successfully: ${contractAddress}`);
+      console.log(`✅ Contract verified successfully: ${contractAddress}`);
     } else {
-      throw new Error(`Verification may have failed. Output: ${stdout}`);
+      throw new Error(`❌ Verification may have failed. Output: ${stdout}`);
     }
   } catch (error: any) {
     // Check if it's already verified (non-fatal)
