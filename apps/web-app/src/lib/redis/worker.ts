@@ -1,5 +1,5 @@
 import { Address } from 'viem';
-import { getVerificationTask } from '.';
+import { getVerificationTask, VerificationTask } from '.';
 import { redis, ensureConnected } from './client';
 
 const QUEUE_NAME = 'queue:verification';
@@ -12,9 +12,8 @@ export async function updateVerificationTask(
   contractAddress: Address,
   updates: {
     status: 'pending' | 'processing' | 'completed' | 'failed';
-    errorMessage?: string;
   }
-) {
+): Promise<VerificationTask> {
   try {
     await ensureConnected();
     const task = await getVerificationTask(chainId, contractAddress);
@@ -22,12 +21,9 @@ export async function updateVerificationTask(
       throw new Error(`Task ${contractAddress} on chain ${chainId} not found`);
     }
 
-    const updated = {
+    const updated: VerificationTask = {
       ...task,
       status: updates.status,
-      errorMessage: updates.errorMessage || null,
-      updatedAt: new Date().toISOString(),
-      completedAt: updates.status === 'completed' || updates.status === 'failed' ? new Date().toISOString() : task.completedAt,
     };
 
     await redis.set(`task:${chainId}:${contractAddress}`, JSON.stringify(updated));
@@ -43,11 +39,7 @@ export async function updateVerificationTask(
  * Consume a task from the queue (for worker)
  * Blocks until a task is available
  */
-export async function consumeTask(timeoutSeconds: number = 0): Promise<{
-  chainId: number;
-  contractAddress: Address;
-  task: any;
-} | null> {
+export async function consumeTask(timeoutSeconds: number = 0): Promise<VerificationTask | null> {
   try {
     await ensureConnected();
     // BRPOP blocks until an item is available (timeout 0 = wait forever)
@@ -67,7 +59,7 @@ export async function consumeTask(timeoutSeconds: number = 0): Promise<{
       return null;
     }
 
-    return { chainId: Number(chainId), contractAddress: contractAddress as Address, task };
+    return task;
   } catch (error) {
     console.error('Error consuming task:', error);
     throw error;

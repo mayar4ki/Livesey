@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Address {
+  id                String             @id @default(cuid())
+  walletAddress     String             @unique @db.VarChar(42) // Ethereum wallet address (0x + 40 hex chars)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  verifiedContracts VerifiedContract[]
+
+  @@index([walletAddress])
+  @@map("addresses")
+}
+
+model VerifiedContract {
+  id              String   @id @default(cuid())
+  contractAddress String   @unique @db.VarChar(42) // Ethereum address (0x + 40 hex chars)
+  chainId         Int
+  verifiedAt      DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  addressId       String
+  deployerAddress Address  @relation(fields: [addressId], references: [id], onDelete: Cascade)
+
+  @@index([contractAddress])
+  @@index([chainId])
+  @@index([verifiedAt])
+  @@index([addressId])
+  @@map("verified_contracts")
+}

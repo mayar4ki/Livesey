@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useChainId } from 'wagmi';
 import { sepolia } from 'wagmi/chains';
 import type { Address } from 'viem';
-import { getContractExplorerUrl } from '@/lib/helpers';
+import { getContractExplorerUrl } from '@/helpers/getContractExplorerUrl';
 import axios from 'axios';
 
 type VerificationStatus = {

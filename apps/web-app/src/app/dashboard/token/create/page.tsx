@@ -5,7 +5,7 @@ import { TokenCreateForm } from '../_components/TokenCreateForm';
 
 import { TransactionStatusCard } from '../_components/TransactionStatusCard';
 import { ContractVerificationCard } from '../_components/ContractVerificationCard';
-import { useChainId, useDeployContract, useWaitForTransactionReceipt } from 'wagmi';
+import { useAccount, useChainId, useDeployContract, useWaitForTransactionReceipt } from 'wagmi';
 import { ContractArtifacts } from '@acme/token-smart-contract';
 import { Address, Hash } from 'viem';
 import { tokenCreateFormSchema, TokenCreateFormSchema } from '../_libs/tokenCreateFormSchema';
@@ -19,6 +19,7 @@ export default function Page() {
   const { deployContract, isPending: isDeploying, data: transactionHash } = useDeployContract({});
 
   const chainId = useChainId();
+  const { address: walletAddress } = useAccount();
   // Get transaction receipt to extract contract address
   const { data: receipt } = useWaitForTransactionReceipt({
     hash: transactionHash,
@@ -50,7 +51,7 @@ export default function Page() {
   const { mutate: verifyToken } = useVerifyToken();
 
   useEffect(() => {
-    if (contractAddress) {
+    if (contractAddress && walletAddress) {
       const formValues = form.getValues();
       const args = [
         formValues.name, // string: "Test Token" → will be quoted in command
@@ -60,7 +61,8 @@ export default function Page() {
 
       verifyToken(
         {
-          contractAddress: contractAddress as Address,
+          contractAddress: contractAddress,
+          walletAddress: walletAddress,
           chainId: chainId,
           args: args,
         },

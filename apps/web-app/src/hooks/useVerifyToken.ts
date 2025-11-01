@@ -8,11 +8,18 @@ type VerifyTokenResponse = {
   message: string;
   contractAddress: Address;
   chainId: number;
+  walletAddress: Address;
+};
+
+export type VerifyTokenPayload = {
+  contractAddress: Address;
+  chainId: number;
+  args: any[];
+  walletAddress: Address;
 };
 
 export const useVerifyToken = () => {
   return useMutation({
-    mutationFn: async (payload: { contractAddress: Address; chainId: number; args: any[] }) =>
-      await axios.post<VerifyTokenResponse>('/api/token/verify', payload),
+    mutationFn: async (payload: VerifyTokenPayload) => await axios.post<VerifyTokenResponse>('/api/token/verify', payload),
   });
 };

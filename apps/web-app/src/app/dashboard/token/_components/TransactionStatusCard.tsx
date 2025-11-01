@@ -6,7 +6,7 @@ import { CheckCircle2, Loader2, XCircle, ExternalLink } from 'lucide-react';
 import { Hash } from 'viem';
 import { useBlockNumber, useChainId, useWaitForTransactionReceipt } from 'wagmi';
 import { useEffect, useMemo, useState } from 'react';
-import { getExplorerUrl } from '@/lib/helpers';
+import { getExplorerUrl } from '@/helpers/getExplorerUrl';
 
 type TransactionStatusCardProps = {
   txHash: Hash;

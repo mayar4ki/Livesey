@@ -8,6 +8,9 @@ const verificationRequestSchema = z.object({
     message: 'Invalid contract address',
   }) as z.ZodType<Address>,
   chainId: z.number().int().positive(),
+  walletAddress: z.string().refine(isAddress, {
+    message: 'Invalid wallet address',
+  }) as z.ZodType<Address>,
   args: z.array(z.string().regex(/^[a-zA-Z0-9]+$/, 'Only alphanumeric characters are allowed')),
 });
 
@@ -18,10 +21,21 @@ export async function POST(request: NextRequest) {
 
     // Create task in Redis and add to queue
     const task = await createVerificationTask({
+      walletAddress: validatedData.walletAddress,
       contractAddress: validatedData.contractAddress,
       chainId: validatedData.chainId,
       args: validatedData.args,
     });
+
+    if (!task) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Contract already verified',
+        },
+        { status: 400 }
+      );
+    }
 
     return NextResponse.json(
       {
