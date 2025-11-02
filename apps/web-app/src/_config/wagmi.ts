@@ -11,8 +11,8 @@ export const getConfig = () => {
     ],
     connectors: [metaMask()],
     transports: {
-      //  [mainnet.id]: http(process.env.NEXT_PUBLIC_ETH_CHAIN_RPC_URL),
-      [sepolia.id]: http(process.env.NEXT_PUBLIC_ETH_SEPOLIA_CHAIN_RPC_URL),
+      //[mainnet.id]: http(`https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`),
+      [sepolia.id]: http(`https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`),
     },
     ssr: true,
     storage: createStorage({

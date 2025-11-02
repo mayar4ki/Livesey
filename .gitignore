@@ -11,12 +11,10 @@ node_modules
 .env.development.local
 .env.test.local
 .env.production.local
-.env.sepolia
 
 # Allow .env.example files (they should be committed)
 !.env.example
 !**/.env.example
-!.env.sepolia.example
 !**/.env.sepolia.example
 
 # Testing

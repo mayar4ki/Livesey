@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createVerificationTask } from '@/lib/redis';
+import { createVerificationTask } from '@acme/verification-queue';
 import { z } from 'zod';
 import { Address, isAddress } from 'viem';
 

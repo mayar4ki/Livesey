@@ -1,20 +1,22 @@
 'use client';
 
-import { motion, AnimatePresence } from 'motion/react';
+import { AnimatePresence } from 'motion/react';
 import { TokenCreateForm } from '../_components/TokenCreateForm';
 
 import { TransactionStatusCard } from '../_components/TransactionStatusCard';
 import { ContractVerificationCard } from '../_components/ContractVerificationCard';
 import { ErrorCard } from '../_components/ErrorCard';
 import { useAccount, useChainId, useDeployContract, useWaitForTransactionReceipt } from 'wagmi';
-import { ContractArtifacts } from '@acme/token-smart-contract';
+import { ContractArtifacts } from '@acme/smart-contract';
 import { Address, Hash } from 'viem';
 import { tokenCreateFormSchema, TokenCreateFormSchema } from '../_libs/tokenCreateFormSchema';
 import { useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { useVerifyToken } from '@/hooks/useVerifyToken';
+import { useVerifyToken } from '@/services/token/useVerifyToken';
 import { toast } from 'sonner';
+import { updateVerificationTask } from '@acme/queue/verification-task/update';
+import { createVerificationTask } from '@acme/queue/verification-task';
 
 export default function Page() {
   const [error, setError] = useState<{ message: string; type: 'transaction' | 'verification' } | null>(null);

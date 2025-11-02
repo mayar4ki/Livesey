@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma/client';
+import { prisma } from '@acme/db';
 import { z } from 'zod';
 import { Address, isAddress } from 'viem';
 

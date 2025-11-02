@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getVerificationTask } from '@/lib/redis';
+import { getVerificationTask } from '@acme/verification-queue';
 
 export async function GET(request: NextRequest) {
   try {

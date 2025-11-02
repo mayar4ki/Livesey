@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma/client';
-import { redis, ensureConnected } from '@/lib/redis/client';
+import { prisma } from '@acme/db';
+import { redis, ensureConnected } from '@acme/verification-queue/client';
 
 export async function GET() {
   try {

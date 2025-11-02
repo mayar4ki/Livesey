@@ -1,6 +1,6 @@
 'use client';
 
-import { useContractHistory } from '@/hooks/useContractHistory';
+import { useContractHistory } from '@/services/token/useContractHistory';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
