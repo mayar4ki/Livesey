@@ -9,7 +9,7 @@ services:
       - redis_data:/data
     command: redis-server --appendonly yes --requirepass redis
     healthcheck:
-      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      test: ["CMD", "redis-cli", "-a", "redis", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5

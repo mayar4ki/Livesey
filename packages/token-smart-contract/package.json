@@ -6,6 +6,7 @@
   "main": "./index.ts",
   "types": "./index.ts",
   "scripts": {
+    "build": "hardhat compile",
     "clear": "rm -rf cache/ artifacts/ ignition/deployments/",
     "deploy:sepolia": "dotenv -e .env.sepolia -- hardhat run scripts/deploy.ts --network sepolia",
     "verify:sepolia": "node scripts/generate-args.cjs ignition/deployments/sepolia/journal.jsonl && dotenv -e .env -- hardhat verify --network sepolia --constructor-args-path ignition/deployments/sepolia/constructor-args.ts"

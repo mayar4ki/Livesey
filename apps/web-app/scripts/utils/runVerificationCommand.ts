@@ -20,7 +20,8 @@ export async function runVerificationCommand({ contractAddress, chainId, args }:
   const networkName = getNetworkName(chainId);
 
   // Path to token-smart-contract package
-  const contractPackagePath = path.join(process.cwd(), '..', '..', 'packages', 'token-smart-contract');
+  // Support both Docker (via env var) and local development paths
+  const contractPackagePath = process.env.CONTRACT_PACKAGE_PATH || path.join(process.cwd(), '..', '..', 'packages', 'token-smart-contract');
 
   // Build Hardhat verify command with constructor args
   // Format: hardhat verify --network <network> <contractAddress> <arg1> <arg2> ...

@@ -1,135 +1,106 @@
-# Turborepo starter
+# Livesey
 
-This Turborepo starter is maintained by the Turborepo core team.
+Livesey monorepo powered by Turborepo.
 
-## Using this example
+## Development
 
-Run the following command:
+### Setup
 
-```sh
-npx create-turbo@latest
+```bash
+# 1. Install dependencies
+yarn install
+
+# 2. Set up environment variables
+# 2.1. Create .env.local in apps/web-app/ with:
+ - DATABASE_URL=postgresql://user:pass@postgres:5432/livesey
+ - REDIS_URL=redis://:password@redis:6379
+ - NEXT_PUBLIC_ETH_SEPOLIA_CHAIN_RPC_URL=your_rpc_url
+ - NEXT_PUBLIC_ETHERSCAN_API_KEY=your_etherscan_key
+
+# 2.2. Create .env.sepolia in apps/web-app/ with:
+ - CHAIN_RPC_URL=your_rpc_url
+ - ACCOUNT_PRIVATE_KEY=your_private_key
+ - ETHERSCAN_API_KEY=your_etherscan_key
+
+# 3. Start database and Redis, then set up Prisma
+cd apps/web-app
+docker-compose up -d
+yarn db:generate
+yarn db:migrate  # or yarn db:push
+
+# 4. Compile Hardhat contracts
+cd packages/token-smart-contract
+yarn build
 ```
 
-## What's inside?
+### Running
 
-This Turborepo includes the following packages/apps:
+```bash
+# Terminal 1: Start web app (from root directory)
+yarn dev --filter=web-app
 
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+# Terminal 2: Start worker (from apps/web-app directory)
+cd apps/web-app
+yarn worker
 ```
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+The web app will be available at `http://localhost:3000`.
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+**Note**: In development mode, the web app and worker run directly on your machine while PostgreSQL and Redis run in Docker containers. Hardhat contracts must be compiled before starting the web app, as it imports contract artifacts.
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+## Production Deployment
 
-### Develop
+### Prerequisites
 
-To develop all apps and packages, run the following command:
+- Docker and Docker Compose installed
+- All environment variables configured
 
-```
-cd my-turborepo
+### Deployment Steps
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+```bash
+# 1. Set up environment variables
+# Create .env file in the root directory with the following variables:
+ - DATABASE_URL=postgresql://user:pass@postgres:5432/livesey
+ - REDIS_URL=redis://:password@redis:6379
+ - REDIS_PASSWORD=your_redis_password
+ - POSTGRES_USER=postgres
+ - POSTGRES_PASSWORD=your_postgres_password
+ - POSTGRES_DB=livesey
+ - NEXT_PUBLIC_ETH_SEPOLIA_CHAIN_RPC_URL=your_rpc_url
+ - NEXT_PUBLIC_ETHERSCAN_API_KEY=your_etherscan_key
+ - CHAIN_RPC_URL=your_rpc_url
+ - ACCOUNT_PRIVATE_KEY=keep_it_zeros
+ - ETHERSCAN_API_KEY=your_etherscan_key
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+# 2. Build all Docker images
+docker-compose -f docker-compose.prod.yml build
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+# 3. Run database migrations
+docker-compose -f docker-compose.prod.yml run --rm web-app yarn db:migrate:deploy
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+# 4. Start all services
+docker-compose -f docker-compose.prod.yml up -d
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
+# 5. View logs (optional)
+docker-compose -f docker-compose.prod.yml logs -f
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+### Managing Services
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
+```bash
+# Scale worker instances
+docker-compose -f docker-compose.prod.yml up -d --scale worker=3
 ```
 
-## Useful Links
+### Health Checks
 
-Learn more about the power of Turborepo:
+The web app includes a health endpoint at `/api/health` that checks:
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+- Database connectivity
+- Redis connectivity
+
+Returns `200` if healthy, `503` if unhealthy.
+
+### Production Considerations
+
+- **Secrets Management**: Use Docker secrets or external secret management (e.g., AWS Secrets Manager, HashiCorp Vault)

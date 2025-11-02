@@ -9,7 +9,6 @@
 import { closeRedisConnection } from '@/lib/redis/client';
 import { consumeTask, updateVerificationTask } from '@/lib/redis/worker';
 import { prisma } from '@/lib/prisma/client';
-import { Address } from 'viem';
 import { runVerificationCommand } from './utils/runVerificationCommand';
 import { storeVerifiedContract } from './utils/storeVerifiedContract';
 import { VerificationTask } from '@/lib/redis';
