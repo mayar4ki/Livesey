@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRightLeft, BookOpen, Calendar, ChartArea, Compass, FilePlus, Handshake, HelpCircle, Landmark, Settings } from 'lucide-react';
+import { ArrowRightLeft, BookOpen, Calendar, ChartArea, Compass, FilePlus, Handshake, HelpCircle, History, Landmark, Settings } from 'lucide-react';
 import * as React from 'react';
 
 import { AppLogo } from '@/components/common/AppBrand';
@@ -29,11 +29,6 @@ const items = [
     isActive: true,
   },
   {
-    title: 'New Token',
-    url: '/dashboard/token/create',
-    icon: FilePlus,
-  },
-  {
     title: 'Fund Campaign',
     url: '/dashboard/fund',
     icon: Calendar,
@@ -59,6 +54,16 @@ const items = [
     icon: Landmark,
   },
 
+  {
+    title: 'New Token',
+    url: '/dashboard/token/create',
+    icon: FilePlus,
+  },
+  {
+    title: 'Token History',
+    url: '/dashboard/token/history',
+    icon: History,
+  },
   {
     title: 'Settings',
     url: '/dashboard/settings',

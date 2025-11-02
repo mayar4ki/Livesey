@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'motion/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ShieldCheck, ShieldAlert, ExternalLink, Loader2, Clock, CheckCircle2, XCircle } from 'lucide-react';
@@ -29,7 +30,16 @@ export function ContractVerificationCard({ contractAddress }: ContractVerificati
   const { data: verification, isLoading: isCheckingVerification } = useCheckContractVerification(contractAddress);
 
   return (
-    <Card>
+    <motion.div
+      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{
+        duration: 0.5,
+        delay: 0.2,
+        ease: [0.16, 1, 0.3, 1],
+      }}
+    >
+      <Card>
       <CardHeader>
         <CardTitle>Contract Verification</CardTitle>
         <CardDescription>Verify your smart contract on the block explorer</CardDescription>
@@ -122,5 +132,6 @@ export function ContractVerificationCard({ contractAddress }: ContractVerificati
         </div>
       </CardContent>
     </Card>
+    </motion.div>
   );
 }

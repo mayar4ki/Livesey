@@ -1,7 +1,10 @@
+'use client';
+
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { DashboardFooter } from './_components/layout/DashboardFooter';
 import { DashboardHeader } from './_components/layout/DashboardHeader';
 import { DashboardSidebar } from './_components/layout/DashboardSidebar';
+import { RequireWallet } from './_guards/RequireWallet';
 
 export default function Layout({
   children,
@@ -9,13 +12,15 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <SidebarProvider>
-      <DashboardSidebar />
-      <SidebarInset>
-        <DashboardHeader />
-        {children}
-        <DashboardFooter />
-      </SidebarInset>
-    </SidebarProvider>
+    <RequireWallet message="Please connect your wallet to access the dashboard.">
+      <SidebarProvider>
+        <DashboardSidebar />
+        <SidebarInset>
+          <DashboardHeader />
+          {children}
+          <DashboardFooter />
+        </SidebarInset>
+      </SidebarProvider>
+    </RequireWallet>
   );
 }

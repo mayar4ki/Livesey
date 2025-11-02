@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'motion/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { SubmitHandler, useForm, UseFormReturn } from 'react-hook-form';
 import { tokenCreateFormSchema, TokenCreateFormSchema } from '../_libs/tokenCreateFormSchema';
@@ -17,7 +18,17 @@ type TokenCreateFormProps = {
 
 export function TokenCreateForm({ onSubmit, isPending = false, form }: TokenCreateFormProps) {
   return (
-    <Card>
+    <motion.div
+      key="form"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20, scale: 0.95 }}
+      transition={{
+        duration: 0.3,
+        ease: [0.16, 1, 0.3, 1],
+      }}
+    >
+      <Card>
       <CardHeader>
         <CardTitle>Create Token</CardTitle>
         <CardDescription>Fill out the details below. All fields are required.</CardDescription>
@@ -88,5 +99,6 @@ export function TokenCreateForm({ onSubmit, isPending = false, form }: TokenCrea
         </CardFooter>
       </CardContent>
     </Card>
+    </motion.div>
   );
 }

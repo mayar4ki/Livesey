@@ -11,7 +11,7 @@ const verificationRequestSchema = z.object({
   walletAddress: z.string().refine(isAddress, {
     message: 'Invalid wallet address',
   }) as z.ZodType<Address>,
-  args: z.array(z.string().regex(/^[a-zA-Z0-9]+$/, 'Only alphanumeric characters are allowed')),
+  args: z.array(z.string().refine((val) => !/[?%\/\\]/.test(val), 'Characters ?, %, /, and \\ are not allowed')),
 });
 
 export async function POST(request: NextRequest) {

@@ -5,23 +5,30 @@ import { TokenCreateForm } from '../_components/TokenCreateForm';
 
 import { TransactionStatusCard } from '../_components/TransactionStatusCard';
 import { ContractVerificationCard } from '../_components/ContractVerificationCard';
+import { ErrorCard } from '../_components/ErrorCard';
 import { useAccount, useChainId, useDeployContract, useWaitForTransactionReceipt } from 'wagmi';
 import { ContractArtifacts } from '@acme/token-smart-contract';
 import { Address, Hash } from 'viem';
 import { tokenCreateFormSchema, TokenCreateFormSchema } from '../_libs/tokenCreateFormSchema';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { useVerifyToken } from '@/hooks/useVerifyToken';
 import { toast } from 'sonner';
 
 export default function Page() {
-  const { deployContract, isPending: isDeploying, data: transactionHash } = useDeployContract({});
+  const [error, setError] = useState<{ message: string; type: 'transaction' | 'verification' } | null>(null);
+
+  const { deployContract, isPending: isDeploying, data: transactionHash, error: deployError, reset: resetDeploy } = useDeployContract({});
 
   const chainId = useChainId();
   const { address: walletAddress } = useAccount();
   // Get transaction receipt to extract contract address
-  const { data: receipt } = useWaitForTransactionReceipt({
+  const {
+    data: receipt,
+    isError: isReceiptError,
+    error: receiptError,
+  } = useWaitForTransactionReceipt({
     hash: transactionHash,
     query: {
       enabled: !!transactionHash,
@@ -41,6 +48,7 @@ export default function Page() {
   });
 
   function onSubmit(values: TokenCreateFormSchema) {
+    setError(null);
     deployContract({
       abi: ContractArtifacts.abi,
       bytecode: ContractArtifacts.bytecode as Hash,
@@ -49,6 +57,26 @@ export default function Page() {
   }
 
   const { mutate: verifyToken } = useVerifyToken();
+
+  // Track transaction errors
+  useEffect(() => {
+    if (deployError) {
+      setError({
+        message: deployError.message || 'Transaction failed. Please try again.',
+        type: 'transaction',
+      });
+    }
+  }, [deployError]);
+
+  // Track receipt errors
+  useEffect(() => {
+    if (isReceiptError && receiptError) {
+      setError({
+        message: receiptError.message || 'Transaction receipt failed. Please check the transaction.',
+        type: 'transaction',
+      });
+    }
+  }, [isReceiptError, receiptError]);
 
   useEffect(() => {
     if (contractAddress && walletAddress) {
@@ -70,56 +98,42 @@ export default function Page() {
           onSuccess: () => {
             toast.success('Token verification process started');
           },
+          onError: (error: any) => {
+            setError({
+              message: error?.response?.data?.error || error?.message || 'Verification failed. Please try again.',
+              type: 'verification',
+            });
+          },
         }
       );
 
       form.reset();
     }
-  }, [contractAddress, chainId, form, verifyToken]);
+  }, [contractAddress, chainId, form, verifyToken, walletAddress]);
+
+  function handleReset() {
+    setError(null);
+    resetDeploy();
+    form.reset({
+      name: 'Test Token',
+      refNumber: 5666,
+      totalSupply: '1000',
+      symbol: 'XY',
+    });
+  }
   return (
     <div className="p-4 md:p-6 flex-1 relative">
       <div className="space-y-6">
         <AnimatePresence mode="wait">
-          {!transactionHash ? (
-            <motion.div
-              key="form"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20, scale: 0.95 }}
-              transition={{
-                duration: 0.3,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-            >
-              <TokenCreateForm form={form} onSubmit={onSubmit} isPending={isDeploying} />
-            </motion.div>
+          {error ? (
+            <ErrorCard error={error} onReset={handleReset} />
+          ) : !transactionHash ? (
+            <TokenCreateForm form={form} onSubmit={onSubmit} isPending={isDeploying} />
           ) : (
-            <motion.div
-              key="status"
-              initial={{ opacity: 0, y: 20, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -20, scale: 0.95 }}
-              transition={{
-                duration: 0.5,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="space-y-6"
-            >
+            <div className="space-y-6">
               <TransactionStatusCard txHash={transactionHash} />
-              {contractAddress && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{
-                    duration: 0.5,
-                    delay: 0.2,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
-                >
-                  <ContractVerificationCard contractAddress={contractAddress} />
-                </motion.div>
-              )}
-            </motion.div>
+              {contractAddress && <ContractVerificationCard contractAddress={contractAddress} />}
+            </div>
           )}
         </AnimatePresence>
       </div>
