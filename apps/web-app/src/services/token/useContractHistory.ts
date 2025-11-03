@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
 import { VerifiedContract } from '@acme/db';
-import axios from 'axios';
+import { apiClient } from '@/services/apiClient';
 
 type ContractHistoryResponse = {
   success: boolean;
@@ -19,7 +19,7 @@ export function useContractHistory() {
   return useQuery<ContractHistoryResponse>({
     queryKey: ['contract-history', walletAddress],
     queryFn: async ({ signal }) => {
-      const response = await axios.get<ContractHistoryResponse>(`/api/token/history`, {
+      const response = await apiClient.get<ContractHistoryResponse>(`token/history`, {
         params: {
           walletAddress,
         },

@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAccount, useChainId } from 'wagmi';
-import { isAddress } from 'viem';
 import axios from 'axios';
 import { sepolia } from 'viem/chains';
 

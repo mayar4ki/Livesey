@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
-import React from 'react';
-import { Address, Hash } from 'viem';
-import axios from 'axios';
+import { Address } from 'viem';
+import { apiClient } from '@/services/apiClient';
 
 type VerifyTokenResponse = {
   success: boolean;
@@ -20,6 +19,6 @@ export type VerifyTokenPayload = {
 
 export const useVerifyToken = () => {
   return useMutation({
-    mutationFn: async (payload: VerifyTokenPayload) => await axios.post<VerifyTokenResponse>('/api/token/verify', payload),
+    mutationFn: async (payload: VerifyTokenPayload) => await apiClient.post<VerifyTokenResponse>('token/verify', payload),
   });
 };

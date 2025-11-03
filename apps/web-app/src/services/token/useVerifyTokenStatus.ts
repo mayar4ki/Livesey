@@ -1,7 +1,6 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import React from 'react';
-import { Address, Hash } from 'viem';
-import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
+import { Address } from 'viem';
+import { apiClient } from '@/services/apiClient';
 
 type VerifyTokenResponse = {
   success: boolean;
@@ -20,7 +19,7 @@ export const useVerifyTokenStatus = ({ contractAddress, chainId }: { contractAdd
   return useQuery({
     queryKey: ['verify-token-status', contractAddress, chainId],
     queryFn: async ({ signal }) =>
-      await axios.get<VerifyTokenResponse>(`/api/token/verify/status`, {
+      await apiClient.get<VerifyTokenResponse>(`token/verify/status`, {
         params: {
           contractAddress,
           chainId,

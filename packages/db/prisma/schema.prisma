@@ -23,7 +23,7 @@ model Address {
 
 model VerifiedContract {
   id              String   @id @default(cuid())
-  contractAddress String   @unique @db.VarChar(42) // Ethereum address (0x + 40 hex chars)
+  contractAddress String   @db.VarChar(42) // Ethereum address (0x + 40 hex chars)
   chainId         Int
   verifiedAt      DateTime @default(now())
   createdAt       DateTime @default(now())
@@ -31,6 +31,7 @@ model VerifiedContract {
   addressId       String
   deployerAddress Address  @relation(fields: [addressId], references: [id], onDelete: Cascade)
 
+  @@unique([contractAddress, chainId])
   @@index([contractAddress])
   @@index([chainId])
   @@index([verifiedAt])
