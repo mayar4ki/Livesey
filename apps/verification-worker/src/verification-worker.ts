@@ -4,8 +4,8 @@ import { storeVerifiedContract } from "./stages/store-verified-contract";
 import {
   updateVerificationTask,
   consumeTask,
-  type VerificationTask,
-} from "@acme/queue/verification-task";
+  VerificationTask,
+} from "@acme/queue";
 
 import { closeRedisConnection } from "@acme/queue/client";
 import { prisma } from "@acme/db";

@@ -15,8 +15,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { useVerifyToken } from '@/services/token/useVerifyToken';
 import { toast } from 'sonner';
-import { updateVerificationTask } from '@acme/queue/verification-task/update';
-import { createVerificationTask } from '@acme/queue/verification-task';
 
 export default function Page() {
   const [error, setError] = useState<{ message: string; type: 'transaction' | 'verification' } | null>(null);

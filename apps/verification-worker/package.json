@@ -5,17 +5,21 @@
   "type": "module",
   "scripts": {
     "dev": "dotenv -e .env -- tsx src/verification-worker.ts",
-    "start:prod": "tsx src/verification-worker.ts",
-    "check-types": "tsc --noEmit"
+    "build": "tsc",
+    "start": "node dist/verification-worker.js",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "viem": "2.x"
+    "viem": "catalog:"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "dotenv-cli": "^10.0.0",
+    "@acme/tsconfig": "workspace:*",
+    "@acme/helpers": "workspace:*",
+    "@acme/db": "workspace:*",
+    "@acme/queue": "workspace:*",
+    "@types/node": "catalog:",
+    "dotenv-cli": "catalog:",
     "tsx": "^4.20.6",
-    "typescript": "^5"
-  },
-  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
+    "typescript": "catalog:"
+  }
 }

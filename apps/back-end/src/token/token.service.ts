@@ -6,10 +6,7 @@ import {
 
 import { VerifyStatusQueryDto } from './dto/verify-status-query.dto';
 import { HistoryQueryDto } from './dto/history-query.dto';
-import {
-  createVerificationTask,
-  getVerificationTask,
-} from '@acme/queue/verification-task';
+import { createVerificationTask, getVerificationTask } from '@acme/queue';
 import { PrismaService } from '../prisma/prisma.service';
 import { VerifyTokenDto } from './dto/verify-token.dto';
 

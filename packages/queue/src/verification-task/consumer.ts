@@ -1,5 +1,5 @@
 import { Address } from "viem";
-import { VerificationTask } from ".";
+import { type VerificationTask } from "./types";
 import { ensureConnected, QUEUE_NAME, redis } from "../client";
 import { getVerificationTask } from "./get";
 

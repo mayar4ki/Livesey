@@ -1,22 +1,30 @@
 {
   "name": "@acme/queue",
-  "version": "1.0.0",
   "private": true,
   "type": "module",
   "exports": {
-    "./verification-task": "./src/verification-task/index.ts",
-    "./client": "./src/client.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "default": "./src/client.ts"
+    }
   },
   "scripts": {
-    "check-types": "tsc --noEmit"
+    "build": "tsc",
+    "dev": "tsc",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
     "redis": "^5.9.0",
-    "viem": "2.x"
+    "viem": "catalog:"
   },
   "devDependencies": {
-    "@types/node": "^22.18.12",
-    "typescript": "~5.8.0"
+    "@acme/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
   },
   "license": "MIT"
 }
