@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "dotenv -e .env -- tsx src/verification-worker.ts",
+    "dev": "dotenv -e .env -- tsx src/verification-worker.ts",
     "start:prod": "tsx src/verification-worker.ts",
     "check-types": "tsc --noEmit"
   },
