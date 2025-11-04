@@ -16,7 +16,6 @@ type ErrorCardProps = {
 export function ErrorCard({ error, onReset }: ErrorCardProps) {
   return (
     <motion.div
-      key="error"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20, scale: 0.95 }}

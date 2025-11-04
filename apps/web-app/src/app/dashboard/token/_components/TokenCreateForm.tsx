@@ -19,7 +19,6 @@ type TokenCreateFormProps = {
 export function TokenCreateForm({ onSubmit, isPending = false, form }: TokenCreateFormProps) {
   return (
     <motion.div
-      key="form"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20, scale: 0.95 }}
@@ -29,76 +28,76 @@ export function TokenCreateForm({ onSubmit, isPending = false, form }: TokenCrea
       }}
     >
       <Card>
-      <CardHeader>
-        <CardTitle>Create Token</CardTitle>
-        <CardDescription>Fill out the details below. All fields are required.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <fieldset disabled={isPending} className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-3xl">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="DXB:MY:526..." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="symbol"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Symbol</FormLabel>
-                    <FormControl>
-                      <Input placeholder="DXB:MY:526..." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="refNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Ref Number</FormLabel>
-                    <FormControl>
-                      <Input placeholder="12345xxx..." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="totalSupply"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Total supply</FormLabel>
-                    <FormControl>
-                      <Input placeholder="0" {...field} type="number" min={1} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </fieldset>
-          </form>
-        </Form>
-        <CardFooter className="px-0 mt-6">
-          <Button type="button" className="w-full sm:w-auto" disabled={isPending} onClick={() => form.handleSubmit(onSubmit)()}>
-            Create Token {isPending && <Spinner />}
-          </Button>
-        </CardFooter>
-      </CardContent>
-    </Card>
+        <CardHeader>
+          <CardTitle>Create Token</CardTitle>
+          <CardDescription>Fill out the details below. All fields are required.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <fieldset disabled={isPending} className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-3xl">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="DXB:MY:526..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="symbol"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Symbol</FormLabel>
+                      <FormControl>
+                        <Input placeholder="DXB:MY:526..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="refNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Ref Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="12345xxx..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="totalSupply"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Total supply</FormLabel>
+                      <FormControl>
+                        <Input placeholder="0" {...field} type="number" min={1} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </fieldset>
+            </form>
+          </Form>
+          <CardFooter className="px-0 mt-6">
+            <Button type="button" className="w-full sm:w-auto" disabled={isPending} onClick={() => form.handleSubmit(onSubmit)()}>
+              Create Token {isPending && <Spinner />}
+            </Button>
+          </CardFooter>
+        </CardContent>
+      </Card>
     </motion.div>
   );
 }
