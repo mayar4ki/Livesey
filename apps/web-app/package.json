@@ -44,7 +44,8 @@
     "tailwind-merge": "^3.3.1",
     "viem": "catalog:",
     "wagmi": "^2.17.5",
-    "yup": "^1.7.1"
+    "yup": "^1.7.1",
+    "@acme/smart-contract": "workspace:*"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",

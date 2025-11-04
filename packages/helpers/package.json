@@ -2,15 +2,11 @@
   "name": "@acme/helpers",
   "private": true,
   "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./src/index.ts"
-    }
-  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
+    "dev": "tsc --watch",
     "build": "tsc",
-    "dev": "tsc",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {

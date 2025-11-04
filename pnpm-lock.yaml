@@ -144,10 +144,6 @@ importers:
 
   apps/verification-worker:
     dependencies:
-      viem:
-        specifier: 'catalog:'
-        version: 2.38.6(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.12)
-    devDependencies:
       '@acme/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -157,6 +153,13 @@ importers:
       '@acme/queue':
         specifier: workspace:*
         version: link:../../packages/queue
+      '@acme/smart-contract':
+        specifier: workspace:*
+        version: link:../../packages/smart-contract
+      viem:
+        specifier: 'catalog:'
+        version: 2.38.6(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.12)
+    devDependencies:
       '@acme/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/tsconfig
@@ -175,6 +178,9 @@ importers:
 
   apps/web-app:
     dependencies:
+      '@acme/smart-contract':
+        specifier: workspace:*
+        version: link:../../packages/smart-contract
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.66.0(react@19.1.0))
@@ -365,10 +371,9 @@ importers:
 
   packages/smart-contract:
     dependencies:
-      zod:
-        specifier: ^3.22.0
-        version: 3.25.76
-    devDependencies:
+      '@acme/helpers':
+        specifier: workspace:*
+        version: link:../helpers
       '@nomicfoundation/hardhat-ethers':
         specifier: ^4.0.2
         version: 4.0.2(bufferutil@4.0.9)(hardhat@3.0.10(bufferutil@4.0.9)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
@@ -393,6 +398,16 @@ importers:
       '@nomicfoundation/ignition-core':
         specifier: ^3.0.3
         version: 3.0.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      ethers:
+        specifier: ^6.15.0
+        version: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      hardhat:
+        specifier: ^3.0.9
+        version: 3.0.10(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      zod:
+        specifier: ^4.1.12
+        version: 4.1.12
+    devDependencies:
       '@openzeppelin/contracts':
         specifier: ^5.4.0
         version: 5.4.0
@@ -402,12 +417,6 @@ importers:
       dotenv-cli:
         specifier: ^10.0.0
         version: 10.0.0
-      ethers:
-        specifier: ^6.15.0
-        version: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      hardhat:
-        specifier: ^3.0.9
-        version: 3.0.10(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       typescript:
         specifier: 'catalog:'
         version: 5.9.2

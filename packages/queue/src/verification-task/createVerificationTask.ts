@@ -1,6 +1,6 @@
 import { Address } from "viem";
-import { redis, ensureConnected, QUEUE_NAME } from "../client";
-import { VerificationTask } from "./types";
+import { redis, ensureConnected, QUEUE_NAME } from "../client.js";
+import { VerificationTask } from "./types.js";
 
 /**
  * Create a new verification task and add to queue

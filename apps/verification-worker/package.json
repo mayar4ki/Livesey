@@ -10,13 +10,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "viem": "catalog:"
-  },
-  "devDependencies": {
-    "@acme/tsconfig": "workspace:*",
+    "viem": "catalog:",
     "@acme/helpers": "workspace:*",
     "@acme/db": "workspace:*",
     "@acme/queue": "workspace:*",
+    "@acme/smart-contract": "workspace:*"
+  },
+  "devDependencies": {
+    "@acme/tsconfig": "workspace:*",
     "@types/node": "catalog:",
     "dotenv-cli": "catalog:",
     "tsx": "^4.20.6",

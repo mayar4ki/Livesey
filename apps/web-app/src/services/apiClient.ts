@@ -4,7 +4,7 @@ import axios from 'axios';
  * Axios instance configured with the back-end API base URL
  */
 export const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BACK_END_URL,
+  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
   headers: {
     'Content-Type': 'application/json',
   },

@@ -42,6 +42,7 @@ export class TokenService {
   }
 
   async getHistory(query: HistoryQueryDto) {
+    console.log('query', query);
     const address = await this.prisma.client.address.findUnique({
       where: { walletAddress: query.walletAddress },
       include: {

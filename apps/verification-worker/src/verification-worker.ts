@@ -1,5 +1,5 @@
-import { runVerificationCommand } from "./stages/verification-command";
 import { storeVerifiedContract } from "./stages/store-verified-contract";
+import { verifyContract } from "@acme/smart-contract/scripts/verifyContract";
 
 import {
   updateVerificationTask,
@@ -26,7 +26,7 @@ async function processVerificationTask(task: VerificationTask): Promise<void> {
     });
 
     // Verify contract
-    const isVerified = await runVerificationCommand({
+    const isVerified = await verifyContract({
       contractAddress,
       chainId,
       args,

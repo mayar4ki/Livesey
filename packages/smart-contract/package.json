@@ -3,16 +3,33 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "main": "./index.ts",
-  "types": "./index.ts",
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./scripts/verifyContract": {
+      "default": "./dist/scripts/verifyContract.js",
+      "types": "./dist/scripts/verifyContract.d.ts"
+    }
+  },
   "scripts": {
-    "build": "hardhat compile",
-    "typecheck": "tsc --noEmit",
+    "dev": "tsc --emitDeclarationOnly false && hardhat compile",
+    "build": "tsc && hardhat compile",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "clear": "rm -rf cache/ artifacts/ ignition/deployments/",
     "deploy:sepolia": "dotenv -e .env.sepolia -- hardhat run scripts/deploy.ts --network sepolia",
     "verify:sepolia": "node scripts/generate-args.cjs ignition/deployments/sepolia/journal.jsonl && dotenv -e .env -- hardhat verify --network sepolia --constructor-args-path ignition/deployments/sepolia/constructor-args.ts"
   },
   "devDependencies": {
+    "@openzeppelin/contracts": "^5.4.0",
+    "@types/node": "catalog:",
+    "dotenv-cli": "^10.0.0",
+    "typescript": "catalog:"
+  },
+  "dependencies": {
+    "zod": "^4.1.12",
+    "@acme/helpers": "workspace:*",
     "@nomicfoundation/hardhat-ethers": "^4.0.2",
     "@nomicfoundation/hardhat-ignition": "^3.0.3",
     "@nomicfoundation/hardhat-ignition-ethers": "^3.0.3",
@@ -22,14 +39,7 @@
     "@nomicfoundation/hardhat-verify": "^3.0.4",
     "@nomicfoundation/ignition-core": "^3.0.3",
     "ethers": "^6.15.0",
-    "hardhat": "^3.0.9",
-    "@openzeppelin/contracts": "^5.4.0",
-    "@types/node": "catalog:",
-    "dotenv-cli": "^10.0.0",
-    "typescript": "catalog:"
-  },
-  "dependencies": {
-    "zod": "^3.22.0"
+    "hardhat": "^3.0.9"
   },
   "license": "MIT"
 }

@@ -1,6 +1,6 @@
 import { Address } from "viem";
-import { redis, ensureConnected } from "../client";
-import { VerificationTask } from "./types";
+import { redis, ensureConnected } from "../client.js";
+import { VerificationTask } from "./types.js";
 
 /**
  * Get verification task by chainId and tx

@@ -1,1 +1,1 @@
-export * from "./get-network-name";
+export { getNetworkName } from "./get-network-name.js";

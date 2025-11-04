@@ -4,8 +4,8 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./src/index.ts"
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
   "scripts": {
@@ -15,7 +15,7 @@
     "db:migrate:deploy": "prisma migrate deploy --schema=./prisma/schema.prisma",
     "db:studio": "prisma studio --schema=./prisma/schema.prisma",
     "build": "tsc",
-    "dev": "tsc",
+    "dev": "tsc --watch",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {

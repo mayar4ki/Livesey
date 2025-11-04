@@ -4,17 +4,17 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./src/index.ts"
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     },
     "./client": {
-      "types": "./dist/client.d.ts",
-      "default": "./src/client.ts"
+      "default": "./dist/client.js",
+      "types": "./dist/client.d.ts"
     }
   },
   "scripts": {
     "build": "tsc",
-    "dev": "tsc",
+    "dev": "tsc --watch",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {

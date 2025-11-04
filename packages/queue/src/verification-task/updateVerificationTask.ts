@@ -1,7 +1,7 @@
 import { Address } from "viem";
-import { redis, ensureConnected } from "../client";
-import { VerificationTask } from "./types";
-import { getVerificationTask } from "./getVerificationTask";
+import { redis, ensureConnected } from "../client.js";
+import { VerificationTask } from "./types.js";
+import { getVerificationTask } from "./getVerificationTask.js";
 
 /**
  * Update verification task status

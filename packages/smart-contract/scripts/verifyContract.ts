@@ -1,12 +1,12 @@
+import { getNetworkName } from "@acme/helpers";
 import { Address } from "viem";
 import { exec } from "child_process";
 import { promisify } from "util";
 import path from "path";
-import { getNetworkName } from "@acme/helpers";
 
 const execAsync = promisify(exec);
 
-export type RunVerificationCommandProps = {
+export type VerifyContractProps = {
   contractAddress: Address;
   chainId: number;
   args: any[];
@@ -15,19 +15,17 @@ export type RunVerificationCommandProps = {
 /**
  * Verify contract using Hardhat
  */
-export async function runVerificationCommand({
+export async function verifyContract({
   contractAddress,
   chainId,
   args,
-}: RunVerificationCommandProps): Promise<boolean> {
+}: VerifyContractProps): Promise<boolean> {
   // Get network name
   const networkName = getNetworkName(chainId);
 
   // Path to token-smart-contract package
   // Support both Docker (via env var) and local development paths
-  const contractPackagePath =
-    process.env.CONTRACT_PACKAGE_PATH ||
-    path.join(process.cwd(), "..", "..", "packages", "smart-contract");
+  const contractPackagePath = path.join(process.cwd(), "./");
 
   // Build Hardhat verify command with constructor args
   // Format: hardhat verify --network <network> <contractAddress> <arg1> <arg2> ...
@@ -85,7 +83,7 @@ export async function runVerificationCommand({
     }
 
     throw new Error(
-      `Hardhat verify failed: ${error.message}\nStdout: ${error.stdout}\nStderr: ${error.stderr}`
+      `Hardhat verify failed: ${error.message}\nStdout: ${error.stdout}\nStderr: ${error.stderr}`,
     );
   }
 }

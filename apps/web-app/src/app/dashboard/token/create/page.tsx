@@ -8,7 +8,7 @@ import { ContractVerificationCard } from '../_components/ContractVerificationCar
 import { ErrorCard } from '../_components/ErrorCard';
 import { useAccount, useChainId, useDeployContract, useWaitForTransactionReceipt } from 'wagmi';
 import { ContractArtifacts } from '@acme/smart-contract';
-import { Address, Hash } from 'viem';
+import { Hash } from 'viem';
 import { tokenCreateFormSchema, TokenCreateFormSchema } from '../_libs/tokenCreateFormSchema';
 import { useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
