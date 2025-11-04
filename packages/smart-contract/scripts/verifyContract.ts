@@ -3,8 +3,13 @@ import { Address } from "viem";
 import { exec } from "child_process";
 import { promisify } from "util";
 import path from "path";
+import { fileURLToPath } from "url";
 
 const execAsync = promisify(exec);
+
+// Get directory of current file (ES module equivalent of __dirname)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export type VerifyContractProps = {
   contractAddress: Address;
@@ -23,9 +28,9 @@ export async function verifyContract({
   // Get network name
   const networkName = getNetworkName(chainId);
 
-  // Path to token-smart-contract package
-  // Support both Docker (via env var) and local development paths
-  const contractPackagePath = path.join(process.cwd(), "./");
+  // Path to smart-contract package (where package.json and hardhat.config.ts are located)
+  // Resolve from the script file location: scripts/verifyContract.ts -> packages/smart-contract/
+  const contractPackagePath = path.resolve(__dirname, "..");
 
   // Build Hardhat verify command with constructor args
   // Format: hardhat verify --network <network> <contractAddress> <arg1> <arg2> ...
@@ -46,9 +51,9 @@ export async function verifyContract({
           .join(" ")
       : "";
 
-  const verifyCommand = `CHAIN_RPC_URL='${process.env.CHAIN_RPC_URL}' ETHERSCAN_API_KEY='${process.env.ETHERSCAN_API_KEY}' ACCOUNT_PRIVATE_KEY='xxxxxxxxxx' hardhat verify --force --network ${networkName} ${contractAddress} ${argsString ? `${argsString}` : ""}`;
+  const verifyCommand = `CHAIN_RPC_URL='${process.env.CHAIN_RPC_URL}' ETHERSCAN_API_KEY='${process.env.ETHERSCAN_API_KEY}' ACCOUNT_PRIVATE_KEY='xxxxxxxxxx' pnpm run hardhat verify --force --network ${networkName} ${contractAddress} ${argsString ? `${argsString}` : ""}`;
 
-  console.log(`🚀Executing Hardhat verify command: ${verifyCommand}`);
+  console.log(`🚀Executing Hardhat verify command22: ${verifyCommand}`);
 
   try {
     const { stdout, stderr } = await execAsync(verifyCommand, {

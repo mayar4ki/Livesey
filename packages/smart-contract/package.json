@@ -25,7 +25,8 @@
     "@openzeppelin/contracts": "^5.4.0",
     "@types/node": "catalog:",
     "dotenv-cli": "^10.0.0",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "hardhat": "^3.0.9"
   },
   "dependencies": {
     "zod": "^4.1.12",

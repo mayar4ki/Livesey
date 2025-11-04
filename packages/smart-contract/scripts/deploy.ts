@@ -3,10 +3,7 @@ import { verifyContract } from "@nomicfoundation/hardhat-verify/verify";
 import hre from "hardhat";
 import { initializeConnections } from "../utils/initialize-connections.js";
 
-const deploymentArgs = [
-  // _initialSupply
-  100,
-];
+const deploymentArgs = ["Test Token", "TT", 100];
 
 async function main() {
   const { connection } = await initializeConnections();
@@ -14,8 +11,8 @@ async function main() {
   console.log(`🚀 Deploying contract...`);
 
   const { contract } = await connection.ignition.deploy(
-    buildModule("Asset", (m) => {
-      const contract = m.contract("Asset", deploymentArgs);
+    buildModule("AssetToken", (m) => {
+      const contract = m.contract("AssetToken", deploymentArgs);
 
       return { contract };
     }),
