@@ -14,7 +14,7 @@
     }
   },
   "scripts": {
-    "build": "tsup ",
+    "build": "tsup",
     "dev": "tsup",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
