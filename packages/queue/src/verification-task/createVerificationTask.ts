@@ -2,19 +2,15 @@ import { Address } from "viem";
 import { redis, ensureConnected, QUEUE_NAME } from "../client";
 import { VerificationTask } from "./types";
 
-export type CreateVerificationTaskProps = {
+/**
+ * Create a new verification task and add to queue
+ */
+export async function createVerificationTask(data: {
   contractAddress: Address;
   chainId: number;
   walletAddress: Address;
   args: any[];
-};
-
-/**
- * Create a new verification task and add to queue
- */
-export async function createVerificationTask(
-  data: CreateVerificationTaskProps
-) {
+}) {
   try {
     await ensureConnected();
 

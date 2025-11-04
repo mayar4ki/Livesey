@@ -1,7 +1,7 @@
 import { Address } from "viem";
 import { redis, ensureConnected } from "../client";
 import { VerificationTask } from "./types";
-import { getVerificationTask } from "./get";
+import { getVerificationTask } from "./getVerificationTask";
 
 /**
  * Update verification task status

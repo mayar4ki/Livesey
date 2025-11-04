@@ -1,7 +1,7 @@
 import { Address } from "viem";
 import { type VerificationTask } from "./types";
 import { ensureConnected, QUEUE_NAME, redis } from "../client";
-import { getVerificationTask } from "./get";
+import { getVerificationTask } from "./getVerificationTask";
 
 /**
  * Consume a task from the queue (for worker)

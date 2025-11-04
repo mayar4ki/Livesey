@@ -38,6 +38,12 @@ importers:
 
   apps/back-end:
     dependencies:
+      '@acme/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@acme/queue':
+        specifier: workspace:*
+        version: link:../../packages/queue
       '@nestjs/common':
         specifier: ^11.0.1
         version: 11.1.8(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)

@@ -27,7 +27,9 @@
     "class-validator": "^0.14.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "viem": "catalog:"
+    "viem": "catalog:",
+    "@acme/queue": "workspace:*",
+    "@acme/db": "workspace:*"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
