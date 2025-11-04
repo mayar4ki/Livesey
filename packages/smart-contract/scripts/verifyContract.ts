@@ -4,6 +4,7 @@ import { exec } from "child_process";
 import { promisify } from "util";
 import path from "path";
 import { fileURLToPath } from "url";
+import { existsSync } from "fs";
 
 const execAsync = promisify(exec);
 
@@ -32,6 +33,35 @@ export async function verifyContract({
   // Resolve from the script file location: scripts/verifyContract.ts -> packages/smart-contract/
   const contractPackagePath = path.resolve(__dirname, "..");
 
+  // Resolve hardhat binary path - check multiple locations
+  // 1. Local node_modules/.bin/hardhat (if dependencies installed locally)
+  // 2. Root workspace node_modules/.bin/hardhat (if pnpm hoisted dependencies)
+  // 3. Fallback to pnpm exec hardhat (pnpm will resolve from workspace)
+  const localHardhatBin = path.resolve(
+    contractPackagePath,
+    "node_modules",
+    ".bin",
+    "hardhat",
+  );
+  const rootHardhatBin = path.resolve(
+    contractPackagePath,
+    "..",
+    "..",
+    "node_modules",
+    ".bin",
+    "hardhat",
+  );
+
+  let hardhatCommand: string;
+  if (existsSync(localHardhatBin)) {
+    hardhatCommand = localHardhatBin;
+  } else if (existsSync(rootHardhatBin)) {
+    hardhatCommand = rootHardhatBin;
+  } else {
+    // Use pnpm exec which will resolve hardhat from the workspace
+    hardhatCommand = "pnpm exec hardhat";
+  }
+
   // Build Hardhat verify command with constructor args
   // Format: hardhat verify --network <network> <contractAddress> <arg1> <arg2> ...
   const argsString =
@@ -51,7 +81,7 @@ export async function verifyContract({
           .join(" ")
       : "";
 
-  const verifyCommand = `CHAIN_RPC_URL='${process.env.CHAIN_RPC_URL}' ETHERSCAN_API_KEY='${process.env.ETHERSCAN_API_KEY}' ACCOUNT_PRIVATE_KEY='xxxxxxxxxx' pnpm run hardhat verify --force --network ${networkName} ${contractAddress} ${argsString ? `${argsString}` : ""}`;
+  const verifyCommand = `CHAIN_RPC_URL='${process.env.CHAIN_RPC_URL}' ETHERSCAN_API_KEY='${process.env.ETHERSCAN_API_KEY}' ${hardhatCommand} verify --force --network ${networkName} ${contractAddress} ${argsString ? `${argsString}` : ""}`;
 
   console.log(`🚀Executing Hardhat verify command22: ${verifyCommand}`);
 

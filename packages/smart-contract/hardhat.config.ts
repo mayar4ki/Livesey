@@ -26,7 +26,9 @@ const config: HardhatUserConfig = {
       chainType: "l1",
       chainId: 11155111,
       url: configVariable("CHAIN_RPC_URL"),
-      accounts: [configVariable("ACCOUNT_PRIVATE_KEY")],
+      accounts: process.env.ACCOUNT_PRIVATE_KEY
+        ? [configVariable("ACCOUNT_PRIVATE_KEY")]
+        : [],
     },
   },
   verify: {
