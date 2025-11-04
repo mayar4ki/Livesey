@@ -10,5 +10,6 @@ catalog:
   prettier: ^3.6.2
   viem: "2.x"
   dotenv-cli: "^10.0.0"
+  tsup: "^8.0.0"
 
 linkWorkspacePackages: true
