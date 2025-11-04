@@ -1,12 +1,16 @@
 {
   "name": "@acme/helpers",
   "private": true,
-  "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
   "scripts": {
-    "dev": "tsc --watch",
-    "build": "tsc",
+    "dev": "tsup",
+    "build": "tsup",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
@@ -15,7 +19,8 @@
   "devDependencies": {
     "@acme/tsconfig": "workspace:*",
     "@types/node": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "tsup": "catalog:"
   },
   "license": "MIT"
 }
