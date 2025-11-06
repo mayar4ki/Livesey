@@ -6,7 +6,7 @@ import {Clones} from "@openzeppelin/contracts/proxy/Clones.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 import {BeaconProxy} from "@openzeppelin/contracts/proxy/beacon/BeaconProxy.sol";
-import {AccessControlled} from "./utils/AccessControlled.sol";
+import {AccessControlled} from "./_libs/AccessControlled.sol";
 import {IERC20Implementation} from "./ERC20Implementation/IERC20Implementation.sol";
 import {IUpgradeableBeacon} from "./UpgradeableBeacon/IUpgradeableBeacon.sol";
 
@@ -88,13 +88,6 @@ contract Factory is AccessControlled {
     function deleteBeaconProxy(address _beaconProxy) external onlyAdmin {
         delete beaconLedger[_beaconProxy];
         emit BeaconProxyDeleted(_beaconProxy);
-    }
-
-    /**
-     * @notice Get current implementation address
-     */
-    function getImplementation() external view returns (address) {
-        return IUpgradeableBeacon(beacon).implementation();
     }
 
     /**
