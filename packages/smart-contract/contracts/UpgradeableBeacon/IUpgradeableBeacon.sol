@@ -3,10 +3,10 @@
 pragma solidity ^0.8.28;
 
 /**
- * @title IBeacon
- * @notice Interface for the Beacon contract
+ * @title IUpgradeableBeacon
+ * @notice Interface for the UpgradeableBeacon contract
  */
-interface IBeacon {
+interface IUpgradeableBeacon {
     /**
      * @dev Must return an address that can be used as a delegate call target.
      * @return implementation address

@@ -7,8 +7,8 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 import {BeaconProxy} from "@openzeppelin/contracts/proxy/beacon/BeaconProxy.sol";
 import {AccessControlled} from "./utils/AccessControlled.sol";
-import {ERC20Implementation} from "./ERC20Implementation.sol";
-import {IBeacon} from "./utils/IBeacon.sol";
+import {IERC20Implementation} from "./ERC20Implementation/IERC20Implementation.sol";
+import {IUpgradeableBeacon} from "./UpgradeableBeacon/IUpgradeableBeacon.sol";
 
 /**
  * @title Factory
@@ -62,9 +62,12 @@ contract Factory is AccessControlled {
         require(_totalSupply > 0, "Total supply cannot be zero");
         require(_owner != address(0), "Owner cannot be zero address");
 
-        bytes memory initData = abi.encodeCall(
-            ERC20Implementation.initialize,
-            (_name, _symbol, _totalSupply, _owner)
+        bytes memory initData = abi.encodeWithSelector(
+            IERC20Implementation.initialize.selector,
+            _name,
+            _symbol,
+            _totalSupply,
+            _owner
         );
 
         address beaconProxy = address(new BeaconProxy(beacon, initData));
@@ -91,7 +94,7 @@ contract Factory is AccessControlled {
      * @notice Get current implementation address
      */
     function getImplementation() external view returns (address) {
-        return IBeacon(beacon).implementation();
+        return IUpgradeableBeacon(beacon).implementation();
     }
 
     /**
@@ -100,7 +103,7 @@ contract Factory is AccessControlled {
      * @dev Only owner can upgrade the beacon
      */
     function upgradeBeacon(address _newImplementation) external onlyOwner {
-        IBeacon(beacon).upgradeTo(_newImplementation);
+        IUpgradeableBeacon(beacon).upgradeTo(_newImplementation);
         emit BeaconUpgraded(_newImplementation);
     }
 }
