@@ -18,10 +18,7 @@
     "build": "tsc && hardhat compile",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "clear": "rm -rf cache/ artifacts/ ignition/deployments/",
-    "deploy:sepolia": "dotenv -e .env.sepolia -- hardhat run scripts/deploy.ts --network sepolia",
-    "verify1:sepolia": "node scripts/generate-args.cjs ignition/deployments/sepolia-ERC20Implementation/journal.jsonl && dotenv -e .env.sepolia -- hardhat verify --force --network sepolia --constructor-args-path ignition/deployments/sepolia-ERC20Implementation/constructor-args.ts",
-    "verify2:sepolia": "node scripts/generate-args.cjs ignition/deployments/sepolia-UpgradeableBeacon/journal.jsonl && dotenv -e .env.sepolia -- hardhat verify --force --network sepolia --constructor-args-path ignition/deployments/sepolia-UpgradeableBeacon/constructor-args.ts",
-    "verify3:sepolia": "node scripts/generate-args.cjs ignition/deployments/sepolia-Factory/journal.jsonl && dotenv -e .env.sepolia -- hardhat verify --force --network sepolia --constructor-args-path ignition/deployments/sepolia-Factory/constructor-args.ts"
+    "deploy:sepolia": "dotenv -e .env.sepolia -- hardhat run scripts/deploy.ts --network sepolia"
   },
   "devDependencies": {
     "@openzeppelin/contracts": "^5.4.0",
