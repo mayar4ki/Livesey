@@ -1,4 +1,3 @@
-import { ethers } from "ethers";
 import hre from "hardhat";
 import { envValidationSchema } from "./env-validation-schema.js";
 
@@ -6,15 +5,14 @@ export const initializeConnections = async () => {
   console.log(`Initializing Connections... \n`);
   const env = envValidationSchema.parse(process.env);
   const connection = await hre.network.connect();
-  const ethersProvider = new ethers.JsonRpcProvider(env.CHAIN_RPC_URL, {
-    chainId: connection.id,
-    name: connection.networkName,
-  });
+
+  const [signer] = await connection.ethers.getSigners();
+  const deployerAddress = await signer.getAddress();
 
   return {
     env,
     connection,
-    ethersProvider,
+    deployerAddress,
   };
 };
 

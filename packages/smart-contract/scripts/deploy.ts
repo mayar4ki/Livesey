@@ -1,39 +1,43 @@
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
-import { verifyContract } from "@nomicfoundation/hardhat-verify/verify";
-import hre from "hardhat";
 import { initializeConnections } from "../utils/initialize-connections.js";
 
-const deploymentArgs = ["Test Token", "TT", 100];
-
 async function main() {
-  const { connection } = await initializeConnections();
+  const { connection, deployerAddress, env } = await initializeConnections();
 
-  console.log(`🚀 Deploying contract...`);
+  console.log(`📝 Deployer address: ${deployerAddress} \n`);
 
-  const { contract } = await connection.ignition.deploy(
-    buildModule("AssetToken", (m) => {
-      const contract = m.contract("AssetToken", deploymentArgs);
+  const { beacon, factory } = await connection.ignition.deploy(
+    buildModule("ERC20FactoryDeployment", (m) => {
+      // Deploy ERC20Implementation
+      const erc20Implementation = m.contract("ERC20Implementation");
 
-      return { contract };
+      // Deploy Beacon (depends on ERC20Implementation)
+      const beacon = m.contract("UpgradeableBeacon", [
+        erc20Implementation,
+        m.getParameter("_initialOwner", deployerAddress),
+      ]);
+
+      // Deploy Factory (depends on Beacon)
+      const factory = m.contract("Factory", [
+        m.getParameter("_ownerAddress", env.OWNER_ADDRESS),
+        m.getParameter("_adminAddress", env.ADMIN_ADDRESS),
+        beacon,
+      ]);
+
+      return {
+        erc20Implementation,
+        beacon,
+        factory,
+      };
     }),
-    {
-      deploymentId: hre.globalOptions.network,
-      displayUi: true,
-    },
+    { displayUi: true },
   );
 
-  const contractAddress = await contract.getAddress();
-
-  console.log(`✅ Contract deployed address: ${contractAddress} \n`);
-
-  await verifyContract(
-    {
-      address: contractAddress,
-      constructorArgs: deploymentArgs,
-      provider: "blockscout",
-    },
-    hre,
-  );
+  console.log(`\n 🚀 Transferring beacon ownership to factory contract... \n`);
+  // Transfer beacon ownership
+  const factoryAddress = await factory.getAddress();
+  await beacon.transferOwnership(factoryAddress);
+  console.log(`✅ Beacon ownership transferred \n`);
 }
 
 main().catch(console.error);

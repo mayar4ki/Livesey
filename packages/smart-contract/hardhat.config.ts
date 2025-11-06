@@ -36,7 +36,9 @@ const config: HardhatUserConfig = {
       apiKey: configVariable("ETHERSCAN_API_KEY"),
       enabled: false,
     },
-    blockscout: {},
+    blockscout: {
+      enabled: true,
+    },
   },
   paths: {
     sources: "./contracts",

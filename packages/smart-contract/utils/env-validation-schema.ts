@@ -19,7 +19,7 @@ const endpoints = z.string().refine(
   (val) => {
     return val.split(",").every((url) => /^https:\/\/.+/.test(url));
   },
-  { message: "Invalid endpoint list" }
+  { message: "Invalid endpoint list" },
 );
 
 const functionDonId = z.string().min(1);
@@ -34,4 +34,7 @@ export const envValidationSchema = z.object({
   CHAIN_RPC_URL: url,
   ACCOUNT_PRIVATE_KEY: privateKey,
   ETHERSCAN_API_KEY: apiKey,
+
+  OWNER_ADDRESS: ethAddress,
+  ADMIN_ADDRESS: ethAddress,
 });

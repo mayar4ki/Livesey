@@ -19,17 +19,18 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "clear": "rm -rf cache/ artifacts/ ignition/deployments/",
     "deploy:sepolia": "dotenv -e .env.sepolia -- hardhat run scripts/deploy.ts --network sepolia",
-    "verify:sepolia": "node scripts/generate-args.cjs ignition/deployments/sepolia/journal.jsonl && dotenv -e .env -- hardhat verify --network sepolia --constructor-args-path ignition/deployments/sepolia/constructor-args.ts"
+    "verify1:sepolia": "node scripts/generate-args.cjs ignition/deployments/sepolia-ERC20Implementation/journal.jsonl && dotenv -e .env.sepolia -- hardhat verify --force --network sepolia --constructor-args-path ignition/deployments/sepolia-ERC20Implementation/constructor-args.ts",
+    "verify2:sepolia": "node scripts/generate-args.cjs ignition/deployments/sepolia-UpgradeableBeacon/journal.jsonl && dotenv -e .env.sepolia -- hardhat verify --force --network sepolia --constructor-args-path ignition/deployments/sepolia-UpgradeableBeacon/constructor-args.ts",
+    "verify3:sepolia": "node scripts/generate-args.cjs ignition/deployments/sepolia-Factory/journal.jsonl && dotenv -e .env.sepolia -- hardhat verify --force --network sepolia --constructor-args-path ignition/deployments/sepolia-Factory/constructor-args.ts"
   },
   "devDependencies": {
     "@openzeppelin/contracts": "^5.4.0",
     "@types/node": "catalog:",
     "dotenv-cli": "^10.0.0",
-    "typescript": "catalog:",
-    "hardhat": "^3.0.9"
+    "hardhat": "^3.0.9",
+    "typescript": "catalog:"
   },
   "dependencies": {
-    "zod": "^4.1.12",
     "@acme/helpers": "workspace:*",
     "@nomicfoundation/hardhat-ethers": "^4.0.2",
     "@nomicfoundation/hardhat-ignition": "^3.0.3",
@@ -39,8 +40,10 @@
     "@nomicfoundation/hardhat-node-test-runner": "^3.0.4",
     "@nomicfoundation/hardhat-verify": "^3.0.4",
     "@nomicfoundation/ignition-core": "^3.0.3",
+    "@openzeppelin/contracts-upgradeable": "^5.4.0",
     "ethers": "^6.15.0",
-    "hardhat": "^3.0.9"
+    "hardhat": "^3.0.10",
+    "zod": "^4.1.12"
   },
   "license": "MIT"
 }
