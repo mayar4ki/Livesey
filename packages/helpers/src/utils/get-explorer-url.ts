@@ -1,5 +1,5 @@
-import { Hash } from 'viem';
-import { sepolia } from 'wagmi/chains';
+import { Hash } from "viem";
+import { sepolia } from "viem/chains";
 
 /**
  * Get the block explorer URL for a transaction hash based on chain ID
@@ -13,4 +13,3 @@ export function getExplorerUrl(hash: Hash, chainId: number): string {
   }
   return `https://etherscan.io/tx/${hash}`;
 }
-

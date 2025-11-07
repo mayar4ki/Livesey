@@ -1,16 +1,16 @@
-import { mainnet, sepolia } from 'wagmi/chains';
+import { mainnet, sepolia } from "viem/chains";
 
 /**
  * Get the human-readable name of a chain by its chain ID
  * @param chainId - Chain ID number
  * @returns Chain name or fallback format
  */
-export function getChainName(chainId: number): string {
+export function getChainUIName(chainId: number): string {
   switch (chainId) {
     case sepolia.id:
-      return 'Sepolia';
+      return "Sepolia";
     case mainnet.id:
-      return 'Mainnet';
+      return "Mainnet";
     default:
       return `Chain ${chainId}`;
   }

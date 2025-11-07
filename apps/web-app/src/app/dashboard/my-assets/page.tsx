@@ -1,17 +1,16 @@
 'use client';
 
-import { useWalletAssets } from '~/services/token/useWalletAssets';
+import { formatAddress, getChainUIName, getContractExplorerUrl } from '@acme/shared/utils';
+import { Badge } from '@acme/ui/badge';
+import { Button } from '@acme/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@acme/ui/table';
-import { Badge } from '@acme/ui/badge';
-import { ExternalLink, Wallet, Coins } from 'lucide-react';
-import { getContractExplorerUrl } from '~/helpers/getContractExplorerUrl';
-import { formatAddress } from '~/helpers/formatAddress';
-import { getChainName } from '~/helpers/getChainName';
-import { Button } from '@acme/ui/button';
+import { Coins, ExternalLink, Wallet } from 'lucide-react';
 import { useAccount, useChainId } from 'wagmi';
-import { LoadingCard } from '~/app/dashboard/_components/common/LoadingCard';
 import { ErrorStateCard } from '~/app/dashboard/_components/common/ErrorStateCard';
+import { LoadingCard } from '~/app/dashboard/_components/common/LoadingCard';
+
+import { useWalletAssets } from '~/services/token/useWalletAssets';
 
 export default function Page() {
   const { address: walletAddress } = useAccount();
@@ -38,7 +37,7 @@ export default function Page() {
             My Assets
           </CardTitle>
           <CardDescription>
-            View all ERC-20 tokens in your wallet on {getChainName(chainId)}
+            View all ERC-20 tokens in your wallet on {getChainUIName(chainId)}
             {walletAddress && ` (${formatAddress(walletAddress)})`}
           </CardDescription>
         </CardHeader>
@@ -47,7 +46,9 @@ export default function Page() {
             <div className="flex flex-col items-center justify-center py-12">
               <Wallet className="h-12 w-12 text-muted-foreground mb-4" />
               <h3 className="text-lg font-semibold mb-2">No Assets Found</h3>
-              <p className="text-sm text-muted-foreground text-center">You don't have any ERC-20 tokens in this wallet on {getChainName(chainId)}.</p>
+              <p className="text-sm text-muted-foreground text-center">
+                You don't have any ERC-20 tokens in this wallet on {getChainUIName(chainId)}.
+              </p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -92,7 +93,7 @@ export default function Page() {
                         <code className="text-xs font-mono bg-muted px-2 py-1 rounded">{formatAddress(asset.contractAddress)}</code>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="secondary">{getChainName(data?.chainId || chainId)}</Badge>
+                        <Badge variant="secondary">{getChainUIName(data?.chainId || chainId)}</Badge>
                       </TableCell>
                       <TableCell className="text-right">
                         <Button variant="ghost" size="sm" asChild className="h-8">

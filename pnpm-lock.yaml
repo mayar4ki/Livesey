@@ -60,6 +60,9 @@ importers:
 
   apps/admin-app:
     dependencies:
+      '@acme/shared':
+        specifier: workspace:*
+        version: link:../../packages/helpers
       '@acme/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -257,12 +260,12 @@ importers:
       '@acme/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@acme/helpers':
-        specifier: workspace:*
-        version: link:../../packages/helpers
       '@acme/queue':
         specifier: workspace:*
         version: link:../../packages/queue
+      '@acme/shared':
+        specifier: workspace:*
+        version: link:../../packages/helpers
       '@acme/smart-contract':
         specifier: workspace:*
         version: link:../../packages/smart-contract
@@ -288,6 +291,9 @@ importers:
 
   apps/web-app:
     dependencies:
+      '@acme/shared':
+        specifier: workspace:*
+        version: link:../../packages/helpers
       '@acme/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -439,7 +445,7 @@ importers:
 
   packages/smart-contract:
     dependencies:
-      '@acme/helpers':
+      '@acme/shared':
         specifier: workspace:*
         version: link:../helpers
       '@nomicfoundation/hardhat-ethers':

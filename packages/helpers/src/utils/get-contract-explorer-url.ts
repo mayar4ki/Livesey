@@ -1,5 +1,5 @@
-import { type Address } from 'viem';
-import { sepolia } from 'wagmi/chains';
+import { type Address } from "viem";
+import { sepolia } from "viem/chains";
 
 /**
  * Get the block explorer URL for a contract address based on chain ID
@@ -7,10 +7,12 @@ import { sepolia } from 'wagmi/chains';
  * @param chainId - Chain ID (defaults to mainnet if not provided)
  * @returns Block explorer URL for the contract
  */
-export function getContractExplorerUrl(address: Address | string, chainId: number): string {
+export function getContractExplorerUrl(
+  address: Address | string,
+  chainId: number
+): string {
   if (chainId === sepolia.id) {
     return `https://eth-sepolia.blockscout.com/token/${address.toLowerCase()}?tab=contract`;
   }
   return `https://etherscan.io/address/${address}`;
 }
-

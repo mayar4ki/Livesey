@@ -1,5 +1,6 @@
 'use client';
 
+import { formatAddress, getChainUIName, getContractExplorerUrl } from '@acme/shared/utils';
 import { Badge } from '@acme/ui/badge';
 import { Button } from '@acme/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
@@ -8,9 +9,6 @@ import { ExternalLink, FileCode } from 'lucide-react';
 import { useAccount } from 'wagmi';
 import { ErrorStateCard } from '~/_components/common/ErrorStateCard';
 import { LoadingCard } from '~/_components/common/LoadingCard';
-import { formatAddress } from '~/helpers/formatAddress';
-import { getChainName } from '~/helpers/getChainName';
-import { getContractExplorerUrl } from '~/helpers/getContractExplorerUrl';
 import { useContractHistory } from '~/services/token/useContractHistory';
 
 export default function Page() {
@@ -65,7 +63,7 @@ export default function Page() {
                       <code className="text-xs font-mono bg-muted px-2 py-1 rounded">{formatAddress(contract.contractAddress)}</code>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="secondary">{getChainName(contract.chainId)}</Badge>
+                      <Badge variant="secondary">{getChainUIName(contract.chainId)}</Badge>
                     </TableCell>
                     <TableCell>
                       <span className="text-sm text-muted-foreground">

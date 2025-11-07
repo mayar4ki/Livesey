@@ -1,16 +1,23 @@
 {
-  "name": "@acme/helpers",
+  "name": "@acme/shared",
   "private": true,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "default": "./src/index.ts"
+    },
+    "./helpers": {
+      "types": "./dist/helpers/index.d.ts",
+      "default": "./src/helpers/index.ts"
+    },
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "default": "./src/utils/index.ts"
     }
   },
   "scripts": {
-    "dev": "tsup",
-    "build": "tsup",
+    "dev": "tsc",
+    "build": "tsc",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "clean": "git clean -xdf .cache .turbo dist node_modules"
   },

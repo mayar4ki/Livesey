@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "viem": "catalog:",
-    "@acme/helpers": "workspace:*",
+    "@acme/shared": "workspace:*",
     "@acme/db": "workspace:*",
     "@acme/queue": "workspace:*",
     "@acme/smart-contract": "workspace:*"

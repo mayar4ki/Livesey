@@ -4,23 +4,20 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "default": "./src/index.ts"
     },
     "./admin-app": {
       "types": "./dist/admin-app/index.d.ts",
-      "import": "./dist/admin-app/index.mjs",
-      "require": "./dist/admin-app/index.js"
+      "default": "./src/admin-app/index.ts"
     },
     "./web-app": {
       "types": "./dist/web-app/index.d.ts",
-      "import": "./dist/web-app/index.mjs",
-      "require": "./dist/web-app/index.js"
+      "default": "./src/web-app/index.ts"
     }
   },
   "scripts": {
-    "dev": "tsup",
-    "build": "tsup",
+    "dev": "tsc",
+    "build": "tsc",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "clean": "git clean -xdf .cache .turbo dist node_modules"
   },
