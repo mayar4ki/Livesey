@@ -1,11 +1,9 @@
-import { Address } from "viem";
-
 /**
  * Create FormData for Sourcify API submission
  */
 export function prepareVerificationData(
   chainId: number,
-  contractAddress: Address,
+  contractAddress: string,
   files: { path: string; content: string }[],
 ): FormData {
   const formData = new FormData();

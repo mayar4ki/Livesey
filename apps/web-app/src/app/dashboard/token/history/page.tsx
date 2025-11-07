@@ -1,17 +1,17 @@
 'use client';
 
-import { useContractHistory } from '@/services/token/useContractHistory';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
+import { useContractHistory } from '~/services/token/useContractHistory';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@acme/ui/table';
+import { Badge } from '@acme/ui/badge';
 import { ExternalLink, FileCode } from 'lucide-react';
-import { getContractExplorerUrl } from '@/helpers/getContractExplorerUrl';
-import { formatAddress } from '@/helpers/formatAddress';
-import { getChainName } from '@/helpers/getChainName';
-import { Button } from '@/components/ui/button';
+import { getContractExplorerUrl } from '~/helpers/getContractExplorerUrl';
+import { formatAddress } from '~/helpers/formatAddress';
+import { getChainName } from '~/helpers/getChainName';
+import { Button } from '@acme/ui/button';
 import { useAccount } from 'wagmi';
-import { LoadingCard } from '@/app/dashboard/_components/common/LoadingCard';
-import { ErrorStateCard } from '@/app/dashboard/_components/common/ErrorStateCard';
+import { LoadingCard } from '~/app/dashboard/_components/common/LoadingCard';
+import { ErrorStateCard } from '~/app/dashboard/_components/common/ErrorStateCard';
 
 export default function Page() {
   const { address: walletAddress } = useAccount();

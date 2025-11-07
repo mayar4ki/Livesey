@@ -14,10 +14,10 @@
     }
   },
   "scripts": {
-    "dev": "tsc --emitDeclarationOnly false && hardhat compile",
+    "dev": "tsc --emitDeclarationOnly false",
     "build": "tsc && hardhat compile",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "clear": "rm -rf cache/ artifacts/ ignition/deployments/",
+    "clean": "git clean -xdf .cache .turbo dist node_modules && rm -rf cache/ artifacts/ ignition/deployments/",
     "deploy:sepolia": "dotenv -e .env.sepolia -- hardhat run scripts/deploy.ts --network sepolia",
     "verify:sepolia": "dotenv -e .env.sepolia -- hardhat run scripts/verify.ts --network sepolia"
   },

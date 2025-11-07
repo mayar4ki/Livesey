@@ -1,14 +1,14 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
+import { Badge } from '@acme/ui/badge';
 import { Loader2, Clock, CheckCircle2, XCircle, ExternalLink } from 'lucide-react';
 import type { Address } from 'viem';
 import { useChainId } from 'wagmi';
-import { useVerifyTokenStatus } from '@/services/token/useVerifyTokenStatus';
-import { getContractExplorerUrl } from '@/helpers/getContractExplorerUrl';
-import { Separator } from '@/components/ui/separator';
+import { useVerifyTokenStatus } from '~/services/token/useVerifyTokenStatus';
+import { getContractExplorerUrl } from '~/helpers/getContractExplorerUrl';
+import { Separator } from '@acme/ui/separator';
 
 type ContractVerificationCardProps = {
   contractAddress: Address | string;

@@ -2,8 +2,8 @@
 import { useAccount, useChainId, useSwitchChain } from 'wagmi';
 
 import { Check, Network } from 'lucide-react';
-import { Button } from '../../../../components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../../../components/ui/dropdown-menu';
+import { Button } from '@acme/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@acme/ui/dropdown-menu';
 
 export const ChainsMenu = () => {
   const chainId = useChainId();

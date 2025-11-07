@@ -3,9 +3,9 @@
 import { Globe, Languages, Moon, Sun } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
-import { ModeToggle } from '@/components/common/ModeToggle';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ModeToggle } from '~/components/common/ModeToggle';
+import { Button } from '@acme/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +14,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@acme/ui/dropdown-menu';
 
 type LanguageCode = 'en' | 'es' | 'fr' | 'de' | 'ar' | 'zh';
 

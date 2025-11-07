@@ -1,9 +1,9 @@
 import { ArrowUpRight } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { LightRays } from '@/components/ui/light-rays';
-import { badge, buttons, description, heading } from '@/white-label/home';
+import { Badge } from '@acme/ui/badge';
+import { Button } from '@acme/ui/button';
+import { LightRays } from '~/components/ui/light-rays';
+import { badge, buttons, description, heading } from '~/white-label/home';
 import { HeroCard } from './HeroCard';
 
 export const HeroSection = () => {

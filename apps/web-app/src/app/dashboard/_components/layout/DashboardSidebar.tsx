@@ -3,7 +3,7 @@
 import { ArrowRightLeft, BookOpen, Calendar, ChartArea, Compass, FilePlus, Handshake, HelpCircle, History, Landmark, Settings } from 'lucide-react';
 import * as React from 'react';
 
-import { AppLogo } from '@/components/common/AppBrand';
+import { AppLogo } from '~/components/common/AppBrand';
 import {
   Sidebar,
   SidebarContent,
@@ -15,9 +15,9 @@ import {
   SidebarRail,
   SidebarSeparator,
   useSidebar,
-} from '@/components/ui/sidebar';
-import { cn } from '@/lib/utils';
-import { siteName } from '@/white-label';
+} from '@acme/ui/sidebar';
+import { cn } from '@acme/ui';
+import { siteName } from '~/white-label';
 import Link from 'next/link';
 
 // This is sample data.

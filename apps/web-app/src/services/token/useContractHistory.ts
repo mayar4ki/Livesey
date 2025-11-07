@@ -1,11 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
-import { VerifiedContract } from '@acme/db';
-import { apiClient } from '@/services/apiClient';
+import { apiClient } from '~/services/apiClient';
 
 type ContractHistoryResponse = {
   success: boolean;
-  contracts: VerifiedContract[];
+  contracts: any[];
   walletAddress: string;
 };
 

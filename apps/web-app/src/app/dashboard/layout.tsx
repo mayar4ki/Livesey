@@ -1,6 +1,6 @@
 'use client';
 
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarInset, SidebarProvider } from '@acme/ui/sidebar';
 import { DashboardFooter } from './_components/layout/DashboardFooter';
 import { DashboardHeader } from './_components/layout/DashboardHeader';
 import { DashboardSidebar } from './_components/layout/DashboardSidebar';

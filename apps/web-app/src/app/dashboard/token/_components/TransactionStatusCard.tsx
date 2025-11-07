@@ -1,13 +1,13 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
+import { Badge } from '@acme/ui/badge';
 import { CheckCircle2, Loader2, XCircle, ExternalLink } from 'lucide-react';
 import { Hash } from 'viem';
 import { useBlockNumber, useChainId, useWaitForTransactionReceipt } from 'wagmi';
 import { useEffect, useMemo, useState } from 'react';
-import { getExplorerUrl } from '@/helpers/getExplorerUrl';
+import { getExplorerUrl } from '~/helpers/getExplorerUrl';
 
 type TransactionStatusCardProps = {
   txHash: Hash;

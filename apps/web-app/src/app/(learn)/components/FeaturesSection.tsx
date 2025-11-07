@@ -1,5 +1,5 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { featuresSection } from '@/white-label/home';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@acme/ui/accordion';
+import { featuresSection } from '~/white-label/home';
 
 export const FeaturesSection = () => {
   return (

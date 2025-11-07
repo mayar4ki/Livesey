@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Address } from 'viem';
-import { apiClient } from '@/services/apiClient';
+import { apiClient } from '~/services/apiClient';
 
 type VerifyTokenResponse = {
   success: boolean;

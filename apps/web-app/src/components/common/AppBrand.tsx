@@ -1,5 +1,5 @@
-import { cn } from '@/lib/utils';
-import { siteName } from '@/white-label';
+import { cn } from '@acme/ui';
+import { siteName } from '~/white-label';
 import Link, { LinkProps } from 'next/link';
 import { HTMLAttributes, SVGProps } from 'react';
 

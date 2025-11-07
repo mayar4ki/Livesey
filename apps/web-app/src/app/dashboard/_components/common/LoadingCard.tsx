@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@acme/ui/card';
 import { Loader2 } from 'lucide-react';
 
 type LoadingCardProps = {

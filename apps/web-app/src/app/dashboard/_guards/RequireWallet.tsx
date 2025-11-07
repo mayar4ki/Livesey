@@ -1,7 +1,7 @@
 'use client';
 
 import { useAccount } from 'wagmi';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@acme/ui/card';
 import { Wallet } from 'lucide-react';
 import { ReactNode } from 'react';
 import { ConnectWallet } from '../_components/common/ConnectWallet';

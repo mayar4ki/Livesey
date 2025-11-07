@@ -1,10 +1,10 @@
 'use client';
 
 import { Moon, Sun } from 'lucide-react';
-import { useTheme } from 'next-themes';
+import { useTheme } from '@acme/ui/provider/theme-provider';
 
-import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Button } from '@acme/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@acme/ui/dropdown-menu';
 
 export interface ModeToggleProps {
   size?: 'icon' | 'default';

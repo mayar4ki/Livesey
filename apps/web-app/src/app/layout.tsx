@@ -1,9 +1,9 @@
-import { getConfig } from '@/_config/wagmi';
-import { ReactQueryProvider } from '@/components/providers/ReactQueryProvider';
-import { ThemeProvider } from '@/components/providers/ThemeProvider';
-import { WagmiProvider } from '@/components/providers/WagmiProvider';
-import { Toaster } from '@/components/ui/sonner';
-import { siteName } from '@/white-label';
+import { getConfig } from '~/_config/wagmi';
+import { ReactQueryProvider } from '~/components/providers/ReactQueryProvider';
+import { ThemeProvider } from '@acme/ui/provider/theme-provider';
+import { WagmiProvider } from '~/components/providers/WagmiProvider';
+import { Toaster } from '@acme/ui/sonner';
+import { siteName } from '~/white-label';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { headers } from 'next/headers';

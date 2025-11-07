@@ -1,9 +1,9 @@
-import { ChainsMenu } from '@/app/dashboard/_components/common/ChainsMenu';
-import { ConnectWallet } from '@/app/dashboard/_components/common/ConnectWallet';
-import { ModeToggle } from '@/components/common/ModeToggle';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '@/components/ui/breadcrumb';
-import { Separator } from '@/components/ui/separator';
-import { SidebarTrigger } from '@/components/ui/sidebar';
+import { ChainsMenu } from '../common/ChainsMenu';
+import { ConnectWallet } from '../common/ConnectWallet';
+import { ModeToggle } from '~/components/common/ModeToggle';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '@acme/ui/breadcrumb';
+import { Separator } from '@acme/ui/separator';
+import { SidebarTrigger } from '@acme/ui/sidebar';
 
 export const DashboardHeader = () => {
   return (

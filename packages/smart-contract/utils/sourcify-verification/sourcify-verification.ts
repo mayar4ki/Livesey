@@ -1,10 +1,9 @@
-import { Address } from "viem";
 import { submitVerificationRequest } from "./submit-verification-request.js";
 import { prepareVerificationFiles } from "./prepare-verification-files.js";
 import { prepareVerificationData } from "./prepare-verification-data.js";
 
 export type VerifyContractSourcifyProps = {
-  contractAddress: Address;
+  contractAddress: string;
   chainId: number;
   contractName: string;
   sourceName: string;

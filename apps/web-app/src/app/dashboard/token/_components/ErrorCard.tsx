@@ -1,7 +1,7 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
+import { Button } from '@acme/ui/button';
 import { AlertCircle, RotateCcw } from 'lucide-react';
 import { motion } from 'motion/react';
 

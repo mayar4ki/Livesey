@@ -31,7 +31,17 @@ coverage
 out/
 build
 dist
+# next.js
+.next/
+out/
+next-env.d.ts
 
+# local env files
+.env
+.env*.local
+
+# vercel
+.vercel
 
 # Debug
 npm-debug.log*
@@ -45,3 +55,5 @@ yarn-error.log*
 .cache
 .pnpm-store
 packages/db/prisma/migrations/*
+
+tsup.config.bundled_*.mjs

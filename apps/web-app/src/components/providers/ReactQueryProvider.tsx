@@ -2,7 +2,7 @@
 // Since QueryClientProvider relies on useContext under the hood, we have to put 'use client' on top
 import { isServer, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { JSX } from 'react';
-import { toast } from 'sonner';
+import { toast } from '@acme/ui/sonner';
 
 function makeQueryClient() {
   return new QueryClient({

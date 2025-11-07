@@ -1,6 +1,5 @@
 import { initializeConnections } from "../utils/initialize-connections.js";
 import { verifyContractSourcify } from "../utils/sourcify-verification/sourcify-verification.js";
-import { Address } from "viem";
 import { readFileSync } from "fs";
 import { join } from "path";
 import { fileURLToPath } from "url";
@@ -59,7 +58,7 @@ async function main() {
   console.log("🔍 Verifying ERC20Implementation...");
   try {
     await verifyContractSourcify({
-      contractAddress: erc20ImplementationAddress as Address,
+      contractAddress: erc20ImplementationAddress,
       chainId,
       contractName: "ERC20Implementation",
       sourceName: "contracts/ERC20Implementation/ERC20Implementation.sol",
@@ -72,7 +71,7 @@ async function main() {
   console.log("\n🔍 Verifying UpgradeableBeacon...");
   try {
     await verifyContractSourcify({
-      contractAddress: beaconAddress as Address,
+      contractAddress: beaconAddress,
       chainId,
       contractName: "UpgradeableBeacon",
       sourceName: "contracts/UpgradeableBeacon/UpgradeableBeacon.sol",
@@ -85,7 +84,7 @@ async function main() {
   console.log("\n🔍 Verifying Factory...");
   try {
     await verifyContractSourcify({
-      contractAddress: factoryAddress as Address,
+      contractAddress: factoryAddress,
       chainId,
       contractName: "Factory",
       sourceName: "contracts/Factory.sol",

@@ -1,11 +1,11 @@
 import { Menu } from 'lucide-react';
 
-import { AppBrand } from '@/components/common/AppBrand';
-import { ModeToggle } from '@/components/common/ModeToggle';
-import { Accordion } from '@/components/ui/accordion';
-import { Button } from '@/components/ui/button';
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from '@/components/ui/navigation-menu';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { AppBrand } from '~/components/common/AppBrand';
+import { ModeToggle } from '~/components/common/ModeToggle';
+import { Accordion } from '@acme/ui/accordion';
+import { Button } from '@acme/ui/button';
+import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from '@acme/ui/navigation-menu';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@acme/ui/sheet';
 import Link from 'next/link';
 
 const menu = [

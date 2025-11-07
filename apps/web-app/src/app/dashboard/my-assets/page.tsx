@@ -1,18 +1,17 @@
 'use client';
 
-import { useWalletAssets } from '@/services/token/useWalletAssets';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
+import { useWalletAssets } from '~/services/token/useWalletAssets';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@acme/ui/table';
+import { Badge } from '@acme/ui/badge';
 import { ExternalLink, Wallet, Coins } from 'lucide-react';
-import { getContractExplorerUrl } from '@/helpers/getContractExplorerUrl';
-import { formatAddress } from '@/helpers/formatAddress';
-import { getChainName } from '@/helpers/getChainName';
-import { Button } from '@/components/ui/button';
+import { getContractExplorerUrl } from '~/helpers/getContractExplorerUrl';
+import { formatAddress } from '~/helpers/formatAddress';
+import { getChainName } from '~/helpers/getChainName';
+import { Button } from '@acme/ui/button';
 import { useAccount, useChainId } from 'wagmi';
-import { LoadingCard } from '@/app/dashboard/_components/common/LoadingCard';
-import { ErrorStateCard } from '@/app/dashboard/_components/common/ErrorStateCard';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { LoadingCard } from '~/app/dashboard/_components/common/LoadingCard';
+import { ErrorStateCard } from '~/app/dashboard/_components/common/ErrorStateCard';
 
 export default function Page() {
   const { address: walletAddress } = useAccount();
@@ -72,10 +71,10 @@ export default function Page() {
                     <TableRow key={asset.contractAddress}>
                       <TableCell>
                         <div className="flex items-center gap-3">
-                          <Avatar className="h-8 w-8">
+                          {/* <Avatar className="h-8 w-8">
                             {asset.logo && <AvatarImage src={asset.logo} alt={asset.name || asset.symbol || 'Token'} />}
                             <AvatarFallback className="text-xs">{asset.symbol ? asset.symbol.slice(0, 2).toUpperCase() : 'T'}</AvatarFallback>
-                          </Avatar>
+                          </Avatar> */}
                           <div className="flex flex-col">
                             <span className="font-medium">{asset.name || asset.symbol || 'Unknown Token'}</span>
                             {asset.symbol && asset.name && <span className="text-xs text-muted-foreground">{asset.symbol}</span>}

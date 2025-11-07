@@ -2,16 +2,10 @@
 
 import React from 'react';
 import { Connector, useAccount, useConnect, useDisconnect } from 'wagmi';
-import { Button } from '../../../../components/ui/button';
+import { Button } from '@acme/ui/button';
 
 import { LogOut, Wallet } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '../../../../components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@acme/ui/dropdown-menu';
 
 function WalletOption({ connector, onClick }: { connector: Connector; onClick: () => void }) {
   const [ready, setReady] = React.useState(false);

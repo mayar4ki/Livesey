@@ -7,14 +7,12 @@ import { TransactionStatusCard } from '../_components/TransactionStatusCard';
 import { ContractVerificationCard } from '../_components/ContractVerificationCard';
 import { ErrorCard } from '../_components/ErrorCard';
 import { useAccount, useChainId, useDeployContract, useWaitForTransactionReceipt } from 'wagmi';
-import { ContractArtifacts } from '@acme/smart-contract';
-import { Hash } from 'viem';
 import { tokenCreateFormSchema, TokenCreateFormSchema } from '../_libs/tokenCreateFormSchema';
 import { useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { useVerifyToken } from '@/services/token/useVerifyToken';
-import { toast } from 'sonner';
+import { useVerifyToken } from '~/services/token/useVerifyToken';
+import { toast } from '@acme/ui/sonner';
 
 export default function Page() {
   const [error, setError] = useState<{ message: string; type: 'transaction' | 'verification' } | null>(null);
@@ -49,11 +47,11 @@ export default function Page() {
 
   function onSubmit(values: TokenCreateFormSchema) {
     setError(null);
-    deployContract({
-      abi: ContractArtifacts.abi,
-      bytecode: ContractArtifacts.bytecode as Hash,
-      args: [values.name, values.symbol, BigInt(values.totalSupply)],
-    });
+    // deployContract({
+    //   abi: ContractArtifacts.abi,
+    //   bytecode: ContractArtifacts.bytecode as Hash,
+    //   args: [values.name, values.symbol, BigInt(values.totalSupply)],
+    // });
   }
 
   const { mutate: verifyToken } = useVerifyToken();
