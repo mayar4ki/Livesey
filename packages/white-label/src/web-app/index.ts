@@ -49,3 +49,5 @@ export const bottomLinks = [
   { text: "Terms and Conditions", url: "#" },
   { text: "Privacy Policy", url: "#" },
 ];
+
+export * from "./home";

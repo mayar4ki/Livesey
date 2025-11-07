@@ -1,5 +1,5 @@
 import { cn } from '@acme/ui';
-import { siteName } from '~/white-label';
+import { siteName } from '@acme/white-label/web-app';
 import Link, { LinkProps } from 'next/link';
 import { HTMLAttributes, SVGProps } from 'react';
 

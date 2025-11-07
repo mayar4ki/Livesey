@@ -1,5 +1,5 @@
+import { bottomLinks, copyright, menuItems, tagline } from '@acme/white-label/web-app';
 import { AppBrand } from '~/_components/common/AppBrand';
-import { bottomLinks, copyright, menuItems, tagline } from '~/white-label';
 
 export const AppFooter = () => {
   return (

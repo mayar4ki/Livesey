@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRightLeft, BookOpen, Calendar, ChartArea, Compass, FilePlus, Handshake, HelpCircle, History, Landmark, Settings } from 'lucide-react';
+import { ArrowRightLeft, BookOpen, Calendar, ChartArea, Compass, Handshake, HelpCircle, Landmark, Settings } from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@acme/ui';
@@ -16,9 +16,9 @@ import {
   SidebarSeparator,
   useSidebar,
 } from '@acme/ui/sidebar';
+import { siteName } from '@acme/white-label/web-app';
 import Link from 'next/link';
 import { AppLogo } from '~/_components/common/AppBrand';
-import { siteName } from '~/white-label';
 
 // This is sample data.
 const items = [
@@ -52,17 +52,6 @@ const items = [
     title: 'Governance',
     url: '/dashboard/governance',
     icon: Landmark,
-  },
-
-  {
-    title: 'New Token',
-    url: '/dashboard/token/create',
-    icon: FilePlus,
-  },
-  {
-    title: 'Token History',
-    url: '/dashboard/token/history',
-    icon: History,
   },
   {
     title: 'Settings',

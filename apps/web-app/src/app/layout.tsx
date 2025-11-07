@@ -1,5 +1,6 @@
 import { ThemeProvider } from '@acme/ui/provider/theme-provider';
 import { Toaster } from '@acme/ui/sonner';
+import { siteName } from '@acme/white-label/web-app';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { headers } from 'next/headers';
@@ -7,7 +8,6 @@ import { cookieToInitialState } from 'wagmi';
 import { ReactQueryProvider } from '~/_components/providers/ReactQueryProvider';
 import { WagmiProvider } from '~/_components/providers/WagmiProvider';
 import { getConfig } from '~/_config/wagmi';
-import { siteName } from '~/white-label';
 import './globals.css';
 
 const geistSans = Geist({

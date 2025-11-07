@@ -1,7 +1,7 @@
-import { CompliantWithSection } from './components/CompliantWithSection';
-import { FeaturesSection } from './components/FeaturesSection';
-import { HeroSection } from './components/HeroSection/HeroSection';
-import { StatsSection } from './components/StatsSection';
+import { CompliantWithSection } from './_components/CompliantWithSection';
+import { FeaturesSection } from './_components/FeaturesSection';
+import { HeroSection } from './_components/HeroSection/HeroSection';
+import { StatsSection } from './_components/StatsSection';
 
 export default function Home() {
   return (

@@ -1,4 +1,4 @@
-import { bottomLinks, copyright } from '~/white-label';
+import { bottomLinks, copyright } from '@acme/white-label/web-app';
 
 export const DashboardFooter = () => {
   return (

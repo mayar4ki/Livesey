@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRightLeft, Calendar, ChartArea, Compass, FilePlus, Handshake, HelpCircle, History, Landmark, Settings } from 'lucide-react';
+import { FilePlus, HelpCircle, History, Settings } from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@acme/ui';
@@ -22,38 +22,6 @@ import { AppLogo } from '~/_components/common/AppBrand';
 
 // This is sample data.
 const items = [
-  {
-    title: 'Discover',
-    url: '',
-    icon: Compass,
-    isActive: true,
-  },
-  {
-    title: 'Fund Campaign',
-    url: '/fund',
-    icon: Calendar,
-  },
-  {
-    title: 'Public Limit Orders',
-    url: '/orders/public',
-    icon: ArrowRightLeft,
-  },
-  {
-    title: 'My Assets',
-    url: '/my-assets',
-    icon: ChartArea,
-  },
-  {
-    title: 'Private Limit Orders',
-    url: '/orders/private',
-    icon: Handshake,
-  },
-  {
-    title: 'Governance',
-    url: '/governance',
-    icon: Landmark,
-  },
-
   {
     title: 'New Token',
     url: '/token/create',
@@ -97,7 +65,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuButton size="lg" asChild>
-            <Link href="/dashboard" className="min-w-0 overflow-hidden relative transition-all duration-300 shadow-xs">
+            <Link href="/" className="min-w-0 overflow-hidden relative transition-all duration-300 shadow-xs">
               <span
                 className="absolute  opacity-3  hover:opacity-5 transition-all duration-300  scale-[13] rotate-5 
                 -translate-x-3 z-1 
@@ -117,7 +85,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
-            {items.slice(0, 3).map((item) => (
+            {items.slice(0, 2).map((item) => (
               <SidebarMenuItem2 key={item.title} item={item} />
             ))}
           </SidebarMenu>
@@ -126,7 +94,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
         <SidebarGroup>
           <SidebarMenu>
-            {items.slice(3, 6).map((item) => (
+            {items.slice(2, 3).map((item) => (
               <SidebarMenuItem2 key={item.title} item={item} />
             ))}
           </SidebarMenu>
@@ -135,7 +103,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
         <SidebarGroup>
           <SidebarMenu>
-            {items.slice(6).map((item) => (
+            {items.slice(3).map((item) => (
               <SidebarMenuItem2 key={item.title} item={item} />
             ))}
           </SidebarMenu>
