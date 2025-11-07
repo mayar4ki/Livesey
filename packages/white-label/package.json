@@ -1,0 +1,37 @@
+{
+  "name": "@acme/white-label",
+  "private": true,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./admin-app": {
+      "types": "./dist/admin-app/index.d.ts",
+      "import": "./dist/admin-app/index.mjs",
+      "require": "./dist/admin-app/index.js"
+    },
+    "./web-app": {
+      "types": "./dist/web-app/index.d.ts",
+      "import": "./dist/web-app/index.mjs",
+      "require": "./dist/web-app/index.js"
+    }
+  },
+  "scripts": {
+    "dev": "tsup",
+    "build": "tsup",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "clean": "git clean -xdf .cache .turbo dist node_modules"
+  },
+  "dependencies": {
+    "lucide-react": "^0.548.0"
+  },
+  "devDependencies": {
+    "@acme/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "tsup": "catalog:"
+  },
+  "license": "MIT"
+}

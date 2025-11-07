@@ -1,9 +1,9 @@
 'use client';
 
-import React, { forwardRef, useRef } from 'react';
-import { AnimatedBeam } from '~/components/ui/animated-beam';
-import { GridPattern } from '~/components/ui/grid-pattern';
 import { cn } from '@acme/ui';
+import React, { forwardRef, useRef } from 'react';
+import { AnimatedBeam } from '~/_components/ui/animated-beam';
+import { GridPattern } from '~/_components/ui/grid-pattern';
 
 const Circle = forwardRef<HTMLDivElement, { className?: string; children?: React.ReactNode }>(({ className, children }, ref) => {
   return (

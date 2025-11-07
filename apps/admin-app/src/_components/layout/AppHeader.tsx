@@ -5,7 +5,7 @@ import { ModeToggle } from '~/_components/common/ModeToggle';
 import { ChainsMenu } from '../common/ChainsMenu';
 import { ConnectWallet } from '../common/ConnectWallet';
 
-export const DashboardHeader = () => {
+export const AppHeader = () => {
   return (
     <section className="py-2 sticky top-0 bg-blur-3xl backdrop-blur-md border-b border-foreground/20 border-dashed z-50  ">
       <div className="flex items-center justify-between gap-2 px-4">

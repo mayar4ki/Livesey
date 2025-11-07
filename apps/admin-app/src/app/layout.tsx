@@ -1,13 +1,14 @@
 import { ThemeProvider } from '@acme/ui/provider/theme-provider';
 import { Toaster } from '@acme/ui/sonner';
+import { siteName } from '@acme/white-label/admin-app';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { headers } from 'next/headers';
 import { cookieToInitialState } from 'wagmi';
+import AppLayout from '~/_components/layout/AppLayout';
 import { ReactQueryProvider } from '~/_components/providers/ReactQueryProvider';
 import { WagmiProvider } from '~/_components/providers/WagmiProvider';
 import { getConfig } from '~/_config/wagmi';
-import { siteName } from '~/white-label';
 import './globals.css';
 
 const geistSans = Geist({
@@ -38,8 +39,10 @@ export default async function RootLayout({
         <WagmiProvider initialState={wagmiInitialState}>
           <ReactQueryProvider>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-              <Toaster />
-              {children}
+              <AppLayout>
+                <Toaster />
+                {children}
+              </AppLayout>
             </ThemeProvider>
           </ReactQueryProvider>
         </WagmiProvider>

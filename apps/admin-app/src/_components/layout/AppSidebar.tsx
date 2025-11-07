@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRightLeft, BookOpen, Calendar, ChartArea, Compass, FilePlus, Handshake, HelpCircle, History, Landmark, Settings } from 'lucide-react';
+import { ArrowRightLeft, Calendar, ChartArea, Compass, FilePlus, Handshake, HelpCircle, History, Landmark, Settings } from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@acme/ui';
@@ -16,63 +16,58 @@ import {
   SidebarSeparator,
   useSidebar,
 } from '@acme/ui/sidebar';
+import { siteName } from '@acme/white-label/admin-app';
 import Link from 'next/link';
 import { AppLogo } from '~/_components/common/AppBrand';
-import { siteName } from '~/white-label';
 
 // This is sample data.
 const items = [
   {
     title: 'Discover',
-    url: '/dashboard',
+    url: '',
     icon: Compass,
     isActive: true,
   },
   {
     title: 'Fund Campaign',
-    url: '/dashboard/fund',
+    url: '/fund',
     icon: Calendar,
   },
   {
     title: 'Public Limit Orders',
-    url: '/dashboard/orders/public',
+    url: '/orders/public',
     icon: ArrowRightLeft,
   },
   {
     title: 'My Assets',
-    url: '/dashboard/my-assets',
+    url: '/my-assets',
     icon: ChartArea,
   },
   {
     title: 'Private Limit Orders',
-    url: '/dashboard/orders/private',
+    url: '/orders/private',
     icon: Handshake,
   },
   {
     title: 'Governance',
-    url: '/dashboard/governance',
+    url: '/governance',
     icon: Landmark,
   },
 
   {
     title: 'New Token',
-    url: '/dashboard/token/create',
+    url: '/token/create',
     icon: FilePlus,
   },
   {
     title: 'Token History',
-    url: '/dashboard/token/history',
+    url: '/token/history',
     icon: History,
   },
   {
     title: 'Settings',
-    url: '/dashboard/settings',
+    url: '/settings',
     icon: Settings,
-  },
-  {
-    title: 'Learn',
-    url: '/',
-    icon: BookOpen,
   },
   {
     title: 'Support',
@@ -94,7 +89,7 @@ export const SidebarMenuItem2 = ({ item }: { item: (typeof items)[number] }) => 
   );
 };
 
-export function DashboardSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { open } = useSidebar();
 
   return (

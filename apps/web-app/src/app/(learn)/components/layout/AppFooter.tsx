@@ -1,4 +1,4 @@
-import { AppBrand } from '~/components/common/AppBrand';
+import { AppBrand } from '~/_components/common/AppBrand';
 import { bottomLinks, copyright, menuItems, tagline } from '~/white-label';
 
 export const AppFooter = () => {

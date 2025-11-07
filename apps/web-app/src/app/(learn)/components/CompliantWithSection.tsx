@@ -1,5 +1,5 @@
-import { LightRays } from '~/components/ui/light-rays';
 import { cn } from '@acme/ui';
+import { LightRays } from '~/_components/ui/light-rays';
 import { compliantWithSection } from '~/white-label/home';
 
 export const CompliantWithSection = () => {

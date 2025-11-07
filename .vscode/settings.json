@@ -1,3 +1,7 @@
 {
-    "editor.formatOnSave": true
+  "cSpell.words": ["Wagmi"],
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "editor.formatOnSave": true
 }
