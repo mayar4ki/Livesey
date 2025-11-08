@@ -24,7 +24,14 @@ contract Factory is AccessControlled {
 
     mapping(address => BeaconInfo) public beaconLedger; // beacon address to beacon info
 
-    event BeaconProxyCreated(address indexed createdBeaconProxy);
+    event BeaconProxyCreated(
+        address indexed createdBeaconProxy,
+        address indexed deployer,
+        string name,
+        string symbol,
+        uint256 totalSupply
+    );
+
     event BeaconProxyDeleted(address indexed deletedBeaconProxy);
     event BeaconUpgraded(address indexed newImplementation);
 
@@ -76,7 +83,13 @@ contract Factory is AccessControlled {
             isLegit: true
         });
 
-        emit BeaconProxyCreated(beaconProxy);
+        emit BeaconProxyCreated(
+            beaconProxy,
+            msg.sender,
+            _name,
+            _symbol,
+            _totalSupply
+        );
     }
 
     /**
