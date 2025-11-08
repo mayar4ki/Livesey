@@ -12,7 +12,7 @@ export default function AppLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <RequireWallet message="Please connect your wallet to access the dashboard.">
+    <RequireWallet message="Please connect your wallet to access the application.">
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>

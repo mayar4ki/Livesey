@@ -8,6 +8,7 @@ import { motion } from 'motion/react';
 import { useEffect, useMemo, useState } from 'react';
 import { Hash } from 'viem';
 import { useBlockNumber, useChainId, useWaitForTransactionReceipt } from 'wagmi';
+import { CONFIRMATION_BLOCK_COUNT } from '~/_config/wagmi';
 
 type TransactionStatusCardProps = {
   txHash: Hash;
@@ -15,8 +16,6 @@ type TransactionStatusCardProps = {
 
 export function TransactionStatusCard({ txHash }: TransactionStatusCardProps) {
   const chainId = useChainId();
-
-  const BLOCK_CONFIRMATIONS = 12; // TODO: Make this configurable
 
   const [watch, setWatch] = useState(true);
   const { data: currentBlockNumber } = useBlockNumber({ watch });
@@ -43,7 +42,7 @@ export function TransactionStatusCard({ txHash }: TransactionStatusCardProps) {
   }, [receipt?.blockNumber, currentBlockNumber]);
 
   useEffect(() => {
-    if (confirmations && confirmations >= BLOCK_CONFIRMATIONS) {
+    if (confirmations && confirmations >= CONFIRMATION_BLOCK_COUNT) {
       setWatch(false);
     }
   }, [confirmations]);

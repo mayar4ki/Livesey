@@ -2,18 +2,20 @@
 
 import { Card, CardContent } from '@acme/ui/card';
 import { LucideIcon } from 'lucide-react';
+import { ReactNode } from 'react';
 
 type ErrorStateCardProps = {
   icon?: LucideIcon;
   title?: string;
   message: string;
   className?: string;
+  action?: ReactNode;
 };
 
 /**
  * Reusable error state card component
  */
-export function ErrorStateCard({ icon: Icon, title = 'Error', message, className }: ErrorStateCardProps) {
+export function ErrorStateCard({ icon: Icon, title = 'Error', message, className, action }: ErrorStateCardProps) {
   return (
     <div className={className || 'p-4 md:p-6 flex-1'}>
       <Card>
@@ -21,6 +23,7 @@ export function ErrorStateCard({ icon: Icon, title = 'Error', message, className
           {Icon && <Icon className="h-12 w-12 text-destructive mb-4" />}
           <h3 className="text-lg font-semibold mb-2">{title}</h3>
           <p className="text-sm text-muted-foreground text-center mb-4">{message}</p>
+          {action && <div className="mt-2">{action}</div>}
         </CardContent>
       </Card>
     </div>
