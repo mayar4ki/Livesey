@@ -15,7 +15,8 @@
     "@acme/shared": "workspace:*",
     "@acme/db": "workspace:*",
     "@acme/queue": "workspace:*",
-    "@acme/smart-contract": "workspace:*"
+    "@acme/smart-contract": "workspace:*",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@acme/tsconfig": "workspace:*",

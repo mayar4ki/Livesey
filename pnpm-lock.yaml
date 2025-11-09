@@ -69,6 +69,9 @@ importers:
       '@acme/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@acme/smart-contract':
+        specifier: workspace:*
+        version: link:../../packages/smart-contract
       '@acme/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -315,6 +318,9 @@ importers:
       viem:
         specifier: 'catalog:'
         version: 2.38.6(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.12)
+      zod:
+        specifier: 'catalog:'
+        version: 4.1.12
     devDependencies:
       '@acme/tsconfig':
         specifier: workspace:*

@@ -1,61 +1,19 @@
-import { storeVerifiedContract } from "./helpers/store-verified-contract";
-
-import {
-  VerificationTask,
-  consumeTask,
-  updateVerificationTask,
-} from "@acme/queue";
-
 import { prisma } from "@acme/db";
+import { consumeTask } from "@acme/queue";
 import { closeRedisConnection } from "@acme/queue/client";
+import { handleContractVerification } from "./handlers/contract-verification-handler.js";
+import { validateEnv } from "./schemas/env-validation-schema.js";
 
-/**
- * Process a verification task
- */
-async function processVerificationTask(task: VerificationTask): Promise<void> {
-  const { chainId, contractAddress, args } = task;
-  console.log(`✅ processing: task:${chainId}:${contractAddress}`);
-
-  try {
-    // Update status to processing
-    await updateVerificationTask(chainId, contractAddress, {
-      status: "processing",
-    });
-
-    // Verify contract
-    const isVerified = true;
-
-    // Store contract address in PostgreSQL after successful verification
-    if (isVerified) {
-      await storeVerifiedContract({ contractAddress, chainId });
-    }
-
-    // Update status to completed
-    await updateVerificationTask(chainId, contractAddress, {
-      status: "completed",
-    });
-
-    console.log(`✅ successfully verified: task:${chainId}:${contractAddress}`);
-  } catch (error) {
-    console.error(
-      `✗ Failed to verify contract ${contractAddress} on chain ${chainId}:`,
-      error
-    );
-
-    // Update status to failed
-    await updateVerificationTask(chainId, contractAddress, {
-      status: "failed",
-    });
-  }
-}
+// Validate environment variables before starting
+validateEnv(process.env);
 
 /**
  * Start the worker
  */
 async function startWorker() {
-  console.log("Starting verification worker...");
-  console.log("Connected to Redis");
-  console.log("Waiting for tasks in queue...");
+  console.log("🚀 Starting verification worker...");
+  console.log("✅ Connected to Redis");
+  console.log("👂 Waiting for tasks in queue...");
   console.log("Press CTRL+C to exit");
 
   try {
@@ -66,7 +24,7 @@ async function startWorker() {
         const result = await consumeTask(0); // 0 = wait forever
 
         if (result) {
-          await processVerificationTask(result);
+          await handleContractVerification(result);
         }
       } catch (error) {
         console.error("Error processing task:", error);

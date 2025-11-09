@@ -3,11 +3,11 @@ import { FactoryAbi } from "@acme/smart-contract";
 import { Address, createPublicClient, http } from "viem";
 
 import { handleBeaconProxyCreatedEvents } from "./handlers/beacon-proxy-created-handler.js";
-import { envValidationSchema } from "./schemas/env-validation-schema.js";
+import { validateEnv } from "./schemas/env-validation-schema.js";
 import { getChain } from "./utils/get-chain.js";
 
-// Validate and parse environment variables
-const env = envValidationSchema.parse(process.env);
+// Validate environment variables before starting
+const env = validateEnv(process.env);
 
 /**
  * Start listening to blockchain events
