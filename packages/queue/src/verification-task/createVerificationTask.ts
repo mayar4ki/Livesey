@@ -1,5 +1,5 @@
 import { Address } from "viem";
-import { redis, ensureConnected, QUEUE_NAME } from "../client.js";
+import { QUEUE_NAME, ensureConnected, redis } from "../client.js";
 import { VerificationTask } from "./types.js";
 
 /**
@@ -8,18 +8,16 @@ import { VerificationTask } from "./types.js";
 export async function createVerificationTask(data: {
   contractAddress: Address;
   chainId: number;
-  walletAddress: Address;
   args: any[];
 }) {
   try {
     await ensureConnected();
 
-    const { contractAddress, chainId, walletAddress, args } = data;
+    const { contractAddress, chainId, args } = data;
 
     const task: VerificationTask = {
       contractAddress,
       chainId,
-      walletAddress,
       args,
       status: "pending",
     };
@@ -30,9 +28,7 @@ export async function createVerificationTask(data: {
     // Add tx to queue (using Redis List)
     await redis.lPush(QUEUE_NAME, `${chainId}:${contractAddress}`);
 
-    console.log(
-      `✅ new task: task:${chainId}:${contractAddress} for wallet: ${walletAddress}`
-    );
+    console.log(`✅ new task: task:${chainId}:${contractAddress}`);
     return task;
   } catch (error) {
     console.error("Error creating verification task:", error);
