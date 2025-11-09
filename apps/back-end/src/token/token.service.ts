@@ -1,13 +1,13 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
-  BadRequestException,
 } from '@nestjs/common';
 
-import { VerifyStatusQueryDto } from './dto/verify-status-query.dto';
-import { HistoryQueryDto } from './dto/history-query.dto';
 import { createVerificationTask, getVerificationTask } from '@acme/queue';
 import { PrismaService } from '../prisma/prisma.service';
+import { HistoryQueryDto } from './dto/history-query.dto';
+import { VerifyStatusQueryDto } from './dto/verify-status-query.dto';
 import { VerifyTokenDto } from './dto/verify-token.dto';
 
 @Injectable()
@@ -43,20 +43,16 @@ export class TokenService {
 
   async getHistory(query: HistoryQueryDto) {
     console.log('query', query);
-    const address = await this.prisma.client.address.findUnique({
-      where: { walletAddress: query.walletAddress },
-      include: {
-        verifiedContracts: {
-          orderBy: {
-            verifiedAt: 'desc',
-          },
-        },
+    const tokens = await this.prisma.client.deployedToken.findMany({
+      where: { deployerAddress: query.walletAddress },
+      orderBy: {
+        deployedAt: 'desc',
       },
     });
 
     return {
-      contracts: address?.verifiedContracts ?? [],
-      walletAddress: address?.walletAddress ?? query.walletAddress,
+      contracts: tokens,
+      walletAddress: query.walletAddress,
     };
   }
 }

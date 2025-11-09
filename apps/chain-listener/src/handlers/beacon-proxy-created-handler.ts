@@ -1,68 +1,76 @@
-import { createVerificationTask } from "@acme/queue";
 import { FactoryAbi } from "@acme/smart-contract";
 import { WatchContractEventOnLogsParameter } from "viem";
-import { z } from "zod";
 
+import { queueVerificationTasks } from "../helpers/queue-verification-tasks.js";
+import { storeDeployedTokens } from "../helpers/store-deployed-tokens.js";
+import { validateEventLogs } from "../helpers/validate-event-logs.js";
 import { envValidationSchema } from "../schemas/env-validation-schema.js";
-import { beaconProxyCreatedEventArgsSchema } from "../schemas/event-args-validation-schema.js";
 
 // Validate and parse environment variables
 const env = envValidationSchema.parse(process.env);
 
+type BeaconProxyCreatedEventsLog = WatchContractEventOnLogsParameter<
+  typeof FactoryAbi,
+  "BeaconProxyCreated"
+>;
+
 /**
- * Handle BeaconProxyCreated event
+ * Handle BeaconProxyCreated events
+ * Processes multiple events and stores them in a single database transaction
  */
-
-export async function handleBeaconProxyCreatedEvent(
-  log: WatchContractEventOnLogsParameter<
-    typeof FactoryAbi,
-    "BeaconProxyCreated"
-  >[number]
+export async function handleBeaconProxyCreatedEvents(
+  logs: BeaconProxyCreatedEventsLog
 ) {
-  try {
-    // Validate event arguments at runtime using Zod
-    const validatedArgs = beaconProxyCreatedEventArgsSchema.parse(log.args);
-    const { createdBeaconProxy, deployer, name, symbol, totalSupply } =
-      validatedArgs;
-
+  // Log each token
+  for (const log of logs) {
     console.log(
       `📢 BeaconProxyCreated event detected:\n` +
-        `  Contract: ${createdBeaconProxy}\n` +
-        `  Deployer: ${deployer}\n` +
-        `  Name: ${name}\n` +
-        `  Symbol: ${symbol}\n` +
-        `  Total Supply: ${totalSupply}\n` +
-        `  Transaction: ${log.transactionHash}\n` +
-        `  Block: ${log.blockNumber}`
+        `  Contract: ${log?.args?.createdBeaconProxy}\n` +
+        `  Deployer: ${log?.args?.deployer}\n` +
+        `  Name: ${log?.args?.name}\n` +
+        `  Symbol: ${log?.args?.symbol}\n` +
+        `  Total Supply: ${log?.args?.totalSupply}\n` +
+        `  Transaction: ${log?.transactionHash}\n` +
+        `  Block: ${log?.blockNumber}`
+    );
+  }
+
+  // Validate and filter logs
+  const validLogs = validateEventLogs(logs);
+
+  try {
+    // Store all tokens in a single database transaction
+    await storeDeployedTokens(
+      validLogs.map(({ log, args }) => ({
+        contractAddress: args.createdBeaconProxy,
+        chainId: env.CHAIN_ID,
+        deployerAddress: args.deployer,
+        name: args.name,
+        symbol: args.symbol,
+        totalSupply: args.totalSupply,
+        transactionHash: log.transactionHash,
+        blockNumber: log.blockNumber
+          ? BigInt(log.blockNumber.toString())
+          : undefined,
+      }))
     );
 
-    // Push to verification queue
-    await createVerificationTask({
-      contractAddress: createdBeaconProxy,
-      chainId: env.CHAIN_ID,
-      walletAddress: deployer,
-      args: [name, symbol, totalSupply.toString()],
-    });
-
-    console.log(
-      `✅ Task queued: ${createdBeaconProxy} for verification (deployer: ${deployer})`
+    // Queue verification tasks for all tokens
+    await queueVerificationTasks(
+      validLogs.map(({ args }) => ({
+        contractAddress: args.createdBeaconProxy,
+        chainId: env.CHAIN_ID,
+        deployerAddress: args.deployer,
+        name: args.name,
+        symbol: args.symbol,
+        totalSupply: args.totalSupply,
+      }))
     );
   } catch (error) {
-    // Handle Zod validation errors specifically
-    if (error instanceof z.ZodError) {
-      const errorMessages = error.issues
-        .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
-        .join(", ");
-      console.error(
-        `❌ Event validation failed for transaction ${log.transactionHash}:`,
-        errorMessages
-      );
-    } else {
-      console.error(
-        `❌ Error processing BeaconProxyCreated event:`,
-        error instanceof Error ? error.message : error
-      );
-    }
+    console.error(
+      `❌ Error storing deployed tokens in database:`,
+      error instanceof Error ? error.message : error
+    );
     // Don't throw - continue listening to other events
   }
 }

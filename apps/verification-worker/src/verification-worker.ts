@@ -1,4 +1,4 @@
-import { storeVerifiedContract } from "./stages/store-verified-contract";
+import { storeVerifiedContract } from "./helpers/store-verified-contract";
 
 import {
   VerificationTask,
@@ -13,10 +13,8 @@ import { closeRedisConnection } from "@acme/queue/client";
  * Process a verification task
  */
 async function processVerificationTask(task: VerificationTask): Promise<void> {
-  const { chainId, contractAddress, walletAddress, args } = task;
-  console.log(
-    `✅ processing: task:${chainId}:${contractAddress} for wallet: ${walletAddress}`
-  );
+  const { chainId, contractAddress, args } = task;
+  console.log(`✅ processing: task:${chainId}:${contractAddress}`);
 
   try {
     // Update status to processing
@@ -29,7 +27,7 @@ async function processVerificationTask(task: VerificationTask): Promise<void> {
 
     // Store contract address in PostgreSQL after successful verification
     if (isVerified) {
-      await storeVerifiedContract({ contractAddress, chainId, walletAddress });
+      await storeVerifiedContract({ contractAddress, chainId });
     }
 
     // Update status to completed

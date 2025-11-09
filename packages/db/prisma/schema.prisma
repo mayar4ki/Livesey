@@ -1,5 +1,5 @@
 // This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// learn more about it in the docs: https://pris.ly/d/prisma/schema
 
 generator client {
   provider = "prisma-client-js"
@@ -10,32 +10,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Address {
-  id                String             @id @default(cuid())
-  walletAddress     String             @unique @db.VarChar(42) // Ethereum wallet address (0x + 40 hex chars)
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  verifiedContracts VerifiedContract[]
-
-  @@index([walletAddress])
-  @@map("addresses")
-}
-
-model VerifiedContract {
-  id              String   @id @default(cuid())
-  contractAddress String   @db.VarChar(42) // Ethereum address (0x + 40 hex chars)
+model DeployedToken {
+  id              String    @id @default(cuid())
+  contractAddress String    @db.VarChar(42) // Ethereum address (0x + 40 hex chars)
   chainId         Int
-  verifiedAt      DateTime @default(now())
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  addressId       String
-  deployerAddress Address  @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  name            String
+  symbol          String
+  totalSupply     String // Store as string to handle large numbers (uint256)
+  transactionHash String    @db.VarChar(66) // Transaction hash (0x + 64 hex chars)
+  blockNumber     BigInt?
+  deployerAddress String    @db.VarChar(42) // Ethereum wallet address (0x + 40 hex chars)
+  verifiedAt      DateTime?
+  deployedAt      DateTime  @default(now())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   @@unique([contractAddress, chainId])
   @@index([contractAddress])
   @@index([chainId])
+  @@index([deployedAt])
   @@index([verifiedAt])
-  @@index([addressId])
-  @@map("verified_contracts")
+  @@index([deployerAddress])
+  @@index([transactionHash])
+  @@map("deployed_tokens")
 }
-
