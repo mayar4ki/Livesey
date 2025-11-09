@@ -24,7 +24,6 @@
       "outputs": [".cache/tsbuildinfo.json"]
     },
     "dev": {
-      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
     },

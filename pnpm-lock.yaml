@@ -272,9 +272,6 @@ importers:
       '@acme/queue':
         specifier: workspace:*
         version: link:../../packages/queue
-      '@acme/shared':
-        specifier: workspace:*
-        version: link:../../packages/shared
       '@acme/smart-contract':
         specifier: workspace:*
         version: link:../../packages/smart-contract
@@ -309,9 +306,6 @@ importers:
       '@acme/queue':
         specifier: workspace:*
         version: link:../../packages/queue
-      '@acme/shared':
-        specifier: workspace:*
-        version: link:../../packages/shared
       '@acme/smart-contract':
         specifier: workspace:*
         version: link:../../packages/smart-contract
@@ -485,18 +479,12 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 22.19.0
-      tsup:
-        specifier: 'catalog:'
-        version: 8.5.0(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.2)
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
 
   packages/smart-contract:
     dependencies:
-      '@acme/shared':
-        specifier: workspace:*
-        version: link:../shared
       '@nomicfoundation/hardhat-ethers':
         specifier: ^4.0.2
         version: 4.0.3(bufferutil@4.0.9)(hardhat@3.0.12(bufferutil@4.0.9)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
@@ -641,9 +629,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 22.19.0
-      tsup:
-        specifier: 'catalog:'
-        version: 8.5.0(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.2)
       typescript:
         specifier: 'catalog:'
         version: 5.9.2

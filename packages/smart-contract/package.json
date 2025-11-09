@@ -28,7 +28,6 @@
     "tsup": "catalog:"
   },
   "dependencies": {
-    "@acme/shared": "workspace:*",
     "@nomicfoundation/hardhat-ethers": "^4.0.2",
     "@nomicfoundation/hardhat-ignition": "^3.0.3",
     "@nomicfoundation/hardhat-ignition-ethers": "^3.0.3",

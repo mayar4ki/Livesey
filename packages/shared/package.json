@@ -1,23 +1,13 @@
 {
   "name": "@acme/shared",
   "private": true,
+  "type": "module",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./src/index.ts"
-    },
-    "./helpers": {
-      "types": "./dist/helpers/index.d.ts",
-      "default": "./src/helpers/index.ts"
-    },
-    "./utils": {
-      "types": "./dist/utils/index.d.ts",
-      "default": "./src/utils/index.ts"
-    }
+    ".": "./src/index.ts",
+    "./helpers": "./src/helpers/index.ts",
+    "./utils": "./src/utils/index.ts"
   },
   "scripts": {
-    "dev": "tsc",
-    "build": "tsc",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "clean": "git clean -xdf .cache .turbo dist node_modules"
   },
@@ -27,8 +17,7 @@
   "devDependencies": {
     "@acme/tsconfig": "workspace:*",
     "@types/node": "catalog:",
-    "typescript": "catalog:",
-    "tsup": "catalog:"
+    "typescript": "catalog:"
   },
   "license": "MIT"
 }
