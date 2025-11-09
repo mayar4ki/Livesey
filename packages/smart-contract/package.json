@@ -5,17 +5,14 @@
   "type": "module",
   "exports": {
     ".": {
-      "default": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    },
-    "./scripts/verifyContract": {
-      "default": "./dist/scripts/verifyContract.js",
-      "types": "./dist/scripts/verifyContract.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
     }
   },
   "scripts": {
-    "dev": "tsc --emitDeclarationOnly false",
-    "build": "tsc && hardhat compile",
+    "dev": "hardhat compile && tsx scripts/extract-abi.ts artifacts/contracts && tsup",
+    "build": "hardhat compile && tsx scripts/extract-abi.ts artifacts/contracts && tsup",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "clean": "git clean -xdf .cache .turbo dist node_modules && rm -rf cache/ artifacts/ ignition/deployments/",
     "deploy:sepolia": "dotenv -e .env.sepolia -- hardhat run scripts/deploy.ts --network sepolia",
@@ -24,9 +21,11 @@
   "devDependencies": {
     "@openzeppelin/contracts": "^5.4.0",
     "@types/node": "catalog:",
-    "dotenv-cli": "^10.0.0",
+    "dotenv-cli": "catalog:",
     "hardhat": "^3.0.9",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "tsx": "catalog:",
+    "tsup": "catalog:"
   },
   "dependencies": {
     "@acme/shared": "workspace:*",
@@ -41,7 +40,7 @@
     "@openzeppelin/contracts-upgradeable": "^5.4.0",
     "ethers": "^6.15.0",
     "hardhat": "^3.0.10",
-    "zod": "^4.1.12"
+    "zod": "catalog:"
   },
   "license": "MIT"
 }

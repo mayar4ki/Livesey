@@ -13,6 +13,8 @@ catalog:
   viem: 2.x
   tailwindcss: ^4.1.16
   "@tailwindcss/postcss": ^4.1.16
+  zod: ^4.1.12
+  tsx: ^4.20.6
 
 catalogs:
   react19:

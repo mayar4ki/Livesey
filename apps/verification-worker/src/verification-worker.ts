@@ -1,13 +1,13 @@
 import { storeVerifiedContract } from "./stages/store-verified-contract";
 
 import {
-  updateVerificationTask,
-  consumeTask,
   VerificationTask,
+  consumeTask,
+  updateVerificationTask,
 } from "@acme/queue";
 
-import { closeRedisConnection } from "@acme/queue/client";
 import { prisma } from "@acme/db";
+import { closeRedisConnection } from "@acme/queue/client";
 
 /**
  * Process a verification task
@@ -83,12 +83,15 @@ async function startWorker() {
 }
 
 // Handle graceful shutdown
-process.on("SIGINT", async () => {
+async function shutdown() {
   console.log("\nShutting down worker...");
   await closeRedisConnection();
   await prisma.$disconnect();
   process.exit(0);
-});
+}
+
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
 
 // Start the worker
 startWorker().catch((error) => {

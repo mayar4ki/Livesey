@@ -24,12 +24,18 @@ catalogs:
     tsup:
       specifier: ^8.0.0
       version: 8.5.0
+    tsx:
+      specifier: ^4.20.6
+      version: 4.20.6
     typescript:
       specifier: 5.9.2
       version: 5.9.2
     viem:
       specifier: 2.x
       version: 2.38.6
+    zod:
+      specifier: ^4.1.12
+      version: 4.1.12
   react19:
     '@types/react':
       specifier: ^19.1.12
@@ -255,6 +261,43 @@ importers:
         specifier: ^8.20.0
         version: 8.46.3(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.2)
 
+  apps/chain-listener:
+    dependencies:
+      '@acme/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@acme/queue':
+        specifier: workspace:*
+        version: link:../../packages/queue
+      '@acme/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      '@acme/smart-contract':
+        specifier: workspace:*
+        version: link:../../packages/smart-contract
+      viem:
+        specifier: 'catalog:'
+        version: 2.38.6(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.12)
+      zod:
+        specifier: 'catalog:'
+        version: 4.1.12
+    devDependencies:
+      '@acme/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/tsconfig
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.19.0
+      dotenv-cli:
+        specifier: 'catalog:'
+        version: 10.0.0
+      tsx:
+        specifier: 'catalog:'
+        version: 4.20.6
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+
   apps/verification-worker:
     dependencies:
       '@acme/db':
@@ -283,7 +326,7 @@ importers:
         specifier: 'catalog:'
         version: 10.0.0
       tsx:
-        specifier: ^4.20.6
+        specifier: 'catalog:'
         version: 4.20.6
       typescript:
         specifier: 'catalog:'
@@ -482,7 +525,7 @@ importers:
         specifier: ^3.0.10
         version: 3.0.12(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       zod:
-        specifier: ^4.1.12
+        specifier: 'catalog:'
         version: 4.1.12
     devDependencies:
       '@openzeppelin/contracts':
@@ -492,8 +535,14 @@ importers:
         specifier: 'catalog:'
         version: 22.19.0
       dotenv-cli:
-        specifier: ^10.0.0
+        specifier: 'catalog:'
         version: 10.0.0
+      tsup:
+        specifier: 'catalog:'
+        version: 8.5.0(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.2)
+      tsx:
+        specifier: 'catalog:'
+        version: 4.20.6
       typescript:
         specifier: 'catalog:'
         version: 5.9.2

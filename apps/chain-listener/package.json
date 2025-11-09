@@ -1,17 +1,18 @@
 {
-  "name": "verification-worker",
+  "name": "chain-listener",
   "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "dotenv -e .env -- tsx src/verification-worker.ts",
+    "dev": "dotenv -e .env -- tsx src/chain-listener.ts",
     "build": "tsc",
-    "start": "node dist/verification-worker.js",
+    "start": "node dist/chain-listener.js",
     "typecheck": "tsc --noEmit",
     "clean": "git clean -xdf .cache .turbo dist node_modules"
   },
   "dependencies": {
     "viem": "catalog:",
+    "zod": "catalog:",
     "@acme/shared": "workspace:*",
     "@acme/db": "workspace:*",
     "@acme/queue": "workspace:*",
