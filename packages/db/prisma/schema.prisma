@@ -18,7 +18,7 @@ model DeployedToken {
   symbol          String
   totalSupply     String // Store as string to handle large numbers (uint256)
   transactionHash String    @db.VarChar(66) // Transaction hash (0x + 64 hex chars)
-  blockNumber     BigInt?
+  blockNumber     BigInt
   deployerAddress String    @db.VarChar(42) // Ethereum wallet address (0x + 40 hex chars)
   verifiedAt      DateTime?
   deployedAt      DateTime  @default(now())
@@ -31,6 +31,7 @@ model DeployedToken {
   @@index([deployedAt])
   @@index([verifiedAt])
   @@index([deployerAddress])
+  @@index([blockNumber])
   @@index([transactionHash])
   @@map("deployed_tokens")
 }
