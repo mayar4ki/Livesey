@@ -1,6 +1,6 @@
 'use client';
 
-import { Coins, FilePlus, HelpCircle, Settings } from 'lucide-react';
+import { Coins, Database, FilePlus, HelpCircle, Settings } from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@acme/ui';
@@ -8,6 +8,7 @@ import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -20,31 +21,50 @@ import { siteName } from '@acme/white-label/admin-app';
 import Link from 'next/link';
 import { AppLogo } from '~/_components/common/AppBrand';
 
-// This is sample data.
-const items = [
+const navGroups = [
   {
-    title: 'Tokens List',
-    url: '/token',
-    icon: Coins,
+    label: 'Tokens',
+    items: [
+      {
+        title: 'Tokens List',
+        url: '/token',
+        icon: Coins,
+      },
+      {
+        title: 'New Token',
+        url: '/token/create',
+        icon: FilePlus,
+      },
+    ],
   },
   {
-    title: 'New Token',
-    url: '/token/create',
-    icon: FilePlus,
+    label: 'Advance',
+    items: [
+      {
+        title: 'DB Sync',
+        url: '/db-sync',
+        icon: Database,
+      },
+    ],
   },
   {
-    title: 'Settings',
-    url: '/settings',
-    icon: Settings,
-  },
-  {
-    title: 'Support',
-    url: '/',
-    icon: HelpCircle,
+    label: '',
+    items: [
+      {
+        title: 'Settings',
+        url: '/settings',
+        icon: Settings,
+      },
+      {
+        title: 'Support',
+        url: '/',
+        icon: HelpCircle,
+      },
+    ],
   },
 ];
 
-export const SidebarMenuItem2 = ({ item }: { item: (typeof items)[number] }) => {
+export const SidebarMenuItem2 = ({ item }: { item: (typeof navGroups)[number]['items'][number] }) => {
   return (
     <SidebarMenuItem>
       <Link href={item.url}>
@@ -83,31 +103,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
 
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarMenu>
-            {items.slice(0, 2).map((item) => (
-              <SidebarMenuItem2 key={item.title} item={item} />
-            ))}
-          </SidebarMenu>
-          <SidebarSeparator />
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarMenu>
-            {items.slice(2, 3).map((item) => (
-              <SidebarMenuItem2 key={item.title} item={item} />
-            ))}
-          </SidebarMenu>
-          <SidebarSeparator />
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarMenu>
-            {items.slice(3).map((item) => (
-              <SidebarMenuItem2 key={item.title} item={item} />
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
+        {navGroups.map((group, index) => (
+          <SidebarGroup key={index}>
+            {group.label && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}
+            <SidebarMenu>
+              {group.items.map((item) => (
+                <SidebarMenuItem2 key={item.title} item={item} />
+              ))}
+            </SidebarMenu>
+            {index < navGroups.length - 1 && <SidebarSeparator />}
+          </SidebarGroup>
+        ))}
       </SidebarContent>
 
       <SidebarRail />

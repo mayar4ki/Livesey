@@ -1,17 +1,19 @@
 'use client';
 
-import { formatAddress, getChainUIName, getContractExplorerUrl } from '@acme/shared/utils';
+import { getChainUIName } from '@acme/shared/utils';
 import { Badge } from '@acme/ui/badge';
 import { Button } from '@acme/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@acme/ui/table';
-import { Coins, ExternalLink, Plus } from 'lucide-react';
+import { Coins, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { DataTablePagination } from '~/_components/common/DataTablePagination';
 import { ErrorStateCard } from '~/_components/common/ErrorStateCard';
+import { ExplorerAddressLink } from '~/_components/common/ExplorerAddressLink';
 import { LoadingCard } from '~/_components/common/LoadingCard';
 import { useQueryParams } from '~/_hooks/useQueryParams';
 import { useTokenList } from '~/services/token/useTokenList';
+import { TokenActionsMenu } from './_components/TokenActionsMenu';
 
 export default function Page() {
   const { params, setParams } = useQueryParams({ take: 10, skip: 0 });
@@ -74,7 +76,9 @@ export default function Page() {
                 {data?.data.map((token) => (
                   <TableRow key={token.id}>
                     <TableCell>
-                      <span className="font-medium">{token.name}</span>
+                      <Link href={`/token/${token.id}`} className="font-medium hover:underline cursor-pointer">
+                        {token.name}
+                      </Link>
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline">{token.symbol}</Badge>
@@ -83,13 +87,13 @@ export default function Page() {
                       <span className="font-mono text-sm">{BigInt(token.totalSupply).toLocaleString('en-US')}</span>
                     </TableCell>
                     <TableCell>
-                      <code className="text-xs font-mono bg-muted px-2 py-1 rounded">{formatAddress(token.contractAddress)}</code>
+                      <ExplorerAddressLink address={token.contractAddress} chainId={token.chainId} />
                     </TableCell>
                     <TableCell>
                       <Badge variant="secondary">{getChainUIName(token.chainId)}</Badge>
                     </TableCell>
                     <TableCell>
-                      <code className="text-xs font-mono bg-muted px-2 py-1 rounded">{formatAddress(token.deployerAddress)}</code>
+                      <ExplorerAddressLink address={token.deployerAddress} chainId={token.chainId} />
                     </TableCell>
                     <TableCell>
                       <span className="text-sm text-muted-foreground">
@@ -103,17 +107,7 @@ export default function Page() {
                       </span>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="sm" asChild className="h-8">
-                        <a
-                          href={getContractExplorerUrl(token.contractAddress, token.chainId)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1"
-                        >
-                          View
-                          <ExternalLink className="h-3 w-3" />
-                        </a>
-                      </Button>
+                      <TokenActionsMenu token={token} />
                     </TableCell>
                   </TableRow>
                 ))}

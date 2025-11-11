@@ -5,10 +5,10 @@
 - create token ✅
 - token list (all) ✅
 
-- actions on token
+- actions on token ✅
   freeze
   delete
-  copy address to share
+  copy address to share ✅
 
 - add token meta (imgs, tags, description, title)
 

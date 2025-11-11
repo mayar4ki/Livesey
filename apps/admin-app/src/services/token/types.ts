@@ -1,6 +1,4 @@
-import { Transform } from 'class-transformer';
-
-export class TokenEntity {
+export type Token = {
   id: string;
   contractAddress: string;
   chainId: number;
@@ -8,17 +6,10 @@ export class TokenEntity {
   symbol: string;
   totalSupply: string;
   transactionHash: string;
-
-  @Transform(({ value }) => value.toString())
   blockNumber: bigint | string;
-
   deployerAddress: string;
   verifiedAt: Date | string | null;
   deployedAt: Date | string;
   createdAt: Date | string;
   updatedAt: Date | string;
-
-  constructor(partial: Partial<TokenEntity>) {
-    Object.assign(this, partial);
-  }
-}
+};

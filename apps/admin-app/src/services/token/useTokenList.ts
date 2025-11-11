@@ -1,21 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '~/services/apiClient';
-
-type Token = {
-  id: string;
-  contractAddress: string;
-  chainId: number;
-  name: string;
-  symbol: string;
-  totalSupply: string;
-  transactionHash: string;
-  blockNumber: bigint | string;
-  deployerAddress: string;
-  verifiedAt: Date | string | null;
-  deployedAt: Date | string;
-  createdAt: Date | string;
-  updatedAt: Date | string;
-};
+import { Token } from './types';
 
 // Pagination response type
 type Pagination = {
