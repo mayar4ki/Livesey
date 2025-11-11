@@ -6,7 +6,7 @@ import {
 
 import { createVerificationTask, getVerificationTask } from '@acme/queue';
 import { PrismaService } from '../prisma/prisma.service';
-import { HistoryQueryDto } from './dto/history-query.dto';
+import { ListQueryDto } from './dto/list-query.dto';
 import { VerifyStatusQueryDto } from './dto/verify-status-query.dto';
 import { VerifyTokenDto } from './dto/verify-token.dto';
 
@@ -25,7 +25,6 @@ export class TokenService {
       chainId: task.chainId,
     };
   }
-
   async verifyStatus(query: VerifyStatusQueryDto) {
     const task = await getVerificationTask(
       query.chainId,
@@ -40,19 +39,55 @@ export class TokenService {
       task,
     };
   }
+  async list(query: ListQueryDto) {
+    const { skip = 0, take = 10, search } = query;
 
-  async getHistory(query: HistoryQueryDto) {
-    console.log('query', query);
-    const tokens = await this.prisma.client.deployedToken.findMany({
-      where: { deployerAddress: query.walletAddress },
-      orderBy: {
-        deployedAt: 'desc',
-      },
-    });
+    const where = search
+      ? {
+          OR: [
+            {
+              contractAddress: {
+                contains: search,
+                mode: 'insensitive' as const,
+              },
+            },
+            {
+              deployerAddress: {
+                contains: search,
+                mode: 'insensitive' as const,
+              },
+            },
+          ],
+        }
+      : {};
+
+    const [tokens, total] = await Promise.all([
+      this.prisma.client.deployedToken.findMany({
+        where,
+        orderBy: {
+          deployedAt: 'desc',
+        },
+        skip,
+        take,
+      }),
+      this.prisma.client.deployedToken.count({
+        where,
+      }),
+    ]);
+
+    // Convert BigInt values to strings for JSON serialization
+    const serializedTokens = tokens.map((token) => ({
+      ...token,
+      blockNumber: token.blockNumber.toString(),
+    }));
 
     return {
-      contracts: tokens,
-      walletAddress: query.walletAddress,
+      data: serializedTokens,
+      pagination: {
+        skip,
+        take,
+        total,
+      },
     };
   }
 }

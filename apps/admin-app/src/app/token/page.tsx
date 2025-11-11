@@ -1,0 +1,135 @@
+'use client';
+
+import { formatAddress, getChainUIName, getContractExplorerUrl } from '@acme/shared/utils';
+import { Badge } from '@acme/ui/badge';
+import { Button } from '@acme/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@acme/ui/table';
+import { Coins, ExternalLink, Plus } from 'lucide-react';
+import Link from 'next/link';
+import { DataTablePagination } from '~/_components/common/DataTablePagination';
+import { ErrorStateCard } from '~/_components/common/ErrorStateCard';
+import { LoadingCard } from '~/_components/common/LoadingCard';
+import { useQueryParams } from '~/_hooks/useQueryParams';
+import { useTokenList } from '~/services/token/useTokenList';
+
+export default function Page() {
+  const { params, setParams } = useQueryParams({ take: 10, skip: 0 });
+  const { data, isLoading, error } = useTokenList({ skip: params.skip, take: params.take });
+
+  if (isLoading) {
+    return <LoadingCard message="Loading token list..." />;
+  }
+
+  if (error) {
+    return (
+      <ErrorStateCard icon={Coins} title="Error Loading Tokens" message={error instanceof Error ? error.message : 'Failed to load token list'} />
+    );
+  }
+
+  return (
+    <div className="p-4 md:p-6 flex-1 ">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Token List</CardTitle>
+            </div>
+            <Button asChild>
+              <Link href="/token/create">
+                <Plus className="h-4 w-4 mr-2" />
+                Create New Token
+              </Link>
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {data?.data.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12">
+              <Coins className="h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">No Tokens Found</h3>
+              <p className="text-sm text-muted-foreground text-center mb-4">No tokens have been deployed yet. Deploy a token to see it here.</p>
+              <Button asChild>
+                <Link href="/token/create">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create New Token
+                </Link>
+              </Button>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Symbol</TableHead>
+                  <TableHead>Total Supply</TableHead>
+                  <TableHead>Contract Address</TableHead>
+                  <TableHead>Chain</TableHead>
+                  <TableHead>Deployer</TableHead>
+                  <TableHead>Deployed At</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data?.data.map((token) => (
+                  <TableRow key={token.id}>
+                    <TableCell>
+                      <span className="font-medium">{token.name}</span>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{token.symbol}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-mono text-sm">{BigInt(token.totalSupply).toLocaleString('en-US')}</span>
+                    </TableCell>
+                    <TableCell>
+                      <code className="text-xs font-mono bg-muted px-2 py-1 rounded">{formatAddress(token.contractAddress)}</code>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="secondary">{getChainUIName(token.chainId)}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <code className="text-xs font-mono bg-muted px-2 py-1 rounded">{formatAddress(token.deployerAddress)}</code>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm text-muted-foreground">
+                        {new Date(token.deployedAt).toLocaleString('en-US', {
+                          month: 'short',
+                          day: '2-digit',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="sm" asChild className="h-8">
+                        <a
+                          href={getContractExplorerUrl(token.contractAddress, token.chainId)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1"
+                        >
+                          View
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+
+          <DataTablePagination
+            currentPage={Math.floor(params.skip / params.take) + 1}
+            totalPages={data?.pagination?.total ? Math.ceil(data?.pagination?.total / data?.pagination?.take) : 0}
+            onPageChange={(page: number) => {
+              setParams({ skip: (page - 1) * params.take, take: params.take });
+            }}
+          />
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

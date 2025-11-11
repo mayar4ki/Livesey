@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { useAccount, useChainId } from 'wagmi';
 import axios from 'axios';
 import { sepolia } from 'viem/chains';
+import { useAccount, useChainId } from 'wagmi';
 
 type AlchemyToken = {
   contractAddress: string;
@@ -71,7 +71,5 @@ export function useWalletAssets() {
       };
     },
     enabled: isConnected && !!walletAddress,
-    staleTime: 60 * 1000,
-    refetchOnWindowFocus: true,
   });
 }

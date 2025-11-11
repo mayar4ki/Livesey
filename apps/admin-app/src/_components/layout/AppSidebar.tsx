@@ -1,6 +1,6 @@
 'use client';
 
-import { FilePlus, HelpCircle, History, Settings } from 'lucide-react';
+import { Coins, FilePlus, HelpCircle, Settings } from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@acme/ui';
@@ -23,14 +23,14 @@ import { AppLogo } from '~/_components/common/AppBrand';
 // This is sample data.
 const items = [
   {
+    title: 'Tokens List',
+    url: '/token',
+    icon: Coins,
+  },
+  {
     title: 'New Token',
     url: '/token/create',
     icon: FilePlus,
-  },
-  {
-    title: 'Token History',
-    url: '/token/history',
-    icon: History,
   },
   {
     title: 'Settings',

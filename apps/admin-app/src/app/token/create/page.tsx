@@ -6,7 +6,6 @@ import { TokenCreateForm } from '../_components/TokenCreateForm';
 import { Button } from '@acme/ui/button';
 import { toast } from '@acme/ui/sonner';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useAccount } from 'wagmi';
@@ -19,8 +18,7 @@ import { TokenCreateFormSchema, tokenCreateFormSchema } from '../_libs/tokenCrea
 
 export default function Page() {
   const { address: walletAddress } = useAccount();
-  const router = useRouter();
-  const { createBeaconProxy, isPending, data: transactionHash, error, transactionReceipt } = useCreateBeaconProxy();
+  const { createBeaconProxy, isPending, data: transactionHash, error, transactionReceipt, reset: resetCreateBeaconProxy } = useCreateBeaconProxy();
   const [beaconProxyAddress, setBeaconProxyAddress] = useState<string | null>(null);
 
   useWatchBeaconProxyCreatedEvent({
@@ -30,7 +28,7 @@ export default function Page() {
         toast.success('Token created transaction is confirmed');
       }
     },
-    enabled: !!transactionHash && !!!beaconProxyAddress && !!!transactionReceipt.isError,
+    enabled: !!transactionHash && !!!beaconProxyAddress,
   });
 
   const form = useForm<TokenCreateFormSchema>({
@@ -53,21 +51,32 @@ export default function Page() {
     });
   }
 
+  function onReset() {
+    setBeaconProxyAddress(null);
+    form.reset();
+    resetCreateBeaconProxy();
+  }
+
   return (
     <div className="p-4 md:p-6 flex-1 relative">
       <div className="space-y-6">
         <AnimatePresence mode="wait">
-          {error ? (
+          {error || transactionReceipt.error || transactionReceipt.isError ? (
             <ErrorStateCard
               title="Error creating token"
-              message={error.message ?? 'Unknown error'}
-              action={<Button onClick={() => router.refresh()}>Try again</Button>}
+              message={error?.message ?? transactionReceipt.error?.message ?? 'Unknown error'}
+              action={<Button onClick={() => onReset()}>Try again</Button>}
             />
           ) : transactionHash ? (
             <>
               <TransactionStatusCard txHash={transactionHash} />
-              {beaconProxyAddress && tokenName && tokenSymbol && (
-                <TokenSuccessCard tokenAddress={beaconProxyAddress as `0x${string}`} tokenName={tokenName} tokenSymbol={tokenSymbol} />
+              {beaconProxyAddress && (
+                <TokenSuccessCard
+                  tokenAddress={beaconProxyAddress as `0x${string}`}
+                  tokenName={tokenName}
+                  tokenSymbol={tokenSymbol}
+                  onReset={onReset}
+                />
               )}
             </>
           ) : (

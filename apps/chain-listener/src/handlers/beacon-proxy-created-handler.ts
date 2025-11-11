@@ -49,9 +49,7 @@ export async function handleBeaconProxyCreatedEvents(
         symbol: args.symbol,
         totalSupply: args.totalSupply,
         transactionHash: log.transactionHash,
-        blockNumber: log.blockNumber
-          ? BigInt(log.blockNumber.toString())
-          : undefined,
+        blockNumber: log.blockNumber,
       }))
     );
 

@@ -5,6 +5,7 @@ import { Button } from '@acme/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
 import { CheckCircle2, ExternalLink, Plus } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useRouter } from 'next/navigation';
 import { Address } from 'viem';
 import { useChainId, useReadContract } from 'wagmi';
 import { ABI } from '~/_config/smart-contracts/ERC20Implementation/abi';
@@ -14,11 +15,12 @@ type TokenSuccessCardProps = {
   tokenAddress: Address;
   tokenName: string;
   tokenSymbol: string;
+  onReset: () => void;
 };
 
-export function TokenSuccessCard({ tokenAddress, tokenName, tokenSymbol }: TokenSuccessCardProps) {
+export function TokenSuccessCard({ tokenAddress, tokenName, tokenSymbol, onReset }: TokenSuccessCardProps) {
   const chainId = useChainId();
-
+  const router = useRouter();
   // Read decimals from the contract
   const { data: decimals, isLoading: isLoadingDecimals } = useReadContract({
     address: tokenAddress,
@@ -69,7 +71,7 @@ export function TokenSuccessCard({ tokenAddress, tokenName, tokenSymbol }: Token
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-muted-foreground">Contract Address:</span>
-                <code className="text-xs font-mono bg-muted px-2 py-1 rounded">{tokenAddress}</code>
+                <code className="text-xs font-mono bg-muted px-2 py-1 rounded text-wrap break-all">{tokenAddress}</code>
               </div>
             </div>
 
@@ -83,6 +85,10 @@ export function TokenSuccessCard({ tokenAddress, tokenName, tokenSymbol }: Token
                   <ExternalLink className="h-4 w-4" />
                   View on Explorer
                 </a>
+              </Button>
+              <Button variant="outline" className="flex-1" onClick={onReset}>
+                <Plus className="h-4 w-4 mr-2" />
+                Create New Token
               </Button>
             </div>
           </div>

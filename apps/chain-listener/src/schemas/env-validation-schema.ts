@@ -15,7 +15,6 @@ const ethAddress = z
 // Defaults to Sepolia (11155111) if not provided
 const chainId = z
   .string()
-  .optional()
   .transform((val: string | undefined) => {
     return val ? parseInt(val, 10) : 11155111; // Default to Sepolia
   })

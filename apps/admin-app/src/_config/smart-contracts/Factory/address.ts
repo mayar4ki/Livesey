@@ -1,1 +1,3 @@
-export const ADDRESS = '0x1F08F16c809e1D61155f5d11d4b7BDE51ba43AA2';
+import { Address } from 'viem';
+
+export const ADDRESS = process.env.NEXT_PUBLIC_FACTORY_ADDRESS as Address;

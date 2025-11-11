@@ -2,8 +2,8 @@
 
 ### Admin app
 
-- create token
-- token list (all)
+- create token ✅
+- token list (all) ✅
 
 - actions on token
   freeze
@@ -28,3 +28,10 @@
 ### Anonymizer app
 
 - mix erc20 tokens
+
+---
+
+### TODO:
+
+- make the verification process independent of hardhat
+- ux at create token page, we should handle multi logs thing in addition to the transaction receipt

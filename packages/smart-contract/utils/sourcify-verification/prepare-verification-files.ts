@@ -1,5 +1,5 @@
-import { readFileSync, existsSync, readdirSync } from "fs";
-import { join, dirname } from "path";
+import { existsSync, readFileSync, readdirSync } from "fs";
+import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
 // Get directory of current file (ES module equivalent of __dirname)
@@ -11,7 +11,7 @@ const __dirname = dirname(__filename);
  * In Hardhat 3, metadata is stored in the build-info output file
  */
 function getContractMetadata(contractName: string, sourceName: string) {
-  const contractPackagePath = join(__dirname, "../../../");
+  const contractPackagePath = join(__dirname, "..", "..");
   const buildInfoDir = join(contractPackagePath, "artifacts", "build-info");
 
   // Find the output file
@@ -82,7 +82,7 @@ function getContractMetadata(contractName: string, sourceName: string) {
  * Get compilation metadata from build-info
  */
 function getCompilationMetadata() {
-  const contractPackagePath = join(__dirname, "../../../");
+  const contractPackagePath = join(__dirname, "..", "..");
   const buildInfoDir = join(contractPackagePath, "artifacts", "build-info");
 
   if (!existsSync(buildInfoDir)) {
