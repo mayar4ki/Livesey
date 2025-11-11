@@ -1,4 +1,11 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  SerializeOptions,
+} from '@nestjs/common';
+import { BaseResponse, BaseResponseDTO } from 'src/lib/base.dto';
 import { ListQueryDto } from './dto/list-query.dto';
 import { TokenEntity } from './entities/token.entity';
 import { TokenService } from './token.service';
@@ -8,12 +15,16 @@ export class TokenController {
   constructor(private readonly tokenService: TokenService) {}
 
   @Get('list')
-  async list(@Query() query: ListQueryDto) {
+  @SerializeOptions({ type: BaseResponseDTO(TokenEntity) })
+  async list(
+    @Query() query: ListQueryDto,
+  ): Promise<BaseResponse<TokenEntity[]>> {
     return this.tokenService.list(query);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<TokenEntity> {
+  @SerializeOptions({ type: BaseResponseDTO(TokenEntity) })
+  async findOne(@Param('id') id: string): Promise<BaseResponse<TokenEntity>> {
     return this.tokenService.findOne(id);
   }
 }

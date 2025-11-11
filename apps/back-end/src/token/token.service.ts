@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { plainToInstance } from 'class-transformer';
 
+import { BaseResponse } from 'src/lib/base.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { ListQueryDto } from './dto/list-query.dto';
 import { TokenEntity } from './entities/token.entity';
@@ -8,7 +8,7 @@ import { TokenEntity } from './entities/token.entity';
 @Injectable()
 export class TokenService {
   constructor(private readonly prisma: PrismaService) {}
-  async findOne(id: string): Promise<TokenEntity> {
+  async findOne(id: string): Promise<BaseResponse<TokenEntity>> {
     const token = await this.prisma.client.deployedToken.findUnique({
       where: { id },
     });
@@ -17,10 +17,12 @@ export class TokenService {
       throw new NotFoundException('Token not found');
     }
 
-    return plainToInstance(TokenEntity, token);
+    return {
+      data: token,
+    };
   }
 
-  async list(query: ListQueryDto) {
+  async list(query: ListQueryDto): Promise<BaseResponse<TokenEntity[]>> {
     const { skip = 0, take = 10, search } = query;
 
     const where = search
@@ -57,7 +59,7 @@ export class TokenService {
     ]);
 
     return {
-      data: plainToInstance(TokenEntity, tokens),
+      data: tokens,
       pagination: {
         skip,
         take,

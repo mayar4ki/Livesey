@@ -15,7 +15,8 @@ import { useToken } from '~/services/token/useToken';
 export default function Page() {
   const params = useParams();
   const tokenId = params.id as string;
-  const { data: token, isLoading, error } = useToken(tokenId);
+  const { data, isLoading, error } = useToken(tokenId);
+  const token = data?.data;
 
   if (isLoading) {
     return <LoadingCard message="Loading token details..." />;

@@ -1,19 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '~/services/apiClient';
+import { ListBaseResponse } from '../interfaces';
 import { Token } from './types';
-
-// Pagination response type
-type Pagination = {
-  skip: number;
-  take: number;
-  total: number;
-};
-
-// Token list response type
-type TokenListResponse = {
-  data: Token[];
-  pagination: Pagination;
-};
 
 // Use token list options type
 type UseTokenListOptions = {
@@ -30,10 +18,10 @@ type UseTokenListOptions = {
 export function useTokenList(options: UseTokenListOptions = {}) {
   const { skip = 0, take = 10, search } = options;
 
-  return useQuery<TokenListResponse>({
+  return useQuery({
     queryKey: ['token-list', skip, take, search],
     queryFn: async ({ signal }) => {
-      const response = await apiClient.get<TokenListResponse>(`token/list`, {
+      const response = await apiClient.get<ListBaseResponse<Token>>(`token/list`, {
         params: {
           skip,
           take,

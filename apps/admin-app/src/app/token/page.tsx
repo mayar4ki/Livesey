@@ -1,6 +1,6 @@
 'use client';
 
-import { getChainUIName } from '@acme/shared/utils';
+import { formatDateTime, getChainUIName } from '@acme/shared/utils';
 import { Badge } from '@acme/ui/badge';
 import { Button } from '@acme/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
@@ -96,15 +96,7 @@ export default function Page() {
                       <ExplorerAddressLink address={token.deployerAddress} chainId={token.chainId} />
                     </TableCell>
                     <TableCell>
-                      <span className="text-sm text-muted-foreground">
-                        {new Date(token.deployedAt).toLocaleString('en-US', {
-                          month: 'short',
-                          day: '2-digit',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </span>
+                      <span className="text-sm text-muted-foreground">{formatDateTime(token.deployedAt)}</span>
                     </TableCell>
                     <TableCell className="text-right">
                       <TokenActionsMenu token={token} />
