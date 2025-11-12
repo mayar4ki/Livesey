@@ -1,6 +1,6 @@
 'use client';
 
-import { Coins, Database, FilePlus, HelpCircle, Settings } from 'lucide-react';
+import { Coins, Database, FilePlus, HelpCircle, LayoutDashboard, Settings } from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@acme/ui';
@@ -22,6 +22,16 @@ import Link from 'next/link';
 import { AppLogo } from '~/_components/common/AppBrand';
 
 const navGroups = [
+  {
+    label: 'Home',
+    items: [
+      {
+        title: 'Dashboard',
+        url: '/',
+        icon: LayoutDashboard,
+      },
+    ],
+  },
   {
     label: 'Tokens',
     items: [
