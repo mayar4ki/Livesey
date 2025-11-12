@@ -8,6 +8,7 @@ import { motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { Address } from 'viem';
 import { useChainId, useReadContract } from 'wagmi';
+import { ExplorerLink } from '~/_components/common/ExplorerAddressLink';
 import { ABI } from '~/_config/smart-contracts/ERC20Implementation/abi';
 import { addTokenToWallet } from '~/_helpers/addTokenToWallet';
 
@@ -71,7 +72,7 @@ export function TokenSuccessCard({ tokenAddress, tokenName, tokenSymbol, onReset
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-muted-foreground">Contract Address:</span>
-                <code className="text-xs font-mono bg-muted px-2 py-1 rounded text-wrap break-all">{tokenAddress}</code>
+                <ExplorerLink hash={tokenAddress} chainId={chainId} showFull />
               </div>
             </div>
 
