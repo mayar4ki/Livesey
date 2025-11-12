@@ -1,4 +1,5 @@
-import { Address } from "viem";
+import { FactoryAbi } from "@acme/smart-contract";
+import { Address, WatchContractEventOnLogsParameter } from "viem";
 import { z } from "zod";
 
 // Ethereum address validation
@@ -37,17 +38,58 @@ const bigIntSchema = z
 export const beaconProxyCreatedEventArgsSchema = z.object({
   createdBeaconProxy: ethAddress,
   deployer: ethAddress,
-  name: z
+  name: z.string(),
+  symbol: z.string(),
+  assetRefHash: z
     .string()
-    .min(1, "Token name cannot be empty")
-    .max(100, "Token name is too long"),
-  symbol: z
-    .string()
-    .min(1, "Token symbol cannot be empty")
-    .max(20, "Token symbol is too long"),
+    .regex(/^0x[a-fA-F0-9]{64}$/, "Invalid asset reference hash format"),
   totalSupply: bigIntSchema,
 });
 
 export type BeaconProxyCreatedEventArgs = z.infer<
   typeof beaconProxyCreatedEventArgsSchema
 >;
+
+type BeaconProxyCreatedEventsLog = WatchContractEventOnLogsParameter<
+  typeof FactoryAbi,
+  "BeaconProxyCreated"
+>;
+
+export type ValidatedLog = {
+  log: BeaconProxyCreatedEventsLog[number];
+  args: BeaconProxyCreatedEventArgs;
+};
+
+/**
+ * Validate and filter event logs
+ * Returns only logs that pass validation, logs errors for invalid ones
+ */
+export function validateBeaconProxyCreatedEventLogs(
+  logs: BeaconProxyCreatedEventsLog
+): ValidatedLog[] {
+  const validLogs: ValidatedLog[] = [];
+
+  for (const log of logs) {
+    try {
+      const validatedArgs = beaconProxyCreatedEventArgsSchema.parse(log.args);
+      validLogs.push({ log, args: validatedArgs });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errorMessages = error.issues
+          .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
+          .join(", ");
+        console.error(
+          `❌ Event validation failed for transaction ${log.transactionHash}:`,
+          errorMessages
+        );
+      } else {
+        console.error(
+          `❌ Error validating BeaconProxyCreated event:`,
+          error instanceof Error ? error.message : error
+        );
+      }
+    }
+  }
+
+  return validLogs;
+}

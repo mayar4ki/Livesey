@@ -1,6 +1,6 @@
 'use client';
 
-import { getContractExplorerUrl } from '@acme/shared/utils';
+import { getExplorerUrl } from '@acme/shared/utils';
 import { Button } from '@acme/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@acme/ui/dropdown-menu';
 import { toast } from '@acme/ui/sonner';
@@ -42,7 +42,7 @@ export function TokenActionsMenu({ token }: TokenActionsMenuProps) {
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
-            window.open(getContractExplorerUrl(token.contractAddress, token.chainId), '_blank', 'noopener,noreferrer');
+            window.open(getExplorerUrl(token.contractAddress as `0x${string}`, token.chainId), '_blank', 'noopener,noreferrer');
           }}
         >
           <ExternalLink className="h-4 w-4 mr-2" />

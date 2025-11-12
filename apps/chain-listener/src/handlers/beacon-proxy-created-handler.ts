@@ -3,8 +3,9 @@ import { WatchContractEventOnLogsParameter } from "viem";
 
 import { queueVerificationTasks } from "../helpers/queue-verification-tasks.js";
 import { storeDeployedTokens } from "../helpers/store-deployed-tokens.js";
-import { validateEventLogs } from "../helpers/validate-event-logs.js";
+
 import { envValidationSchema } from "../schemas/env-validation-schema.js";
+import { validateBeaconProxyCreatedEventLogs } from "../schemas/event-args-validation-schema.js";
 
 // Validate and parse environment variables
 const env = envValidationSchema.parse(process.env);
@@ -29,6 +30,7 @@ export async function handleBeaconProxyCreatedEvents(
         `  Deployer: ${log?.args?.deployer}\n` +
         `  Name: ${log?.args?.name}\n` +
         `  Symbol: ${log?.args?.symbol}\n` +
+        `  Asset Ref Hash: ${log?.args?.assetRefHash}\n` +
         `  Total Supply: ${log?.args?.totalSupply}\n` +
         `  Transaction: ${log?.transactionHash}\n` +
         `  Block: ${log?.blockNumber}`
@@ -36,7 +38,7 @@ export async function handleBeaconProxyCreatedEvents(
   }
 
   // Validate and filter logs
-  const validLogs = validateEventLogs(logs);
+  const validLogs = validateBeaconProxyCreatedEventLogs(logs);
 
   try {
     // Store all tokens in a single database transaction
@@ -47,6 +49,7 @@ export async function handleBeaconProxyCreatedEvents(
         deployerAddress: args.deployer,
         name: args.name,
         symbol: args.symbol,
+        assetRefHash: args.assetRefHash,
         totalSupply: args.totalSupply,
         transactionHash: log.transactionHash,
         blockNumber: log.blockNumber,

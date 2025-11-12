@@ -3,6 +3,8 @@ export type Token = {
   contractAddress: string;
   chainId: number;
   name: string;
+  assetRefHash: string;
+  seedData?: Record<string, string>;
   symbol: string;
   totalSupply: string;
   transactionHash: string;
@@ -10,6 +12,4 @@ export type Token = {
   deployerAddress: string;
   verifiedAt: Date | string | null;
   deployedAt: Date | string;
-  createdAt: Date | string;
-  updatedAt: Date | string;
 };

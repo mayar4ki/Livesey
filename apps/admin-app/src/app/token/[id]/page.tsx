@@ -7,8 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme
 import { ArrowLeft, Coins, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { CopyButton } from '~/_components/common/CopyButton';
 import { ErrorStateCard } from '~/_components/common/ErrorStateCard';
-import { ExplorerAddressLink } from '~/_components/common/ExplorerAddressLink';
+import { ExplorerLink } from '~/_components/common/ExplorerAddressLink';
 import { LoadingCard } from '~/_components/common/LoadingCard';
 import { useToken } from '~/services/token/useToken';
 
@@ -140,26 +141,19 @@ export default function Page() {
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Contract Address</label>
                 <div className="mt-1">
-                  <ExplorerAddressLink address={token.contractAddress} chainId={token.chainId} />
+                  <ExplorerLink hash={token.contractAddress} chainId={token.chainId} showFull />
                 </div>
               </div>
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Deployer Address</label>
                 <div className="mt-1">
-                  <ExplorerAddressLink address={token.deployerAddress} chainId={token.chainId} />
+                  <ExplorerLink hash={token.deployerAddress} chainId={token.chainId} showFull />
                 </div>
               </div>
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Transaction Hash</label>
                 <div className="mt-1">
-                  <a
-                    href={getExplorerUrl(token.transactionHash as `0x${string}`, token.chainId)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs font-mono bg-muted px-2 py-1 rounded hover:bg-muted/80 cursor-pointer transition-colors inline-block"
-                  >
-                    {token.transactionHash.slice(0, 10)}...{token.transactionHash.slice(-8)}
-                  </a>
+                  <ExplorerLink hash={token.transactionHash} chainId={token.chainId} showFull />
                 </div>
               </div>
               <div>
@@ -199,13 +193,56 @@ export default function Page() {
                 <p className="text-base font-mono mt-1 break-all">{token.id}</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-muted-foreground">Created At</label>
-                <p className="text-base mt-1">{formatDateTime(token.createdAt)}</p>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-sm font-medium text-muted-foreground">Asset Reference Hash</label>
+                  <CopyButton
+                    textToCopy={token.assetRefHash}
+                    successMessage="Hash copied to clipboard"
+                    errorMessage="Failed to copy hash"
+                    title="Copy hash"
+                    className="h-8 w-8 p-0 shrink-0"
+                  />
+                </div>
+                <div className="mt-1 flex items-center gap-2 flex-wrap">
+                  <code className="text-xs font-mono bg-muted px-3 py-2 rounded break-all flex-1 min-w-0">{token.assetRefHash}</code>
+                </div>
               </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Last Updated</label>
-                <p className="text-base mt-1">{formatDateTime(token.updatedAt)}</p>
-              </div>
+              {token.seedData && (
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-sm font-medium text-muted-foreground">Seed Data</label>
+                    <CopyButton
+                      textToCopy={() => {
+                        if (!token.seedData) return '';
+                        const seedDataObj = Array.isArray(token.seedData.seedData)
+                          ? token.seedData.seedData.reduce((acc: Record<string, string>, item: { key: string; value: string }) => {
+                              acc[item.key] = item.value;
+                              return acc;
+                            }, {})
+                          : token.seedData.seedData;
+                        return JSON.stringify(seedDataObj);
+                      }}
+                      successMessage="Seed data copied to clipboard"
+                      errorMessage="Failed to copy seed data"
+                      title="Copy seed data"
+                    />
+                  </div>
+                  <div className="mt-1">
+                    <pre className="text-xs font-mono bg-muted p-3 rounded overflow-auto max-h-48">
+                      {JSON.stringify(
+                        Array.isArray(token.seedData.seedData)
+                          ? token.seedData.seedData.reduce((acc: Record<string, string>, item: { key: string; value: string }) => {
+                              acc[item.key] = item.value;
+                              return acc;
+                            }, {})
+                          : token.seedData.seedData,
+                        null,
+                        2
+                      )}
+                    </pre>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

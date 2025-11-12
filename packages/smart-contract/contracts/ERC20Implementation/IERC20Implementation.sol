@@ -10,6 +10,7 @@ interface IERC20Implementation {
     function initialize(
         string memory _name,
         string memory _symbol,
+        bytes32 _assetRefHash,
         uint256 _totalSupply,
         address _owner
     ) external;

@@ -10,7 +10,12 @@
   delete
   copy address to share ✅
 
-- add token meta (imgs, tags, description, title)
+- we add asset ref hash to the token make sure to integrate it in the frontend and backend
+
+- add token meta (imgs, tags, description, title) /
+- add token to wallet will make u download copy of the seeds
+
+- make public explorer
 
 ### User App
 

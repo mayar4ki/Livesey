@@ -1,6 +1,6 @@
 'use client';
 
-import { formatAddress, getChainUIName, getContractExplorerUrl } from '@acme/shared/utils';
+import { formatAddress, getChainUIName, getExplorerUrl } from '@acme/shared/utils';
 import { Badge } from '@acme/ui/badge';
 import { Button } from '@acme/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
@@ -98,7 +98,7 @@ export default function Page() {
                       <TableCell className="text-right">
                         <Button variant="ghost" size="sm" asChild className="h-8">
                           <a
-                            href={getContractExplorerUrl(asset.contractAddress, data?.chainId || chainId)}
+                            href={getExplorerUrl(asset.contractAddress as `0x${string}`, data?.chainId || chainId)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-1"

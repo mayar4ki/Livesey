@@ -9,7 +9,7 @@ import { Coins, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { DataTablePagination } from '~/_components/common/DataTablePagination';
 import { ErrorStateCard } from '~/_components/common/ErrorStateCard';
-import { ExplorerAddressLink } from '~/_components/common/ExplorerAddressLink';
+import { ExplorerLink } from '~/_components/common/ExplorerAddressLink';
 import { LoadingCard } from '~/_components/common/LoadingCard';
 import { useQueryParams } from '~/_hooks/useQueryParams';
 import { useTokenList } from '~/services/token/useTokenList';
@@ -87,13 +87,13 @@ export default function Page() {
                       <span className="font-mono text-sm">{BigInt(token.totalSupply).toLocaleString('en-US')}</span>
                     </TableCell>
                     <TableCell>
-                      <ExplorerAddressLink address={token.contractAddress} chainId={token.chainId} />
+                      <ExplorerLink hash={token.contractAddress} chainId={token.chainId} />
                     </TableCell>
                     <TableCell>
                       <Badge variant="secondary">{getChainUIName(token.chainId)}</Badge>
                     </TableCell>
                     <TableCell>
-                      <ExplorerAddressLink address={token.deployerAddress} chainId={token.chainId} />
+                      <ExplorerLink hash={token.deployerAddress} chainId={token.chainId} />
                     </TableCell>
                     <TableCell>
                       <span className="text-sm text-muted-foreground">{formatDateTime(token.deployedAt)}</span>

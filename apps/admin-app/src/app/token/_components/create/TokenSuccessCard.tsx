@@ -1,6 +1,6 @@
 'use client';
 
-import { getContractExplorerUrl } from '@acme/shared/utils';
+import { getExplorerUrl } from '@acme/shared/utils';
 import { Button } from '@acme/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
 import { CheckCircle2, ExternalLink, Plus } from 'lucide-react';
@@ -36,7 +36,7 @@ export function TokenSuccessCard({ tokenAddress, tokenName, tokenSymbol, onReset
     });
   };
 
-  const explorerUrl = getContractExplorerUrl(tokenAddress, chainId);
+  const explorerUrl = getExplorerUrl(tokenAddress as `0x${string}`, chainId);
 
   return (
     <motion.div

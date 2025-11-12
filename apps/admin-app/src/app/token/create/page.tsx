@@ -1,35 +1,23 @@
 'use client';
 
 import { AnimatePresence } from 'motion/react';
-import { TokenCreateForm } from '../_components/TokenCreateForm';
+import { TokenCreateForm } from '../_components/create/TokenCreateForm';
 
 import { Button } from '@acme/ui/button';
-import { toast } from '@acme/ui/sonner';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useAccount } from 'wagmi';
 import { ErrorStateCard } from '~/_components/common/ErrorStateCard';
-import { useCreateBeaconProxy } from '~/services/factory/useCreateBeaconProxy';
-import { useWatchBeaconProxyCreatedEvent } from '~/services/factory/useWatchBeaconProxyCreatedEvent';
-import { TokenSuccessCard } from '../_components/TokenSuccessCard';
-import { TransactionStatusCard } from '../_components/TransactionStatusCard';
+import { TokenSuccessCard } from '../_components/create/TokenSuccessCard';
+import { TransactionStatusCard } from '../_components/create/TransactionStatusCard';
+import { useBeaconProxyAddress } from '../_hooks/useBeaconProxyAddress';
+import { useTokenCreation } from '../_hooks/useTokenCreation';
 import { TokenCreateFormSchema, tokenCreateFormSchema } from '../_libs/tokenCreateFormSchema';
 
 export default function Page() {
   const { address: walletAddress } = useAccount();
-  const { createBeaconProxy, isPending, data: transactionHash, error, transactionReceipt, reset: resetCreateBeaconProxy } = useCreateBeaconProxy();
-  const [beaconProxyAddress, setBeaconProxyAddress] = useState<string | null>(null);
-
-  useWatchBeaconProxyCreatedEvent({
-    onLogs: (logs) => {
-      if (logs?.[0] && logs[0].transactionHash === transactionHash && logs[0].args.createdBeaconProxy) {
-        setBeaconProxyAddress(logs[0].args.createdBeaconProxy);
-        toast.success('Token created transaction is confirmed');
-      }
-    },
-    enabled: !!transactionHash && !!!beaconProxyAddress,
-  });
+  const { mutateCreateToken, isPending, transactionHash, transactionReceipt, resetCreateBeaconProxy } = useTokenCreation();
+  const { beaconProxyAddress, resetBeaconProxyAddress } = useBeaconProxyAddress(transactionHash);
 
   const form = useForm<TokenCreateFormSchema>({
     resolver: yupResolver(tokenCreateFormSchema),
@@ -38,21 +26,19 @@ export default function Page() {
       totalSupply: '1000',
       symbol: 'XY',
       owner: walletAddress,
+      assetRefPairs: [{ key: '', value: '' }],
+      assetRefHash: '0x0000000000000000000000000000000000000000000000000000000000000000',
     },
   });
   const tokenName = useWatch({ name: 'name', control: form.control });
   const tokenSymbol = useWatch({ name: 'symbol', control: form.control });
 
   function onSubmit(values: TokenCreateFormSchema) {
-    createBeaconProxy([values.name, values.symbol, BigInt(values.totalSupply), values.owner], {
-      onSuccess: () => {
-        toast.success('Token created transaction is sent to the network');
-      },
-    });
+    mutateCreateToken(values);
   }
 
   function onReset() {
-    setBeaconProxyAddress(null);
+    resetBeaconProxyAddress();
     form.reset();
     resetCreateBeaconProxy();
   }
@@ -61,10 +47,10 @@ export default function Page() {
     <div className="p-4 md:p-6 flex-1 relative">
       <div className="space-y-6">
         <AnimatePresence mode="wait">
-          {error || transactionReceipt.error || transactionReceipt.isError ? (
+          {transactionReceipt.error || transactionReceipt.isError ? (
             <ErrorStateCard
               title="Error creating token"
-              message={error?.message ?? transactionReceipt.error?.message ?? 'Unknown error'}
+              message={transactionReceipt.error?.message ?? 'Unknown error'}
               action={<Button onClick={() => onReset()}>Try again</Button>}
             />
           ) : transactionHash ? (

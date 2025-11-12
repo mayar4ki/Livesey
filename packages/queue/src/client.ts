@@ -58,4 +58,5 @@ export async function closeRedisConnection(): Promise<void> {
   }
 }
 
+export type { RedisClientType };
 export { redis };

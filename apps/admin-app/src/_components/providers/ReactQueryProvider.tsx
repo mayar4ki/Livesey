@@ -2,6 +2,7 @@
 // Since QueryClientProvider relies on useContext under the hood, we have to put 'use client' on top
 import { toast } from '@acme/ui/sonner';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { JSX } from 'react';
 
 // function makeQueryClient() {
@@ -33,15 +34,23 @@ const client = new QueryClient({
     },
     mutations: {
       onError(error) {
-        toast.error(`${(error as unknown as Record<string, string>).shortMessage ?? error.name}`, {
-          description: `${(typeof error?.cause === 'string' ? error?.cause : '') ?? error.name}`,
-          action: {
-            label: 'Close',
-            onClick: () => {},
-          },
-        });
-
-        console.log(error);
+        if (error instanceof AxiosError) {
+          toast.error(error.message, {
+            description: error.response?.data.message.join(', '),
+            action: {
+              label: 'Close',
+              onClick: () => {},
+            },
+          });
+        } else {
+          toast.error(`${(error as unknown as Record<string, string>).shortMessage ?? error.message}`, {
+            description: `${(typeof error?.cause === 'string' ? error?.cause : '') ?? error.name}`,
+            action: {
+              label: 'Close',
+              onClick: () => {},
+            },
+          });
+        }
       },
     },
   },

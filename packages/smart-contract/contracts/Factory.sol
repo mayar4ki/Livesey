@@ -19,7 +19,8 @@ contract Factory is AccessControlled {
     struct BeaconInfo {
         string name;
         string symbol;
-        bool isLegit;
+        bytes32 assetRefHash;
+        uint256 totalSupply;
     }
 
     mapping(address => BeaconInfo) public beaconLedger; // beacon address to beacon info
@@ -29,6 +30,7 @@ contract Factory is AccessControlled {
         address indexed deployer,
         string name,
         string symbol,
+        bytes32 assetRefHash,
         uint256 totalSupply
     );
 
@@ -53,6 +55,7 @@ contract Factory is AccessControlled {
      * @notice Create a new token
      * @param _name: name of the token
      * @param _symbol: symbol of the token
+     * @param _assetRefHash: asset reference hash
      * @param _totalSupply: total supply of the token
      * @param _owner: owner of the token
      * @dev Callable by admin
@@ -60,6 +63,7 @@ contract Factory is AccessControlled {
     function createBeaconProxy(
         string memory _name,
         string memory _symbol,
+        bytes32 _assetRefHash,
         uint256 _totalSupply,
         address _owner
     ) external onlyAdmin whenNotPaused {
@@ -72,6 +76,7 @@ contract Factory is AccessControlled {
             IERC20Implementation.initialize.selector,
             _name,
             _symbol,
+            _assetRefHash,
             _totalSupply,
             _owner
         );
@@ -80,7 +85,8 @@ contract Factory is AccessControlled {
         beaconLedger[beaconProxy] = BeaconInfo({
             name: _name,
             symbol: _symbol,
-            isLegit: true
+            assetRefHash: _assetRefHash,
+            totalSupply: _totalSupply
         });
 
         emit BeaconProxyCreated(
@@ -88,6 +94,7 @@ contract Factory is AccessControlled {
             msg.sender,
             _name,
             _symbol,
+            _assetRefHash,
             _totalSupply
         );
     }

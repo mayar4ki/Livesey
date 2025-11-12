@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { redis, ensureConnected } from '@acme/queue/client';
+import { RedisService } from '../redis/redis.service';
 
 @Injectable()
 export class HealthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly redis: RedisService,
+  ) {}
 
   async checkHealth() {
     const checks = {
@@ -23,8 +26,8 @@ export class HealthService {
 
     // Check Redis
     try {
-      await ensureConnected();
-      await redis.ping();
+      await this.redis.ensureConnected();
+      await this.redis.client.ping();
       checks.redis = true;
     } catch (error) {
       console.error('Redis health check failed:', error);
