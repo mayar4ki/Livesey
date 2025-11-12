@@ -7,9 +7,14 @@ export function useBeaconProxyAddress(transactionHash: string | undefined) {
 
   useWatchBeaconProxyCreatedEvent({
     onLogs: (logs) => {
-      if (logs?.[0] && logs[0].transactionHash === transactionHash && logs[0].args.createdBeaconProxy) {
-        setBeaconProxyAddress(logs[0].args.createdBeaconProxy);
-        toast.success('Token created transaction is confirmed');
+      if (!logs || !transactionHash) return;
+
+      for (const log of logs) {
+        if (log.transactionHash === transactionHash && log.args?.createdBeaconProxy) {
+          setBeaconProxyAddress(log.args.createdBeaconProxy);
+          toast.success('Token created transaction is confirmed');
+          break; // Exit early once we find a match
+        }
       }
     },
     enabled: !!transactionHash && !!!beaconProxyAddress,

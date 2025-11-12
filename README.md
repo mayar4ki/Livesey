@@ -39,4 +39,3 @@
 ### TODO:
 
 - make the verification process independent of hardhat
-- ux at create token page, we should handle multi logs thing in addition to the transaction receipt
