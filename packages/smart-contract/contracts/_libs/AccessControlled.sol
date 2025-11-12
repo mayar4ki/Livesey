@@ -53,4 +53,11 @@ abstract contract AccessControlled is Ownable, Pausable {
         _pause();
         emit Pause();
     }
+
+    /**
+     * @dev Returns the address of the current admin.
+     */
+    function admin() public view virtual returns (address) {
+        return _admin;
+    }
 }
