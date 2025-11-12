@@ -67,7 +67,7 @@ const navGroups = [
       },
       {
         title: 'Support',
-        url: '/',
+        url: '/support',
         icon: HelpCircle,
       },
     ],
