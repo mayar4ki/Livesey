@@ -1,9 +1,8 @@
+import { readFileSync } from "fs";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
 import { initializeConnections } from "../utils/initialize-connections.js";
 import { verifyContractSourcify } from "../utils/sourcify-verification/sourcify-verification.js";
-import { readFileSync } from "fs";
-import { join } from "path";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
 
 // Get directory of current file (ES module equivalent of __dirname)
 const __filename = fileURLToPath(import.meta.url);
@@ -54,46 +53,26 @@ async function main() {
   console.log(`UpgradeableBeacon: ${beaconAddress}`);
   console.log(`Factory: ${factoryAddress}\n`);
 
-  // Verify ERC20Implementation
-  console.log("🔍 Verifying ERC20Implementation...");
-  try {
-    await verifyContractSourcify({
-      contractAddress: erc20ImplementationAddress,
-      chainId,
-      contractName: "ERC20Implementation",
-      sourceName: "contracts/ERC20Implementation/ERC20Implementation.sol",
-    });
-  } catch (error) {
-    console.error(`❌ Failed to verify ERC20Implementation: ${error}`);
-  }
+  await verifyContractSourcify({
+    contractAddress: erc20ImplementationAddress,
+    chainId,
+    contractName: "ERC20Implementation",
+    sourceName: "contracts/ERC20Implementation/ERC20Implementation.sol",
+  });
 
-  // Verify UpgradeableBeacon
-  console.log("\n🔍 Verifying UpgradeableBeacon...");
-  try {
-    await verifyContractSourcify({
-      contractAddress: beaconAddress,
-      chainId,
-      contractName: "UpgradeableBeacon",
-      sourceName: "contracts/UpgradeableBeacon/UpgradeableBeacon.sol",
-    });
-  } catch (error) {
-    console.error(`❌ Failed to verify UpgradeableBeacon: ${error}`);
-  }
+  await verifyContractSourcify({
+    contractAddress: beaconAddress,
+    chainId,
+    contractName: "UpgradeableBeacon",
+    sourceName: "contracts/UpgradeableBeacon/UpgradeableBeacon.sol",
+  });
 
-  // Verify Factory
-  console.log("\n🔍 Verifying Factory...");
-  try {
-    await verifyContractSourcify({
-      contractAddress: factoryAddress,
-      chainId,
-      contractName: "Factory",
-      sourceName: "contracts/Factory.sol",
-    });
-  } catch (error) {
-    console.error(`❌ Failed to verify Factory: ${error}`);
-  }
-
-  console.log("\n✅ Verification process completed!");
+  await verifyContractSourcify({
+    contractAddress: factoryAddress,
+    chainId,
+    contractName: "Factory",
+    sourceName: "contracts/Factory.sol",
+  });
 }
 
 main().catch(console.error);

@@ -1,12 +1,12 @@
-import { submitVerificationRequest } from "./submit-verification-request.js";
-import { prepareVerificationFiles } from "./prepare-verification-files.js";
 import { prepareVerificationData } from "./prepare-verification-data.js";
+import { submitVerificationRequest } from "./submit-verification-request.js";
 
 export type VerifyContractSourcifyProps = {
   contractAddress: string;
   chainId: number;
   contractName: string;
   sourceName: string;
+  contractArgs?: string[];
 };
 
 /**
@@ -17,24 +17,30 @@ export async function verifyContractSourcify({
   chainId,
   contractName,
   sourceName,
+  contractArgs,
 }: VerifyContractSourcifyProps): Promise<boolean> {
   console.log(
     `🔍 Verifying ${contractName} at ${contractAddress} via Sourcify...`,
   );
 
   try {
-    const files = prepareVerificationFiles(contractName, sourceName);
-    const formData = prepareVerificationData(chainId, contractAddress, files);
+    const formData = prepareVerificationData(
+      chainId,
+      contractAddress,
+      contractName,
+      sourceName,
+      contractArgs,
+    );
 
     console.log(`📤 Submitting verification to Sourcify...`);
     await submitVerificationRequest(formData);
-    console.log(`✅ Contract verified successfully: ${contractAddress}`);
+    console.log(`✅ Contract verified successfully: ${contractAddress} \n\n`);
 
     return true;
   } catch (error: unknown) {
     if (error instanceof Error) {
       if (error.message.toLowerCase().includes("already verified")) {
-        console.log(`✅ Contract already verified: ${contractAddress}`);
+        console.log(`✅ Contract already verified: ${contractAddress} \n\n`);
         return true;
       }
 

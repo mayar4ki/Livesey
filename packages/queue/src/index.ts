@@ -1,5 +1,5 @@
-export { getVerificationTask } from "./verification-task/getVerificationTask.js";
+export { consumeVerificationTask } from "./verification-task/consumeVerificationTask.js";
 export { createVerificationTask } from "./verification-task/createVerificationTask.js";
-export { updateVerificationTask } from "./verification-task/updateVerificationTask.js";
-export { consumeTask } from "./verification-task/consumeTask.js";
+export { getVerificationTask } from "./verification-task/getVerificationTask.js";
 export type { VerificationTask } from "./verification-task/types.js";
+export { updateVerificationTask } from "./verification-task/updateVerificationTask.js";

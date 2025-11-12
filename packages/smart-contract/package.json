@@ -8,6 +8,11 @@
       "types": "./src/index.ts",
       "import": "./dist/index.cjs",
       "require": "./dist/index.js"
+    },
+    "./utils/sourcify-verification": {
+      "types": "./src/utils/sourcify-verification/sourcify-verification.ts",
+      "import": "./dist/utils/sourcify-verification/sourcify-verification.cjs",
+      "require": "./dist/utils/sourcify-verification/sourcify-verification.js"
     }
   },
   "scripts": {

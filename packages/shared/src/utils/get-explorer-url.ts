@@ -9,7 +9,8 @@ import { sepolia } from "viem/chains";
  */
 export function getExplorerUrl(hash: Hash, chainId: number): string {
   if (chainId === sepolia.id) {
-    return `https://sepolia.etherscan.io/search?q=${hash.toLowerCase()}`;
+    return `https://eth-sepolia.blockscout.com/search-results?q=${hash.toLowerCase()}`;
+    // return `https://sepolia.etherscan.io/search?q=${hash.toLowerCase()}`;
   }
   return `https://etherscan.io/tx/${hash}`;
 }

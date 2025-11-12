@@ -1,4 +1,5 @@
 import { VerificationTask, updateVerificationTask } from "@acme/queue";
+import { verifyProxy } from "src/helpers/verify-proxy.js";
 import { storeVerifiedContract } from "../helpers/store-verified-contract.js";
 
 /**
@@ -18,12 +19,11 @@ export async function handleContractVerification(
     });
 
     // Verify contract
-    const isVerified = true;
+
+    await verifyProxy(contractAddress, chainId.toString());
 
     // Store contract address in PostgreSQL after successful verification
-    if (isVerified) {
-      await storeVerifiedContract({ contractAddress, chainId });
-    }
+    await storeVerifiedContract({ contractAddress, chainId });
 
     // Update status to completed
     await updateVerificationTask(chainId, contractAddress, {

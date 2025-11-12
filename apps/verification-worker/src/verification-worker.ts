@@ -1,5 +1,5 @@
 import { prisma } from "@acme/db";
-import { consumeTask } from "@acme/queue";
+import { consumeVerificationTask } from "@acme/queue";
 import { closeRedisConnection } from "@acme/queue/client";
 import { handleContractVerification } from "./handlers/contract-verification-handler.js";
 import { validateEnv } from "./schemas/env-validation-schema.js";
@@ -21,7 +21,7 @@ async function startWorker() {
     while (true) {
       try {
         // Consume task from Redis queue (blocks until task available)
-        const result = await consumeTask(0); // 0 = wait forever
+        const result = await consumeVerificationTask(0); // 0 = wait forever
 
         if (result) {
           await handleContractVerification(result);

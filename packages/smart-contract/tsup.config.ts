@@ -1,7 +1,7 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["index.ts"],
+  entry: ["index.ts", "utils/sourcify-verification/sourcify-verification.ts"],
   format: ["cjs", "esm"],
   dts: true,
   splitting: false,
@@ -9,4 +9,5 @@ export default defineConfig({
   clean: true,
   // Ensure proper CommonJS output
   cjsInterop: true,
+  publicDir: ".",
 });
