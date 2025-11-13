@@ -1,6 +1,7 @@
 'use client';
 
 import { getExplorerUrl } from '@acme/shared/utils';
+import { ExplorerLink } from '@acme/ui/bootstrapped/explorer-address-link';
 import { Button } from '@acme/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
 import { CheckCircle2, ExternalLink, Plus } from 'lucide-react';
@@ -8,7 +9,6 @@ import { motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { Address } from 'viem';
 import { useChainId, useReadContract } from 'wagmi';
-import { ExplorerLink } from '~/_components/common/ExplorerAddressLink';
 import { ABI } from '~/_config/smart-contracts/ERC20Implementation/abi';
 import { addTokenToWallet } from '~/_helpers/addTokenToWallet';
 

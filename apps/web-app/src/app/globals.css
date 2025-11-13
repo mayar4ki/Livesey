@@ -81,6 +81,7 @@
 }
 
 .dark {
+  --radius: 0rem;
   --background: oklch(0.141 0.005 285.823);
    /* oklch(0.1784 0.0173 268.64); */
   --foreground: oklch(0.985 0 0);
@@ -88,7 +89,7 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary:oklch(0.488 0.243 264.376);
+  --primary:oklch(58.08% 0.238 29.23);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);

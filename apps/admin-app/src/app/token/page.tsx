@@ -1,17 +1,17 @@
 'use client';
 
+import { useQueryParams } from '@acme/shared/hooks';
 import { formatDateTime, getChainUIName } from '@acme/shared/utils';
 import { Badge } from '@acme/ui/badge';
+import { DataTablePagination } from '@acme/ui/bootstrapped/data-table-pagination';
+import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
+import { ExplorerLink } from '@acme/ui/bootstrapped/explorer-address-link';
+import { LoadingCard } from '@acme/ui/bootstrapped/loading-card';
 import { Button } from '@acme/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@acme/ui/table';
 import { Coins, Plus } from 'lucide-react';
 import Link from 'next/link';
-import { DataTablePagination } from '~/_components/common/DataTablePagination';
-import { ErrorStateCard } from '~/_components/common/ErrorStateCard';
-import { ExplorerLink } from '~/_components/common/ExplorerAddressLink';
-import { LoadingCard } from '~/_components/common/LoadingCard';
-import { useQueryParams } from '~/_hooks/useQueryParams';
 import { useTokenList } from '~/services/token/useTokenList';
 import { TokenActionsMenu } from './_components/TokenActionsMenu';
 

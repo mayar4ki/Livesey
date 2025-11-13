@@ -1,9 +1,11 @@
-'use client';
+"use client";
 
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useMemo } from 'react';
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useMemo } from "react";
 
-type UseQueryParamsOptions<T extends Record<string, string | number | boolean | null | undefined>> = {
+type UseQueryParamsOptions<
+  T extends Record<string, string | number | boolean | null | undefined>,
+> = {
   /**
    * Default values for query parameters
    */
@@ -15,7 +17,9 @@ type UseQueryParamsOptions<T extends Record<string, string | number | boolean | 
   scroll?: boolean;
 };
 
-type UseQueryParamsReturn<T extends Record<string, string | number | boolean | null | undefined>> = {
+type UseQueryParamsReturn<
+  T extends Record<string, string | number | boolean | null | undefined>,
+> = {
   /**
    * Current query parameters as an object
    */
@@ -56,7 +60,9 @@ type UseQueryParamsReturn<T extends Record<string, string | number | boolean | n
  * );
  * ```
  */
-export function useQueryParams<T extends Record<string, string | number | boolean | null | undefined>>(
+export function useQueryParams<
+  T extends Record<string, string | number | boolean | null | undefined>,
+>(
   defaults: T = {} as T,
   options: UseQueryParamsOptions<T> = {}
 ): UseQueryParamsReturn<T> {
@@ -74,10 +80,10 @@ export function useQueryParams<T extends Record<string, string | number | boolea
       if (value !== null) {
         // Try to parse as number or boolean, otherwise keep as string
         const numValue = Number(value);
-        if (!isNaN(numValue) && value.trim() !== '') {
+        if (!isNaN(numValue) && value.trim() !== "") {
           result[key] = numValue as T[typeof key];
-        } else if (value === 'true' || value === 'false') {
-          result[key] = (value === 'true') as T[typeof key];
+        } else if (value === "true" || value === "false") {
+          result[key] = (value === "true") as T[typeof key];
         } else {
           result[key] = value as T[typeof key];
         }
@@ -96,7 +102,7 @@ export function useQueryParams<T extends Record<string, string | number | boolea
       for (const key in updates) {
         const value = updates[key];
 
-        if (value !== null && value !== undefined && value !== '') {
+        if (value !== null && value !== undefined && value !== "") {
           newParams.set(key, String(value));
         } else {
           newParams.delete(key);
@@ -104,7 +110,9 @@ export function useQueryParams<T extends Record<string, string | number | boolea
       }
 
       const queryString = newParams.toString();
-      router.push(queryString ? `?${queryString}` : window.location.pathname, { scroll });
+      router.push(queryString ? `?${queryString}` : window.location.pathname, {
+        scroll,
+      });
     },
     [router, searchParams, defaults, scroll]
   );
@@ -117,13 +125,15 @@ export function useQueryParams<T extends Record<string, string | number | boolea
       for (const key in newParams) {
         const value = newParams[key];
 
-        if (value !== null && value !== undefined && value !== '') {
+        if (value !== null && value !== undefined && value !== "") {
           params.set(key, String(value));
         }
       }
 
       const queryString = params.toString();
-      router.push(queryString ? `?${queryString}` : window.location.pathname, { scroll });
+      router.push(queryString ? `?${queryString}` : window.location.pathname, {
+        scroll,
+      });
     },
     [router, defaults, scroll]
   );
@@ -135,7 +145,9 @@ export function useQueryParams<T extends Record<string, string | number | boolea
       keys.forEach((key) => newParams.delete(String(key)));
 
       const queryString = newParams.toString();
-      router.push(queryString ? `?${queryString}` : window.location.pathname, { scroll });
+      router.push(queryString ? `?${queryString}` : window.location.pathname, {
+        scroll,
+      });
     },
     [router, searchParams, scroll]
   );

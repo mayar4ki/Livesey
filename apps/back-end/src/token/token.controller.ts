@@ -27,6 +27,15 @@ export class TokenController {
     return this.tokenService.list(query);
   }
 
+  @Get('chain/:chainId/address/:address')
+  @SerializeOptions({ type: BaseResponseDTO(TokenEntity) })
+  async findOneByAddress(
+    @Param('address') address: string,
+    @Param('chainId') chainId: number,
+  ): Promise<BaseResponse<TokenEntity>> {
+    return this.tokenService.findOneByAddress(address, chainId);
+  }
+
   @Get(':id')
   @SerializeOptions({ type: BaseResponseDTO(TokenEntity) })
   async findOne(@Param('id') id: string): Promise<BaseResponse<TokenEntity>> {

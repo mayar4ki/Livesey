@@ -30,6 +30,30 @@ export class TokenService {
       data: token,
     };
   }
+  async findOneByAddress(
+    address: string,
+    chainId: number,
+  ): Promise<BaseResponse<TokenEntity>> {
+    const token = await this.prisma.client.deployedToken.findUnique({
+      where: {
+        contractAddress_chainId: {
+          contractAddress: address,
+          chainId: chainId,
+        },
+      },
+      include: {
+        seedData: true,
+      },
+    });
+
+    if (!token) {
+      throw new NotFoundException('Token not found');
+    }
+
+    return {
+      data: token,
+    };
+  }
 
   async list(query: ListQueryDto): Promise<BaseResponse<TokenEntity[]>> {
     const { skip = 0, take = 10, search } = query;

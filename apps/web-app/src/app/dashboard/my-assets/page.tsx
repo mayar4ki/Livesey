@@ -1,31 +1,148 @@
 'use client';
 
-import { formatAddress, getChainUIName, getContractExplorerUrl } from '@acme/shared/utils';
+import { formatAddress, formatTokenBalance, getChainUIName } from '@acme/shared/utils';
 import { Badge } from '@acme/ui/badge';
-import { Button } from '@acme/ui/button';
+import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
+import { ExplorerLink } from '@acme/ui/bootstrapped/explorer-address-link';
+import { LoadingCard } from '@acme/ui/bootstrapped/loading-card';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@acme/ui/table';
-import { Coins, ExternalLink, Wallet } from 'lucide-react';
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import { ArrowDown, ArrowUp, ArrowUpDown, Coins, Wallet } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
 import { useAccount, useChainId } from 'wagmi';
-import { ErrorStateCard } from '~/app/dashboard/_components/common/ErrorStateCard';
-import { LoadingCard } from '~/app/dashboard/_components/common/LoadingCard';
 
-import { useWalletAssets } from '~/services/token/useWalletAssets';
+import { Button } from '@acme/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@acme/ui/table';
+import { useWalletAssets, type Token } from '~/services/token/useWalletAssets';
 
 export default function Page() {
-  const { address: walletAddress } = useAccount();
   const chainId = useChainId();
-  const { data, isLoading, error } = useWalletAssets();
-  const assets = data?.tokens || [];
+  const { address: walletAddress, isConnected } = useAccount();
+  const { data, isLoading, error } = useWalletAssets(walletAddress, chainId);
+  const allAssets = data?.data?.data?.tokens || [];
 
-  if (isLoading) {
-    return <LoadingCard message="Loading your assets..." />;
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
+  const columns: ColumnDef<Token>[] = [
+    {
+      id: 'token',
+      accessorFn: (row) => row.tokenMetadata?.name || row.tokenMetadata?.symbol || 'Unknown Token',
+      header: ({ column }) => {
+        return (
+          <Button variant="ghost" onClick={() => column.toggleSorting()} className="h-8">
+            Token
+            {column.getIsSorted() === 'asc' ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : column.getIsSorted() === 'desc' ? (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        const asset = row.original;
+        const contractAddress = asset.tokenAddress || asset.address;
+        return (
+          <div className="flex items-center gap-3">
+            <Link
+              href={`/dashboard/token/${chainId}/${contractAddress}`}
+              className="font-medium hover:text-primary hover:underline transition-colors cursor-pointer"
+            >
+              {asset.tokenMetadata?.name || asset.tokenMetadata?.symbol || 'Unknown Token'}
+            </Link>
+            {asset.tokenMetadata?.symbol && asset.tokenMetadata?.name && (
+              <Badge variant="outline" className="text-xs">
+                {asset.tokenMetadata.symbol}
+              </Badge>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      id: 'balance',
+      accessorFn: (row) => {
+        const balance = BigInt(row.tokenBalance || '0');
+        const decimals = row.tokenMetadata?.decimals || 18;
+        return Number(balance) / Math.pow(10, decimals);
+      },
+      header: ({ column }) => {
+        return (
+          <Button variant="ghost" onClick={() => column.toggleSorting()} className="h-8">
+            Balance
+            {column.getIsSorted() === 'asc' ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : column.getIsSorted() === 'desc' ? (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        const asset = row.original;
+        return <span className="font-mono font-medium">{formatTokenBalance(asset.tokenBalance || '0', asset.tokenMetadata?.decimals || 18)}</span>;
+      },
+    },
+    {
+      id: 'contractAddress',
+      accessorFn: (row) => row.tokenAddress || row.address,
+      header: 'Contract Address',
+      cell: ({ row }) => {
+        const asset = row.original;
+        const contractAddress = asset.tokenAddress || asset.address;
+        return <ExplorerLink hash={contractAddress} chainId={chainId} />;
+      },
+    },
+    {
+      id: 'chain',
+      header: 'Chain',
+      cell: () => <Badge variant="secondary">{getChainUIName(chainId)}</Badge>,
+    },
+  ];
+
+  const table = useReactTable<Token>({
+    data: allAssets || [],
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      sorting,
+      columnFilters,
+    },
+  });
+
+  if (!isConnected || !walletAddress) {
+    return <ErrorStateCard icon={Wallet} title="Wallet Not Connected" message="Please connect your wallet to view your assets" />;
   }
 
   if (error) {
     return (
       <ErrorStateCard icon={Wallet} title="Error Loading Assets" message={error instanceof Error ? error.message : 'Failed to load wallet assets'} />
     );
+  }
+
+  if (isLoading) {
+    return <LoadingCard message={`Loading assets for ${formatAddress(walletAddress)}...`} />;
   }
 
   return (
@@ -42,7 +159,7 @@ export default function Page() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {assets.length === 0 ? (
+          {allAssets.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">
               <Wallet className="h-12 w-12 text-muted-foreground mb-4" />
               <h3 className="text-lg font-semibold mb-2">No Assets Found</h3>
@@ -51,67 +168,55 @@ export default function Page() {
               </p>
             </div>
           ) : (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-muted-foreground">
-                  Found {assets.length} token{assets.length !== 1 ? 's' : ''}
-                </p>
+            <div>
+              <div className="overflow-hidden rounded-md border">
+                <Table>
+                  <TableHeader>
+                    {table.getHeaderGroups().map((headerGroup) => (
+                      <TableRow key={headerGroup.id}>
+                        {headerGroup.headers.map((header) => {
+                          return (
+                            <TableHead key={header.id}>
+                              {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                            </TableHead>
+                          );
+                        })}
+                      </TableRow>
+                    ))}
+                  </TableHeader>
+                  <TableBody>
+                    {table.getRowModel().rows?.length ? (
+                      table.getRowModel().rows.map((row) => (
+                        <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                          {row.getVisibleCells().map((cell) => (
+                            <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                          ))}
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={table.getAllColumns().length} className="h-24 text-center">
+                          No results.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
               </div>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Token</TableHead>
-                    <TableHead>Balance</TableHead>
-                    <TableHead>Contract Address</TableHead>
-                    <TableHead>Chain</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {assets.map((asset) => (
-                    <TableRow key={asset.contractAddress}>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          {/* <Avatar className="h-8 w-8">
-                            {asset.logo && <AvatarImage src={asset.logo} alt={asset.name || asset.symbol || 'Token'} />}
-                            <AvatarFallback className="text-xs">{asset.symbol ? asset.symbol.slice(0, 2).toUpperCase() : 'T'}</AvatarFallback>
-                          </Avatar> */}
-                          <div className="flex flex-col">
-                            <span className="font-medium">{asset.name || asset.symbol || 'Unknown Token'}</span>
-                            {asset.symbol && asset.name && <span className="text-xs text-muted-foreground">{asset.symbol}</span>}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="font-mono font-medium">
-                          {parseFloat(asset.balance || '0').toLocaleString(undefined, {
-                            maximumFractionDigits: 6,
-                          })}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <code className="text-xs font-mono bg-muted px-2 py-1 rounded">{formatAddress(asset.contractAddress)}</code>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">{getChainUIName(data?.chainId || chainId)}</Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" asChild className="h-8">
-                          <a
-                            href={getContractExplorerUrl(asset.contractAddress, data?.chainId || chainId)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1"
-                          >
-                            View
-                            <ExternalLink className="h-3 w-3" />
-                          </a>
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <div className="flex items-center justify-end space-x-2 py-4">
+                <div className="text-muted-foreground flex-1 text-sm">
+                  Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+                </div>
+                <div className="flex items-center justify-end gap-2">
+                  <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+                    Previous
+                  </Button>
+
+                  <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+                    Next
+                  </Button>
+                </div>
+              </div>
             </div>
           )}
         </CardContent>

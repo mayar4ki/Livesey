@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRightLeft, BookOpen, Calendar, ChartArea, Compass, Handshake, HelpCircle, Landmark, Settings } from 'lucide-react';
+import { ArrowRightLeft, BookOpen, Calendar, ChartArea, Compass, HelpCircle, Landmark, Settings } from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@acme/ui';
@@ -8,6 +8,7 @@ import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -20,57 +21,66 @@ import { siteName } from '@acme/white-label/web-app';
 import Link from 'next/link';
 import { AppLogo } from '~/_components/common/AppBrand';
 
-// This is sample data.
-const items = [
+const navGroups = [
   {
-    title: 'Discover',
-    url: '/dashboard',
-    icon: Compass,
-    isActive: true,
+    label: 'Home',
+    items: [
+      {
+        title: 'Discover',
+        url: '/dashboard',
+        icon: Compass,
+      },
+      {
+        title: 'Fund Campaign',
+        url: '/dashboard/fund',
+        icon: Calendar,
+      },
+    ],
   },
   {
-    title: 'Fund Campaign',
-    url: '/dashboard/fund',
-    icon: Calendar,
+    label: 'Tokens',
+    items: [
+      {
+        title: 'My Assets',
+        url: '/dashboard/my-assets',
+        icon: ChartArea,
+      },
+      {
+        title: 'Governance',
+        url: '/dashboard/governance',
+        icon: Landmark,
+      },
+
+      {
+        title: 'Limit Orders',
+        url: '/dashboard/orders/public',
+        icon: ArrowRightLeft,
+      },
+    ],
   },
   {
-    title: 'Public Limit Orders',
-    url: '/dashboard/orders/public',
-    icon: ArrowRightLeft,
-  },
-  {
-    title: 'My Assets',
-    url: '/dashboard/my-assets',
-    icon: ChartArea,
-  },
-  {
-    title: 'Private Limit Orders',
-    url: '/dashboard/orders/private',
-    icon: Handshake,
-  },
-  {
-    title: 'Governance',
-    url: '/dashboard/governance',
-    icon: Landmark,
-  },
-  {
-    title: 'Settings',
-    url: '/dashboard/settings',
-    icon: Settings,
-  },
-  {
-    title: 'Learn',
-    url: '/',
-    icon: BookOpen,
-  },
-  {
-    title: 'Support',
-    url: '/',
-    icon: HelpCircle,
+    label: '',
+    items: [
+      {
+        title: 'Settings',
+        url: '/settings',
+        icon: Settings,
+      },
+      {
+        title: 'Learn',
+        url: '/',
+        icon: BookOpen,
+      },
+      {
+        title: 'Support',
+        url: '/support',
+        icon: HelpCircle,
+      },
+    ],
   },
 ];
 
-export const SidebarMenuItem2 = ({ item }: { item: (typeof items)[number] }) => {
+export const SidebarMenuItem2 = ({ item }: { item: (typeof navGroups)[number]['items'][number] }) => {
   return (
     <SidebarMenuItem>
       <Link href={item.url}>
@@ -109,31 +119,17 @@ export function DashboardSidebar({ ...props }: React.ComponentProps<typeof Sideb
       </SidebarHeader>
 
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarMenu>
-            {items.slice(0, 3).map((item) => (
-              <SidebarMenuItem2 key={item.title} item={item} />
-            ))}
-          </SidebarMenu>
-          <SidebarSeparator />
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarMenu>
-            {items.slice(3, 6).map((item) => (
-              <SidebarMenuItem2 key={item.title} item={item} />
-            ))}
-          </SidebarMenu>
-          <SidebarSeparator />
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarMenu>
-            {items.slice(6).map((item) => (
-              <SidebarMenuItem2 key={item.title} item={item} />
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
+        {navGroups.map((group, index) => (
+          <SidebarGroup key={index}>
+            {group.label && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}
+            <SidebarMenu>
+              {group.items.map((item) => (
+                <SidebarMenuItem2 key={item.title} item={item} />
+              ))}
+            </SidebarMenu>
+            {index < navGroups.length - 1 && <SidebarSeparator />}
+          </SidebarGroup>
+        ))}
       </SidebarContent>
 
       <SidebarRail />

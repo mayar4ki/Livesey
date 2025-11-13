@@ -1,17 +1,17 @@
 'use client';
 
-import { formatDateTime, getChainUIName, getExplorerUrl } from '@acme/shared/utils';
-import { Badge } from '@acme/ui/badge';
+import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
+import { LoadingCard } from '@acme/ui/bootstrapped/loading-card';
 import { Button } from '@acme/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
-import { ArrowLeft, Coins, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Coins } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { CopyButton } from '~/_components/common/CopyButton';
-import { ErrorStateCard } from '~/_components/common/ErrorStateCard';
-import { ExplorerLink } from '~/_components/common/ExplorerAddressLink';
-import { LoadingCard } from '~/_components/common/LoadingCard';
 import { useToken } from '~/services/token/useToken';
+import { TokenBasicInfoCard } from './_components/TokenBasicInfoCard';
+import { TokenContractInfoCard } from './_components/TokenContractInfoCard';
+import { TokenDeploymentInfoCard } from './_components/TokenDeploymentInfoCard';
+import { TokenHeaderCard } from './_components/TokenHeaderCard';
+import { TokenMetadataCard } from './_components/TokenMetadataCard';
 
 export default function Page() {
   const params = useParams();
@@ -71,180 +71,13 @@ export default function Page() {
       </div>
 
       <div className="space-y-6">
-        {/* Header Card */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-start justify-between">
-              <div>
-                <CardTitle className="text-2xl mb-2">{token.name}</CardTitle>
-                <CardDescription>
-                  <div className="flex items-center gap-2 mt-2">
-                    <Badge variant="outline" className="text-base px-3 py-1">
-                      {token.symbol}
-                    </Badge>
-                    <Badge variant="secondary">{getChainUIName(token.chainId)}</Badge>
-                  </div>
-                </CardDescription>
-              </div>
-              <Button asChild variant="outline">
-                <a
-                  href={getExplorerUrl(token.transactionHash as `0x${string}`, token.chainId)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2"
-                >
-                  View on Explorer
-                  <ExternalLink className="h-4 w-4" />
-                </a>
-              </Button>
-            </div>
-          </CardHeader>
-        </Card>
+        <TokenHeaderCard token={token} />
 
-        {/* Token Details Grid */}
         <div className="grid gap-6 md:grid-cols-2">
-          {/* Basic Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Basic Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Token Name</label>
-                <p className="text-base font-medium mt-1">{token.name}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Symbol</label>
-                <p className="text-base font-medium mt-1">
-                  <Badge variant="outline">{token.symbol}</Badge>
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Total Supply</label>
-                <p className="text-base font-mono mt-1">{BigInt(token.totalSupply).toLocaleString('en-US')}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Chain</label>
-                <p className="text-base mt-1">
-                  <Badge variant="secondary">{getChainUIName(token.chainId)}</Badge>
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Contract Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Contract Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Contract Address</label>
-                <div className="mt-1">
-                  <ExplorerLink hash={token.contractAddress} chainId={token.chainId} showFull />
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Deployer Address</label>
-                <div className="mt-1">
-                  <ExplorerLink hash={token.deployerAddress} chainId={token.chainId} showFull />
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Transaction Hash</label>
-                <div className="mt-1">
-                  <ExplorerLink hash={token.transactionHash} chainId={token.chainId} showFull />
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Block Number</label>
-                <p className="text-base font-mono mt-1">{BigInt(token.blockNumber).toLocaleString('en-US')}</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Deployment Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Deployment Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Deployed At</label>
-                <p className="text-base mt-1">{formatDateTime(token.deployedAt)}</p>
-              </div>
-              {token.verifiedAt && (
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Verified At</label>
-                  <p className="text-base mt-1">{formatDateTime(token.verifiedAt)}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Metadata */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Metadata</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Token ID</label>
-                <p className="text-base font-mono mt-1 break-all">{token.id}</p>
-              </div>
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="text-sm font-medium text-muted-foreground">Asset Reference Hash</label>
-                  <CopyButton
-                    textToCopy={token.assetRefHash}
-                    successMessage="Hash copied to clipboard"
-                    errorMessage="Failed to copy hash"
-                    title="Copy hash"
-                    className="h-8 w-8 p-0 shrink-0"
-                  />
-                </div>
-                <div className="mt-1 flex items-center gap-2 flex-wrap">
-                  <code className="text-xs font-mono bg-muted px-3 py-2 rounded break-all flex-1 min-w-0">{token.assetRefHash}</code>
-                </div>
-              </div>
-              {token.seedData && (
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-sm font-medium text-muted-foreground">Seed Data</label>
-                    <CopyButton
-                      textToCopy={() => {
-                        if (!token.seedData) return '';
-                        const seedDataObj = Array.isArray(token.seedData.seedData)
-                          ? token.seedData.seedData.reduce((acc: Record<string, string>, item: { key: string; value: string }) => {
-                              acc[item.key] = item.value;
-                              return acc;
-                            }, {})
-                          : token.seedData.seedData;
-                        return JSON.stringify(seedDataObj);
-                      }}
-                      successMessage="Seed data copied to clipboard"
-                      errorMessage="Failed to copy seed data"
-                      title="Copy seed data"
-                    />
-                  </div>
-                  <div className="mt-1">
-                    <pre className="text-xs font-mono bg-muted p-3 rounded overflow-auto max-h-48">
-                      {JSON.stringify(
-                        Array.isArray(token.seedData.seedData)
-                          ? token.seedData.seedData.reduce((acc: Record<string, string>, item: { key: string; value: string }) => {
-                              acc[item.key] = item.value;
-                              return acc;
-                            }, {})
-                          : token.seedData.seedData,
-                        null,
-                        2
-                      )}
-                    </pre>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <TokenBasicInfoCard token={token} />
+          <TokenContractInfoCard token={token} />
+          <TokenDeploymentInfoCard token={token} />
+          <TokenMetadataCard token={token} />
         </div>
       </div>
     </div>

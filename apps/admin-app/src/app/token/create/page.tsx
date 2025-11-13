@@ -3,11 +3,11 @@
 import { AnimatePresence } from 'motion/react';
 import { TokenCreateForm } from '../_components/create/TokenCreateForm';
 
+import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
 import { Button } from '@acme/ui/button';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, useWatch } from 'react-hook-form';
 import { useAccount } from 'wagmi';
-import { ErrorStateCard } from '~/_components/common/ErrorStateCard';
 import { TokenSuccessCard } from '../_components/create/TokenSuccessCard';
 import { TransactionStatusCard } from '../_components/create/TransactionStatusCard';
 import { useBeaconProxyAddress } from '../_hooks/useBeaconProxyAddress';

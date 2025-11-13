@@ -15,7 +15,7 @@ export default function Layout({
     <RequireWallet message="Please connect your wallet to access the dashboard.">
       <SidebarProvider>
         <DashboardSidebar />
-        <SidebarInset>
+        <SidebarInset className=" overflow-x-auto">
           <DashboardHeader />
           {children}
           <DashboardFooter />

@@ -5,6 +5,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./helpers": "./src/helpers/index.ts",
+    "./hooks": "./src/hooks/index.ts",
     "./utils": "./src/utils/index.ts"
   },
   "scripts": {
@@ -17,7 +18,14 @@
   "devDependencies": {
     "@acme/tsconfig": "workspace:*",
     "@types/node": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@types/react": "catalog:react19",
+    "react": "catalog:react19",
+    "next": "catalog:react19"
+  },
+  "peerDependencies": {
+    "next": "catalog:react19",
+    "react": "catalog:react19"
   },
   "license": "MIT"
 }
