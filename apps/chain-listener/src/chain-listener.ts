@@ -3,6 +3,7 @@ import { FactoryAbi } from "@acme/smart-contract";
 import { Address, createPublicClient, http } from "viem";
 
 import { handleBeaconProxyCreatedEvents } from "./handlers/beacon-proxy-created-handler.js";
+import { handleNewAdminAddressEvent } from "./handlers/new-admin-address-handler.js";
 import { validateEnv } from "./schemas/env-validation-schema.js";
 import { getChain } from "./utils/get-chain.js";
 
@@ -27,20 +28,32 @@ async function startListener() {
       transport: http(env.CHAIN_RPC_URL),
     });
 
-    const unwatch = publicClient.watchContractEvent({
-      address: env.FACTORY_ADDRESS as Address,
-      abi: FactoryAbi,
-      eventName: "BeaconProxyCreated",
-      onLogs: async (logs) => {
-        await handleBeaconProxyCreatedEvents(logs);
-      },
-    });
+    const unwatchers = [
+      publicClient.watchContractEvent({
+        address: env.FACTORY_ADDRESS as Address,
+        abi: FactoryAbi,
+        eventName: "BeaconProxyCreated",
+        onLogs: async (logs) => {
+          await handleBeaconProxyCreatedEvents(logs);
+        },
+      }),
+      publicClient.watchContractEvent({
+        address: env.FACTORY_ADDRESS as Address,
+        abi: FactoryAbi,
+        eventName: "NewAdminAddress",
+        onLogs: async (logs) => {
+          if (logs?.[0]) {
+            await handleNewAdminAddressEvent(logs?.[0]);
+          }
+        },
+      }),
+    ];
 
     console.log("✅ Event listener started successfully");
     console.log("Press CTRL+C to stop\n");
 
     // Keep the process alive
-    return unwatch;
+    return () => unwatchers.forEach((unwatch) => unwatch());
   } catch (error) {
     console.error("❌ Failed to start event listener:", error);
     throw error;

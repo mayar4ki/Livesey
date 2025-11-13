@@ -1,4 +1,5 @@
 import { prisma } from "@acme/db";
+import { getSeedDataKey } from "@acme/queue";
 import { ensureConnected, redis } from "@acme/queue/client";
 import { Address } from "viem";
 
@@ -32,7 +33,7 @@ export async function storeDeployedTokens(
   const seedDataMap = new Map<string, any>();
 
   for (const token of tokens) {
-    const seedKey = `seed:${token.assetRefHash}`;
+    const seedKey = getSeedDataKey(token.assetRefHash);
     try {
       const seedValue = await redis.get(seedKey);
       if (!seedValue) {

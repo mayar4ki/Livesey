@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { TokenService } from './token.service';
+import { SignatureVerificationGuard } from './guards/signature-verification.guard';
 import { TokenController } from './token.controller';
+import { TokenService } from './token.service';
 
 @Module({
   controllers: [TokenController],
-  providers: [TokenService],
+  providers: [TokenService, SignatureVerificationGuard],
 })
 export class TokenModule {}

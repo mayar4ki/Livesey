@@ -1,5 +1,6 @@
 import { Address } from "viem";
-import { redis, ensureConnected } from "../client.js";
+import { ensureConnected, redis } from "../client.js";
+import { getVerificationTaskKey } from "../keys.js";
 import { VerificationTask } from "./types.js";
 
 /**
@@ -11,7 +12,9 @@ export async function getVerificationTask(
 ): Promise<VerificationTask | null> {
   try {
     await ensureConnected();
-    const data = await redis.get(`task:${chainId}:${contractAddress}`);
+    const data = await redis.get(
+      getVerificationTaskKey(chainId, contractAddress)
+    );
     if (!data) {
       return null;
     }

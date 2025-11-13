@@ -1,5 +1,6 @@
 import { Address } from "viem";
 import { QUEUE_NAME, ensureConnected, redis } from "../client.js";
+import { getVerificationTaskKey } from "../keys.js";
 import { VerificationTask } from "./types.js";
 
 /**
@@ -23,7 +24,10 @@ export async function createVerificationTask(data: {
     };
 
     // Store task in Redis with key: task:{contractAddress}
-    await redis.set(`task:${chainId}:${contractAddress}`, JSON.stringify(task));
+    await redis.set(
+      getVerificationTaskKey(chainId, contractAddress),
+      JSON.stringify(task)
+    );
 
     // Add tx to queue (using Redis List)
     await redis.lPush(QUEUE_NAME, `${chainId}:${contractAddress}`);

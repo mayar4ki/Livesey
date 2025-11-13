@@ -35,6 +35,7 @@ export class TokenController {
 
   @Post('pending-seed')
   @HttpCode(HttpStatus.OK)
+  // @UseGuards(SignatureVerificationGuard)
   async storePendingSeed(@Body() dto: StorePendingSeedDto) {
     return this.tokenService.storePendingSeed(dto);
   }

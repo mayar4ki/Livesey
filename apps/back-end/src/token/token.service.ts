@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
+import { getSeedDataKey } from '@acme/queue';
 import { BaseResponse } from 'src/lib/base.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
@@ -80,7 +81,7 @@ export class TokenService {
     await this.redis.ensureConnected();
 
     // Store seed data in Redis with 30 minutes TTL (1800 seconds)
-    const seedKey = `seed:${dto.assetRefHash}`;
+    const seedKey = getSeedDataKey(dto.assetRefHash);
     const seedValue = JSON.stringify(dto.seedData);
 
     // SETEX sets key with expiration time in seconds

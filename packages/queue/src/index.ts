@@ -1,3 +1,4 @@
+export { StoreKeys, getSeedDataKey, getVerificationTaskKey } from "./keys.js";
 export { consumeVerificationTask } from "./verification-task/consumeVerificationTask.js";
 export { createVerificationTask } from "./verification-task/createVerificationTask.js";
 export { getVerificationTask } from "./verification-task/getVerificationTask.js";

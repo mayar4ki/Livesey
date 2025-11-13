@@ -1,7 +1,8 @@
 import { Address } from "viem";
-import { redis, ensureConnected } from "../client.js";
-import { VerificationTask } from "./types.js";
+import { ensureConnected, redis } from "../client.js";
+import { getVerificationTaskKey } from "../keys.js";
 import { getVerificationTask } from "./getVerificationTask.js";
+import { VerificationTask } from "./types.js";
 
 /**
  * Update verification task status
@@ -26,7 +27,7 @@ export async function updateVerificationTask(
     };
 
     await redis.set(
-      `task:${chainId}:${contractAddress}`,
+      getVerificationTaskKey(chainId, contractAddress),
       JSON.stringify(updated)
     );
     console.log(

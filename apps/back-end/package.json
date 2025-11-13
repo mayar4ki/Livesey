@@ -30,7 +30,8 @@
     "rxjs": "^7.8.1",
     "viem": "catalog:",
     "@acme/queue": "workspace:*",
-    "@acme/db": "workspace:*"
+    "@acme/db": "workspace:*",
+    "@acme/smart-contract": "workspace:*"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
