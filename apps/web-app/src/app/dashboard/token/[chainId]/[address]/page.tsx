@@ -1,21 +1,27 @@
 'use client';
 
 import { ERC20ImplementationAbi } from '@acme/smart-contract';
+import { cn } from '@acme/ui';
 import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
 import { LoadingCard } from '@acme/ui/bootstrapped/loading-card';
-import { Button } from '@acme/ui/button';
-import { ArrowLeft, Wallet } from 'lucide-react';
-import Link from 'next/link';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@acme/ui/tabs';
+import { Wallet } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { Address } from 'viem';
 import { useReadContract } from 'wagmi';
 import { addTokenToWallet } from '~/_helpers/addTokenToWallet';
 import { useToken } from '~/services/token/useToken';
+import { BuySellOrderCard } from './_components/BuySellOrderCard';
+import { CommentsCard } from './_components/CommentsCard';
+import { HoldersListCard } from './_components/HoldersListCard';
 import { TokenBasicInfoCard } from './_components/TokenBasicInfoCard';
+import { TokenChartCard } from './_components/TokenChartCard';
 import { TokenContractInfoCard } from './_components/TokenContractInfoCard';
 import { TokenDeploymentInfoCard } from './_components/TokenDeploymentInfoCard';
 import { TokenHeaderCard } from './_components/TokenHeaderCard';
 import { TokenMetadataCard } from './_components/TokenMetadataCard';
+import { TradesListCard } from './_components/TradesListCard';
+import { VotingCard } from './_components/VotingCard';
 
 export default function TokenPage() {
   const params = useParams();
@@ -61,24 +67,60 @@ export default function TokenPage() {
 
   return (
     <div className="p-4 md:p-6 flex-1">
-      <div className="mb-6">
-        <Button asChild variant="ghost" className="mb-4">
-          <Link href="/dashboard">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
-          </Link>
-        </Button>
-      </div>
-
       <div className="space-y-6">
-        <TokenHeaderCard token={token} onAddToWallet={handleAddToWallet} isAddingToWallet={isLoadingDecimals || decimals === undefined} />
+        <TokenHeaderCard
+          token={token}
+          onAddToWallet={handleAddToWallet}
+          isAddingToWallet={isLoadingDecimals || decimals === undefined}
+          decimals={decimals !== undefined ? Number(decimals) : undefined}
+          isLoadingDecimals={isLoadingDecimals}
+        />
 
-        <div className="grid gap-6 md:grid-cols-2">
-          <TokenBasicInfoCard token={token} decimals={decimals} isLoadingDecimals={isLoadingDecimals} />
-          <TokenContractInfoCard token={token} />
-          <TokenDeploymentInfoCard token={token} />
-          <TokenMetadataCard token={token} />
-        </div>
+        <Tabs defaultValue="overview" className="w-full ">
+          <TabsList className="grid w-full grid-cols-6 lg:flex lg:w-fit mb-4">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="trade">Trade</TabsTrigger>
+            <TabsTrigger value="voting">Voting</TabsTrigger>
+            <TabsTrigger value="comments">Comments</TabsTrigger>
+            <TabsTrigger value="holders">Holders</TabsTrigger>
+          </TabsList>
+
+          {/* Overview Tab */}
+          <TabsContent value="overview">
+            <div className="grid gap-6 md:grid-cols-2">
+              <TokenBasicInfoCard token={token} decimals={decimals} isLoadingDecimals={isLoadingDecimals} />
+              <TokenContractInfoCard token={token} />
+              <TokenDeploymentInfoCard token={token} />
+              <TokenMetadataCard token={token} />
+            </div>
+          </TabsContent>
+
+          {/* Voting Tab */}
+          <TabsContent value="voting">
+            <VotingCard />
+          </TabsContent>
+
+          {/* Comments Tab */}
+          <TabsContent value="comments">
+            <CommentsCard />
+          </TabsContent>
+
+          {/* Holders Tab */}
+          <TabsContent value="holders">
+            <HoldersListCard chainId={chainId} />
+          </TabsContent>
+
+          {/* Trade Tab */}
+          <TabsContent value="trade" forceMount className={cn('space-y-6 data-[state=inactive]:hidden')}>
+            <div className="grid gap-6 lg:grid-cols-3">
+              <div className="lg:col-span-2">
+                <TokenChartCard />
+              </div>
+              <BuySellOrderCard />
+            </div>
+            <TradesListCard />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

@@ -54,9 +54,9 @@ export default function Page() {
   }
 
   return (
-    <div className="px-4 md:px-4 flex-1  pt-2">
+    <div className="p-4 md:p-6 flex-1">
       <TokenViewToggle />
-      <Card className=" py-0 ">
+      <Card className=" mt-4 ">
         <CardContent className=" p-0">
           {tokens.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">

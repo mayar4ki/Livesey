@@ -61,15 +61,6 @@ export default function Page() {
 
   return (
     <div className="p-4 md:p-6 flex-1">
-      <div className="mb-6">
-        <Button asChild variant="ghost" className="mb-4">
-          <Link href="/token">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Token List
-          </Link>
-        </Button>
-      </div>
-
       <div className="space-y-6">
         <TokenHeaderCard token={token} />
 

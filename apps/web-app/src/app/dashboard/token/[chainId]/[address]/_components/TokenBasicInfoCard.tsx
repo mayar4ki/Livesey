@@ -48,4 +48,3 @@ export function TokenBasicInfoCard({ token, decimals, isLoadingDecimals }: Token
     </Card>
   );
 }
-

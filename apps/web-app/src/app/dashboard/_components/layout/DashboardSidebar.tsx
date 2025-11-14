@@ -63,7 +63,7 @@ const navGroups = [
     items: [
       {
         title: 'Settings',
-        url: '/settings',
+        url: '/dashboard/settings',
         icon: Settings,
       },
       {
@@ -73,7 +73,7 @@ const navGroups = [
       },
       {
         title: 'Support',
-        url: '/support',
+        url: '/dashboard/support',
         icon: HelpCircle,
       },
     ],

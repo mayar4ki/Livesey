@@ -232,7 +232,7 @@ export function TokensTable({ tokens }: TokensTableProps) {
       columnFilters,
       pagination: {
         pageIndex: 0,
-        pageSize: 15,
+        pageSize: 9,
       },
     },
   });
@@ -240,7 +240,7 @@ export function TokensTable({ tokens }: TokensTableProps) {
   return (
     <div>
       <div className="overflow-hidden ">
-        <Table className=" min-h-[calc(100vh-15rem)]">
+        <Table className=" h-[calc(100vh-29rem)]">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
