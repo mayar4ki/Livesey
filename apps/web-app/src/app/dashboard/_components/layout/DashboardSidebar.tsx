@@ -1,6 +1,6 @@
 'use client';
 
-import { BookOpen, Calendar, ChartArea, Compass, HelpCircle, Settings } from 'lucide-react';
+import { BookOpen, ChartArea, Compass, HelpCircle, Settings } from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@acme/ui';
@@ -30,11 +30,11 @@ const navGroups = [
         url: '/dashboard',
         icon: Compass,
       },
-      {
-        title: 'Fund Campaign',
-        url: '/dashboard/fund',
-        icon: Calendar,
-      },
+      // {
+      //   title: 'Fund Campaign',
+      //   url: '/dashboard/fund',
+      //   icon: Calendar,
+      // },
     ],
   },
   {

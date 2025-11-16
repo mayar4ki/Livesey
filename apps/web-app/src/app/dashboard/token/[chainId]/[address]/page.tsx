@@ -11,7 +11,6 @@ import { Address } from 'viem';
 import { useReadContract } from 'wagmi';
 import { addTokenToWallet } from '~/_helpers/addTokenToWallet';
 import { useToken } from '~/services/token/useToken';
-import { HoldersListCard } from './_components/HoldersListCard';
 import { OverviewTab } from './_components/OverviewTab';
 import { TokenHeaderCard } from './_components/TokenHeaderCard';
 import { TradeTab } from './_components/TradeTab';
@@ -74,7 +73,7 @@ export default function TokenPage() {
           <TabsList className="grid w-full grid-cols-6 lg:flex lg:w-fit mb-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="trade">Trade</TabsTrigger>
-            <TabsTrigger value="holders">Holders</TabsTrigger>
+
             <TabsTrigger value="voting">Voting</TabsTrigger>
           </TabsList>
 
@@ -85,12 +84,7 @@ export default function TokenPage() {
 
           {/* Voting Tab */}
           <TabsContent value="voting">
-            <VotingTab />
-          </TabsContent>
-
-          {/* Holders Tab */}
-          <TabsContent value="holders">
-            <HoldersListCard chainId={chainId} />
+            <VotingTab tokenId={token.id} />
           </TabsContent>
 
           {/* Trade Tab */}

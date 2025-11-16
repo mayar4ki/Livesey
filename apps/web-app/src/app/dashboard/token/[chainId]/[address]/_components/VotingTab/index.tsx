@@ -3,12 +3,10 @@
 import { useQueryParams } from '@acme/client/hooks';
 import { DataTablePagination } from '@acme/ui/bootstrapped/data-table-pagination';
 import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
-import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 import { Proposal } from '~/services/proposal/useProposal';
 import { useProposals } from '~/services/proposal/useProposals';
 import { getProposalStatus, type ProposalStatus } from '~/services/proposal/utils';
-import { useToken } from '~/services/token/useToken';
 import { CreateProposalForm } from './CreateProposalForm';
 import { ProposalItem } from './ProposalItem';
 
@@ -52,21 +50,18 @@ function transformProposal(proposal: Proposal): ProposalDisplay {
   };
 }
 
-export function VotingTab() {
-  const params = useParams();
-  const chainId = params.chainId as string;
-  const tokenAddress = params.address as string;
+export interface VotingTabProps {
+  tokenId: string;
+}
 
+export function VotingTab({ tokenId }: VotingTabProps) {
   const { params: queryParams, setParams } = useQueryParams({ take: 10, skip: 0 });
 
-  const { data: tokenResponse } = useToken(chainId, tokenAddress);
-
-  const { data: proposalsResponse, isLoading: isLoadingProposals } = useProposals(tokenResponse?.data?.id, {
+  const { data: proposalsResponse, isLoading: isLoadingProposals } = useProposals(tokenId, {
     skip: queryParams.skip,
     take: queryParams.take,
   });
 
-  const token = tokenResponse?.data;
   const proposals = proposalsResponse?.data || [];
 
   const transformedProposals = useMemo(() => {
@@ -75,7 +70,7 @@ export function VotingTab() {
 
   return (
     <div className="space-y-6">
-      {token && <CreateProposalForm deployedTokenId={token.id} />}
+      <CreateProposalForm deployedTokenId={tokenId} />
 
       <Card>
         <CardHeader>

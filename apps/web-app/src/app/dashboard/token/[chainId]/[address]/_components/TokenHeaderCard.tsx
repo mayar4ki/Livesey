@@ -5,7 +5,7 @@ import { Badge } from '@acme/ui/badge';
 import { ExplorerLink } from '@acme/ui/bootstrapped/explorer-address-link';
 import { Button } from '@acme/ui/button';
 import { Card, CardContent } from '@acme/ui/card';
-import { CheckCircle2, ExternalLink, Plus } from 'lucide-react';
+import { CheckCircle2, ExternalLink, Plus, Users } from 'lucide-react';
 import { Token } from '~/services/token/useToken';
 
 type TokenHeaderCardProps = {
@@ -17,7 +17,8 @@ type TokenHeaderCardProps = {
 };
 
 export function TokenHeaderCard({ token, onAddToWallet, isAddingToWallet, decimals, isLoadingDecimals }: TokenHeaderCardProps) {
-  const explorerUrl = getExplorerUrl(token.contractAddress as `0x${string}`, token.chainId);
+  const explorerUrl = getExplorerUrl(token.contractAddress as `0x${string}`, token.chainId, 'token');
+  const tokenHoldersUrl = getExplorerUrl(token.contractAddress as `0x${string}`, token.chainId, 'token-holders');
   const formattedTotalSupply = formatTokenBalance(token.totalSupply, decimals !== undefined ? Number(decimals) : 1, 0);
   const deployedDate = new Date(token.deployedAt).toLocaleDateString('en-US', {
     year: 'numeric',
@@ -30,7 +31,7 @@ export function TokenHeaderCard({ token, onAddToWallet, isAddingToWallet, decima
       <CardContent className="p-5">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           {/* Left: Token Info */}
-          <div className="flex items-center gap-4 flex-1 min-w-0 flex-wrap">
+          <div className="flex items-center gap-4 flex-1  flex-wrap min-w-md">
             <div className="flex items-center gap-2.5 flex-wrap min-w-0">
               <h1 className="text-xl font-bold truncate">{token.name}</h1>
               <Badge variant="outline" className="text-xs font-semibold px-2 py-0.5 shrink-0">
@@ -55,7 +56,7 @@ export function TokenHeaderCard({ token, onAddToWallet, isAddingToWallet, decima
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="text-xs font-medium">Contract:</span>
-                <ExplorerLink hash={token.contractAddress as `0x${string}`} chainId={token.chainId} className="text-xs" />
+                <ExplorerLink hash={token.contractAddress as `0x${string}`} chainId={token.chainId} type="token" className="text-xs" />
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="text-xs font-medium">Deployed:</span>
@@ -71,8 +72,15 @@ export function TokenHeaderCard({ token, onAddToWallet, isAddingToWallet, decima
               Add to Wallet
             </Button>
             <Button asChild variant="outline" size="sm" className="gap-1.5">
+              <a href={tokenHoldersUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center">
+                <Users className="h-3.5 w-3.5" />
+                Holders
+              </a>
+            </Button>
+            <Button asChild variant="outline" size="sm" className="gap-1.5">
               <a href={explorerUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center">
                 <ExternalLink className="h-3.5 w-3.5" />
+                Explorer
               </a>
             </Button>
           </div>
