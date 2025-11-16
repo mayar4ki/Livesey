@@ -17,14 +17,14 @@ export interface Token {
   tokenPrices: any[];
 }
 
-export interface TokenMetadata {
+interface TokenMetadata {
   symbol?: string;
   decimals?: number;
   name?: string;
   logo: any;
 }
 
-export interface AssetsResponse {
+interface AssetsResponse {
   tokens: Token[];
   walletAddress: string;
   chainId: number;

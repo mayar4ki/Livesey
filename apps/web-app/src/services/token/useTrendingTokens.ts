@@ -1,42 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '~/services/apiClient';
-
-export interface TokenSeedData {
-  id: string;
-  seedData: Record<string, unknown>;
-  createdAt: Date | string;
-  updatedAt: Date | string;
-}
-
-export interface Token {
-  id: string;
-  contractAddress: string;
-  chainId: number;
-  name: string;
-  assetRefHash: string;
-  seedData?: TokenSeedData | null;
-  symbol: string;
-  totalSupply: string;
-  transactionHash: string;
-  blockNumber: bigint | string;
-  deployerAddress: string;
-  verifiedAt: Date | string | null;
-  deployedAt: Date | string;
-}
-
-export interface BaseResponse<T> {
-  data: T;
-}
-
-export interface ListBaseResponse<T> extends BaseResponse<T[]> {
-  pagination?: Pagination;
-}
-
-export interface Pagination {
-  skip: number;
-  take: number;
-  total: number;
-}
+import { ListBaseResponse } from '../types';
+import { Token } from './useToken';
 
 type UseTrendingTokensOptions = {
   skip?: number;

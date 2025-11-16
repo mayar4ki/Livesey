@@ -19,3 +19,23 @@ export const ADMIN_REQUEST_TYPES = {
   ],
 } as const;
 
+/**
+ * EIP-712 domain for signature requests
+ */
+export const SIGNATURE_REQUEST_DOMAIN = {
+  name: "https://livesey.com",
+  version: "1",
+} as const;
+
+/**
+ * EIP-712 types for signature requests
+ */
+export const SIGNATURE_REQUEST_TYPES = {
+  SignatureRequest: [
+    { name: "method", type: "string" },
+    { name: "path", type: "string" },
+    { name: "bodyHash", type: "bytes32" },
+    { name: "timestamp", type: "uint256" },
+    { name: "nonce", type: "uint256" },
+  ],
+} as const;

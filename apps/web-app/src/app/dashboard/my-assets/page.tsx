@@ -24,7 +24,7 @@ import { useAccount, useChainId } from 'wagmi';
 
 import { Button } from '@acme/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@acme/ui/table';
-import { useWalletAssets, type Token } from '~/services/token/useWalletAssets';
+import { useWalletAssets, type Token } from '~/services/alchemy/useWalletAssets';
 
 export default function Page() {
   const chainId = useChainId();

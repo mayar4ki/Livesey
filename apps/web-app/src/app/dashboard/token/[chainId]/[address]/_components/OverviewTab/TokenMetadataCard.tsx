@@ -1,7 +1,7 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
 import { CopyButton } from '@acme/ui/bootstrapped/copy-button';
+import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
 import { Token } from '~/services/token/useTrendingTokens';
 
 type TokenMetadataCardProps = {
@@ -68,4 +68,3 @@ export function TokenMetadataCard({ token }: TokenMetadataCardProps) {
     </Card>
   );
 }
-

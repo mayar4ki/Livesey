@@ -2,7 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createPublicClient, http, type PublicClient } from 'viem';
 import { mainnet, sepolia } from 'viem/chains';
-import { Env } from '../config/env-validation.schema';
+import { Env } from '../../config/env-validation.schema';
 
 /**
  * Get chain configuration based on chain ID

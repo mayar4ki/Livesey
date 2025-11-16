@@ -53,9 +53,12 @@ model TokenSeedData {
 }
 
 model Proposal {
-  id          String   @id @default(cuid())
+  id          String @id @default(cuid())
   title       String
-  description String   @db.Text
+  description String @db.Text
+
+  creatorAddress String @db.VarChar(42) // Ethereum wallet address (0x + 40 hex chars)
+
   duration    Int // Duration in seconds
   blockNumber BigInt // Block number when proposal was created
   createdAt   DateTime @default(now())
@@ -74,13 +77,13 @@ model Proposal {
 }
 
 model Vote {
-  id           String   @id @default(cuid())
-  voterAddress String   @db.VarChar(42) // Ethereum wallet address (0x + 40 hex chars)
+  id String @id @default(cuid())
+
+  voterAddress String  @db.VarChar(42) // Ethereum wallet address (0x + 40 hex chars)
   votingPower  BigInt // Voting power (token balance or delegated power)
   choice       Boolean // true = yes/for, false = no/against
-  signature    String   @db.VarChar(132) // EIP-191 signature (0x + 130 hex chars)
-  messageHash  String   @db.VarChar(66) // Hash of the signed message (0x + 64 hex chars)
-  createdAt    DateTime @default(now())
+
+  createdAt DateTime @default(now())
 
   proposal   Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
   proposalId String

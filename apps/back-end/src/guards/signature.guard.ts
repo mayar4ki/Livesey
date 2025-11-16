@@ -1,29 +1,26 @@
-import { StoreKeys } from '@acme/queue';
 import {
-  ADMIN_REQUEST_DOMAIN,
-  ADMIN_REQUEST_TYPES,
+  SIGNATURE_REQUEST_DOMAIN,
+  SIGNATURE_REQUEST_TYPES,
   createAdminRequestMessage,
-  getAdminNonceKey,
+  createSignatureRequestMessage,
+  getSignatureNonceKey,
 } from '@acme/shared';
-import { FactoryAbi } from '@acme/smart-contract';
 import {
   CanActivate,
   ExecutionContext,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Address, recoverTypedDataAddress } from 'viem';
-import { Env } from '../config/env-validation.schema';
+import { recoverTypedDataAddress } from 'viem';
 import { RedisService } from '../lib/redis/redis.service';
 import { ViemPublicClientService } from '../lib/viem/viem.service';
 
 /**
- * Guard that verifies admin signature using EIP-712 typed data signing
+ * Guard that verifies signature using EIP-712 typed data signing
  *
  * Expected headers:
  * - Authorization: EIP-712 signature (0x...)
- * - X-Signer: Admin wallet address
+ * - X-Signer: Wallet address
  * - X-Nonce: Unique nonce (uint256)
  * - X-Timestamp: Request timestamp (uint256, milliseconds)
  *
@@ -31,17 +28,15 @@ import { ViemPublicClientService } from '../lib/viem/viem.service';
  * 1. Verifies nonce hasn't been used (prevents replay attacks)
  * 2. Verifies timestamp is fresh (within 5 minutes)
  * 3. Verifies EIP-712 signature matches the signer
- * 4. Verifies signer is the admin address from the Factory contract
  */
 @Injectable()
-export class AdminSignatureGuard implements CanActivate {
+export class SignatureGuard implements CanActivate {
   private readonly NONCE_TTL = 300; // 5 minutes in seconds
   private readonly MAX_TIMESTAMP_AGE = 5 * 60 * 1000; // 5 minutes in milliseconds
 
   constructor(
     private readonly viemPublicClient: ViemPublicClientService,
     private readonly redis: RedisService,
-    private readonly configService: ConfigService<Env>,
   ) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
@@ -88,18 +83,15 @@ export class AdminSignatureGuard implements CanActivate {
 
     // Verify nonce hasn't been used
     await this.redis.ensureConnected();
-    const nonceKey = getAdminNonceKey(signer, nonceNum.toString());
+    const nonceKey = getSignatureNonceKey(signer, nonceNum.toString());
     const nonceUsed = await this.redis.client.get(nonceKey);
 
     if (nonceUsed) {
       throw new UnauthorizedException('Nonce has already been used');
     }
 
-    // Get admin address
-    const adminAddress = await this.getAdminAddress();
-
     // Create the message that should have been signed
-    const message = createAdminRequestMessage({
+    const message = createSignatureRequestMessage({
       method: req.method,
       path: req.path,
       body: req.body,
@@ -112,7 +104,6 @@ export class AdminSignatureGuard implements CanActivate {
       signature,
       signer,
       message,
-      adminAddress,
     );
 
     if (!isValid) {
@@ -124,9 +115,6 @@ export class AdminSignatureGuard implements CanActivate {
     // Mark nonce as used
     await this.redis.client.setEx(nonceKey, this.NONCE_TTL, '1');
 
-    // Attach admin address to request for use in controllers
-    req.adminAddress = signer.toLowerCase();
-
     return true;
   }
 
@@ -134,7 +122,6 @@ export class AdminSignatureGuard implements CanActivate {
     signature: string,
     signer: string,
     message: ReturnType<typeof createAdminRequestMessage>,
-    expectedAdminAddress: string,
   ): Promise<boolean> {
     try {
       const chainId = this.viemPublicClient.getChainId();
@@ -142,11 +129,11 @@ export class AdminSignatureGuard implements CanActivate {
       // Recover the address from the typed data signature
       const recoveredAddress = await recoverTypedDataAddress({
         domain: {
-          ...ADMIN_REQUEST_DOMAIN,
+          ...SIGNATURE_REQUEST_DOMAIN,
           chainId,
         },
-        types: ADMIN_REQUEST_TYPES,
-        primaryType: 'AdminRequest',
+        types: SIGNATURE_REQUEST_TYPES,
+        primaryType: 'SignatureRequest',
         message,
         signature: signature as `0x${string}`,
       });
@@ -155,46 +142,10 @@ export class AdminSignatureGuard implements CanActivate {
       const recoveredLower = recoveredAddress.toLowerCase();
       const signerLower = signer.toLowerCase();
 
-      if (recoveredLower !== signerLower) {
-        return false;
-      }
-
-      // Verify signer is admin
-      const adminLower = expectedAdminAddress.toLowerCase();
-
-      return recoveredLower === adminLower;
+      return recoveredLower === signerLower;
     } catch (error) {
       console.error('EIP-712 signature verification error:', error);
       return false;
     }
-  }
-
-  private async getAdminAddress(): Promise<string> {
-    await this.redis.ensureConnected();
-
-    // Try to get from cache first
-    const cachedAdminAddress = await this.redis.client.get(
-      StoreKeys.FACTORY_ADMIN_ADDRESS,
-    );
-
-    if (cachedAdminAddress) {
-      return cachedAdminAddress;
-    }
-
-    // If not in cache, fetch from contract
-    const adminAddress = await this.viemPublicClient.client.readContract({
-      address: this.configService.get('FACTORY_ADDRESS') as Address,
-      abi: FactoryAbi,
-      functionName: 'admin',
-    });
-
-    // Store in Redis with 30 minutes TTL
-    await this.redis.client.setEx(
-      StoreKeys.FACTORY_ADMIN_ADDRESS,
-      1800, // 1800 seconds = 30 minutes
-      adminAddress,
-    );
-
-    return adminAddress;
   }
 }

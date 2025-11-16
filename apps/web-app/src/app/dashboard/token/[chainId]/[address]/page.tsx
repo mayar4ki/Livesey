@@ -11,17 +11,11 @@ import { Address } from 'viem';
 import { useReadContract } from 'wagmi';
 import { addTokenToWallet } from '~/_helpers/addTokenToWallet';
 import { useToken } from '~/services/token/useToken';
-import { BuySellOrderCard } from './_components/BuySellOrderCard';
-import { CommentsCard } from './_components/CommentsCard';
 import { HoldersListCard } from './_components/HoldersListCard';
-import { TokenBasicInfoCard } from './_components/TokenBasicInfoCard';
-import { TokenChartCard } from './_components/TokenChartCard';
-import { TokenContractInfoCard } from './_components/TokenContractInfoCard';
-import { TokenDeploymentInfoCard } from './_components/TokenDeploymentInfoCard';
+import { OverviewTab } from './_components/OverviewTab';
 import { TokenHeaderCard } from './_components/TokenHeaderCard';
-import { TokenMetadataCard } from './_components/TokenMetadataCard';
-import { TradesListCard } from './_components/TradesListCard';
-import { VotingCard } from './_components/VotingCard';
+import { TradeTab } from './_components/TradeTab';
+import { VotingTab } from './_components/VotingTab';
 
 export default function TokenPage() {
   const params = useParams();
@@ -80,29 +74,18 @@ export default function TokenPage() {
           <TabsList className="grid w-full grid-cols-6 lg:flex lg:w-fit mb-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="trade">Trade</TabsTrigger>
-            <TabsTrigger value="voting">Voting</TabsTrigger>
-            <TabsTrigger value="comments">Comments</TabsTrigger>
             <TabsTrigger value="holders">Holders</TabsTrigger>
+            <TabsTrigger value="voting">Voting</TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
           <TabsContent value="overview">
-            <div className="grid gap-6 md:grid-cols-2">
-              <TokenBasicInfoCard token={token} decimals={decimals} isLoadingDecimals={isLoadingDecimals} />
-              <TokenContractInfoCard token={token} />
-              <TokenDeploymentInfoCard token={token} />
-              <TokenMetadataCard token={token} />
-            </div>
+            <OverviewTab token={token} decimals={decimals} isLoadingDecimals={isLoadingDecimals} />
           </TabsContent>
 
           {/* Voting Tab */}
           <TabsContent value="voting">
-            <VotingCard />
-          </TabsContent>
-
-          {/* Comments Tab */}
-          <TabsContent value="comments">
-            <CommentsCard />
+            <VotingTab />
           </TabsContent>
 
           {/* Holders Tab */}
@@ -112,13 +95,7 @@ export default function TokenPage() {
 
           {/* Trade Tab */}
           <TabsContent value="trade" forceMount className={cn('space-y-6 data-[state=inactive]:hidden')}>
-            <div className="grid gap-6 lg:grid-cols-3">
-              <div className="lg:col-span-2">
-                <TokenChartCard />
-              </div>
-              <BuySellOrderCard />
-            </div>
-            <TradesListCard />
+            <TradeTab />
           </TabsContent>
         </Tabs>
       </div>

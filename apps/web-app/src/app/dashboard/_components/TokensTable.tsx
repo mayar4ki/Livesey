@@ -240,7 +240,7 @@ export function TokensTable({ tokens }: TokensTableProps) {
   return (
     <div>
       <div className="overflow-hidden ">
-        <Table className=" h-[calc(100vh-29rem)]">
+        <Table className="">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

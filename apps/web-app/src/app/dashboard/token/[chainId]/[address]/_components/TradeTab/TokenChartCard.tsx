@@ -85,9 +85,7 @@ export function TokenChartCard() {
   return (
     <Card className="p-0 overflow-hidden">
       <CardContent className="p-0">
-        <div className="h-[412px] w-full">
-          <TradingViewWidget />
-        </div>
+        <div className="h-[412px] w-full">{/* <TradingViewWidget /> */}</div>
       </CardContent>
     </Card>
   );

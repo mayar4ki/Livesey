@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { getSeedDataKey } from '@acme/queue';
 import { BaseResponse } from 'src/lib/base.dto';
-import { PrismaService } from '../prisma/prisma.service';
-import { RedisService } from '../redis/redis.service';
+import { PrismaService } from '../lib/prisma/prisma.service';
+import { RedisService } from '../lib/redis/redis.service';
 import { ListQueryDto } from './dto/list-query.dto';
 import { StorePendingSeedDto } from './dto/store-seed.dto';
 import { TokenEntity } from './entities/token.entity';

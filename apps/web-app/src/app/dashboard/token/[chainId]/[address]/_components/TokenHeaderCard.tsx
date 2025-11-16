@@ -6,7 +6,7 @@ import { ExplorerLink } from '@acme/ui/bootstrapped/explorer-address-link';
 import { Button } from '@acme/ui/button';
 import { Card, CardContent } from '@acme/ui/card';
 import { CheckCircle2, ExternalLink, Plus } from 'lucide-react';
-import { Token } from '~/services/token/useTrendingTokens';
+import { Token } from '~/services/token/useToken';
 
 type TokenHeaderCardProps = {
   token: Token;

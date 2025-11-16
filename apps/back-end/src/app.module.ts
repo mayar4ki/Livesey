@@ -2,11 +2,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { validateEnv } from './config/env-validation.schema';
 import { HealthModule } from './health/health.module';
-import { PrismaModule } from './prisma/prisma.module';
-import { RedisModule } from './redis/redis.module';
+import { PrismaModule } from './lib/prisma/prisma.module';
+import { RedisModule } from './lib/redis/redis.module';
 
+import { ViemModule } from './lib/viem/viem.module';
+import { ProposalModule } from './proposal/proposal.module';
 import { TokenModule } from './token/token.module';
-import { ViemModule } from './viem/viem.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ViemModule } from './viem/viem.module';
     RedisModule,
     ViemModule,
     TokenModule,
+    ProposalModule,
     HealthModule,
     ConfigModule.forRoot({
       validate: validateEnv,

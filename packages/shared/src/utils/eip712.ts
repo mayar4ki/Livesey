@@ -33,6 +33,26 @@ export function createAdminRequestMessage(params: {
     nonce: params.nonce,
   };
 }
+/**
+ * Create the EIP-712 message for signing a signature request
+ */
+export function createSignatureRequestMessage(params: {
+  method: string;
+  path: string;
+  body: any;
+  timestamp: bigint;
+  nonce: bigint;
+}) {
+  const bodyHash = hashRequestBody(params.body);
+
+  return {
+    method: params.method,
+    path: params.path,
+    bodyHash,
+    timestamp: params.timestamp,
+    nonce: params.nonce,
+  };
+}
 
 /**
  * Generate a nonce for the request
@@ -47,7 +67,13 @@ export function generateNonce(): bigint {
  * Generate a Redis key for storing used nonces
  * Used by backend to track nonce usage
  */
-export function getNonceKey(address: string, nonce: string): string {
+export function getAdminNonceKey(address: string, nonce: string): string {
   return `admin:nonce:${address.toLowerCase()}:${nonce}`;
 }
-
+/**
+ * Generate a Redis key for storing used nonces
+ * Used by backend to track nonce usage
+ */
+export function getSignatureNonceKey(address: string, nonce: string): string {
+  return `signature:nonce:${address.toLowerCase()}:${nonce}`;
+}
