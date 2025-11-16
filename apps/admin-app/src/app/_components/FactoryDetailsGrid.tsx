@@ -1,6 +1,6 @@
 'use client';
 
-import { getChainUIName } from '@acme/shared/utils';
+import { getChainUIName } from '@acme/client/utils';
 import { Badge } from '@acme/ui/badge';
 import { ExplorerLink } from '@acme/ui/bootstrapped/explorer-address-link';
 import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';

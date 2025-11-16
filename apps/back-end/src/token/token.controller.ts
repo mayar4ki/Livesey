@@ -8,7 +8,9 @@ import {
   Post,
   Query,
   SerializeOptions,
+  UseGuards,
 } from '@nestjs/common';
+import { AdminSignatureGuard } from 'src/guards/admin-signature.guard';
 import { BaseResponse, BaseResponseDTO } from 'src/lib/base.dto';
 import { ListQueryDto } from './dto/list-query.dto';
 import { StorePendingSeedDto } from './dto/store-seed.dto';
@@ -44,7 +46,7 @@ export class TokenController {
 
   @Post('pending-seed')
   @HttpCode(HttpStatus.OK)
-  // @UseGuards(SignatureVerificationGuard)
+  @UseGuards(AdminSignatureGuard)
   async storePendingSeed(@Body() dto: StorePendingSeedDto) {
     return this.tokenService.storePendingSeed(dto);
   }

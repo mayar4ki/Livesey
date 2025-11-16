@@ -31,6 +31,9 @@ export const envValidationSchema = z.object({
 
   // Redis Configuration (optional)
   REDIS_URL: redisUrl,
+
+  // Backend API URL (required for Snapshot space creation)
+  BACKEND_URL: z.url("Invalid backend URL format"),
 });
 
 export type Env = z.infer<typeof envValidationSchema>;

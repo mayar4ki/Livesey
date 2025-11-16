@@ -26,7 +26,8 @@ model DeployedToken {
   verifiedAt      DateTime?
   deployedAt      DateTime  @default(now())
 
-  seedData TokenSeedData?
+  seedData  TokenSeedData?
+  proposals Proposal[]
 
   @@unique([contractAddress, chainId])
   @@index([contractAddress])
@@ -49,4 +50,44 @@ model TokenSeedData {
   deployedTokenId String        @unique
 
   @@map("token_seed_data")
+}
+
+model Proposal {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  duration    Int // Duration in seconds
+  blockNumber BigInt // Block number when proposal was created
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime // Calculated: createdAt + duration
+
+  deployedToken   DeployedToken @relation(fields: [deployedTokenId], references: [id], onDelete: Cascade)
+  deployedTokenId String
+
+  votes Vote[]
+
+  @@index([deployedTokenId])
+  @@index([createdAt])
+  @@index([expiresAt])
+  @@index([blockNumber])
+  @@map("proposals")
+}
+
+model Vote {
+  id           String   @id @default(cuid())
+  voterAddress String   @db.VarChar(42) // Ethereum wallet address (0x + 40 hex chars)
+  votingPower  BigInt // Voting power (token balance or delegated power)
+  choice       Boolean // true = yes/for, false = no/against
+  signature    String   @db.VarChar(132) // EIP-191 signature (0x + 130 hex chars)
+  messageHash  String   @db.VarChar(66) // Hash of the signed message (0x + 64 hex chars)
+  createdAt    DateTime @default(now())
+
+  proposal   Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  proposalId String
+
+  @@unique([proposalId, voterAddress]) // Prevent double voting
+  @@index([proposalId])
+  @@index([voterAddress])
+  @@index([createdAt])
+  @@map("votes")
 }

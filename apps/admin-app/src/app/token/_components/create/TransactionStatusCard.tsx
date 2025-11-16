@@ -1,6 +1,6 @@
 'use client';
 
-import { getExplorerUrl } from '@acme/shared/utils';
+import { getExplorerUrl } from '@acme/client/utils';
 import { Badge } from '@acme/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
 import { CheckCircle2, ExternalLink, Loader2, XCircle } from 'lucide-react';

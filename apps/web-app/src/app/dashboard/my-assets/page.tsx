@@ -1,6 +1,6 @@
 'use client';
 
-import { formatAddress, formatTokenBalance, getChainUIName } from '@acme/shared/utils';
+import { formatAddress, formatTokenBalance, getChainUIName } from '@acme/client/utils';
 import { Badge } from '@acme/ui/badge';
 import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
 import { ExplorerLink } from '@acme/ui/bootstrapped/explorer-address-link';

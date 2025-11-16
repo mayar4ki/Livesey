@@ -1,6 +1,6 @@
 'use client';
 
-import { useQueryParams } from '@acme/shared/hooks';
+import { useQueryParams } from '@acme/client/hooks';
 import { cn } from '@acme/ui';
 import { Button } from '@acme/ui/button';
 import { siteName } from '@acme/white-label/web-app';

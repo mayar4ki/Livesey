@@ -6,6 +6,10 @@ import { storeDeployedTokens } from "../helpers/store-deployed-tokens.js";
 
 import { envValidationSchema } from "../schemas/env-validation-schema.js";
 import { validateBeaconProxyCreatedEventLogs } from "../schemas/event-args-validation-schema.js";
+import {
+  transformToQueueVerificationTaskData,
+  transformToStoreDeployedTokenData,
+} from "../utils/transform-validated-logs.js";
 
 // Validate and parse environment variables
 const env = envValidationSchema.parse(process.env);
@@ -41,32 +45,23 @@ export async function handleBeaconProxyCreatedEvents(
   const validLogs = validateBeaconProxyCreatedEventLogs(logs);
 
   try {
-    // Store all tokens in a single database transaction
-    await storeDeployedTokens(
-      validLogs.map(({ log, args }) => ({
-        contractAddress: args.createdBeaconProxy,
-        chainId: env.CHAIN_ID,
-        deployerAddress: args.deployer,
-        name: args.name,
-        symbol: args.symbol,
-        assetRefHash: args.assetRefHash,
-        totalSupply: args.totalSupply,
-        transactionHash: log.transactionHash,
-        blockNumber: log.blockNumber,
-      }))
+    // 1. Store all tokens in a single database transaction
+    const storeTokenData = transformToStoreDeployedTokenData(
+      validLogs,
+      env.CHAIN_ID
     );
+    await storeDeployedTokens(storeTokenData);
+    console.log(`✅ successfully stored: ${validLogs.length} tokens`);
 
-    // Queue verification tasks for all tokens
-    await queueVerificationTasks(
-      validLogs.map(({ args }) => ({
-        contractAddress: args.createdBeaconProxy,
-        chainId: env.CHAIN_ID,
-        deployerAddress: args.deployer,
-        name: args.name,
-        symbol: args.symbol,
-        totalSupply: args.totalSupply,
-      }))
+    // 2. Queue verification tasks for all tokens
+    const verificationTaskData = transformToQueueVerificationTaskData(
+      validLogs,
+      env.CHAIN_ID
     );
+    await queueVerificationTasks(verificationTaskData);
+    console.log(`✅ successfully processed: ${validLogs.length} tokens`);
+
+    //
   } catch (error) {
     console.error(
       `❌ Error storing deployed tokens in database:`,

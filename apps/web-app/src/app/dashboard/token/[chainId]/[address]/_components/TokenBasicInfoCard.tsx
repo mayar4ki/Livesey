@@ -1,6 +1,6 @@
 'use client';
 
-import { formatTokenBalance, getChainUIName } from '@acme/shared/utils';
+import { formatTokenBalance, getChainUIName } from '@acme/client/utils';
 import { Badge } from '@acme/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
 import { Token } from '~/services/token/useTrendingTokens';

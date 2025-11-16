@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack -p 3000",
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "biome check",
@@ -12,10 +12,11 @@
     "clean": "git clean -xdf .cache .next .turbo node_modules"
   },
   "dependencies": {
-    "@acme/ui": "workspace:*",
-    "@acme/white-label": "workspace:*",
+    "@acme/client": "workspace:*",
     "@acme/shared": "workspace:*",
     "@acme/smart-contract": "workspace:*",
+    "@acme/ui": "workspace:*",
+    "@acme/white-label": "workspace:*",
     "@hookform/resolvers": "^5.2.2",
     "@tanstack/react-query": "^5.90.2",
     "@tanstack/react-table": "^8.21.3",

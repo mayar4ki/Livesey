@@ -1,6 +1,8 @@
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { Env } from './config/env-validation.schema';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,8 +24,11 @@ async function bootstrap() {
     origin: '*',
   });
 
-  console.log('PORT', process.env.PORT);
+  const configService = app.get(ConfigService<Env>);
+  const port = configService.get('PORT', { infer: true }) ?? 3000;
 
-  await app.listen(process.env.PORT ?? 3000);
+  console.log('PORT', port);
+
+  await app.listen(port);
 }
 bootstrap();

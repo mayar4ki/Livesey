@@ -4,18 +4,19 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "dotenv -e .env -- tsx src/chain-listener.ts",
+    "dev": "dotenv -e .env -- tsx src/chain-listener.ts --watch",
     "build": "tsc",
     "start": "node dist/chain-listener.js",
     "typecheck": "tsc --noEmit",
     "clean": "git clean -xdf .cache .turbo dist node_modules"
   },
   "dependencies": {
-    "viem": "catalog:",
-    "zod": "catalog:",
     "@acme/db": "workspace:*",
     "@acme/queue": "workspace:*",
-    "@acme/smart-contract": "workspace:*"
+    "@acme/smart-contract": "workspace:*",
+    "axios": "^1.13.2",
+    "viem": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@acme/tsconfig": "workspace:*",

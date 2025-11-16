@@ -1,4 +1,4 @@
-import { getChainUIName, getExplorerUrl } from '@acme/shared/utils';
+import { getChainUIName, getExplorerUrl } from '@acme/client/utils';
 import { Badge } from '@acme/ui/badge';
 import { Button } from '@acme/ui/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
@@ -41,4 +41,3 @@ export function TokenHeaderCard({ token }: TokenHeaderCardProps) {
     </Card>
   );
 }
-

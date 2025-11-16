@@ -1,4 +1,4 @@
-import { getChainUIName } from '@acme/shared/utils';
+import { getChainUIName } from '@acme/client/utils';
 import { Badge } from '@acme/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
 import { Token } from '~/services/token/types';
@@ -38,4 +38,3 @@ export function TokenBasicInfoCard({ token }: TokenBasicInfoCardProps) {
     </Card>
   );
 }
-

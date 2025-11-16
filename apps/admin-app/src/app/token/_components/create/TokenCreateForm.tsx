@@ -1,6 +1,6 @@
 'use client';
 
-import { computeHashFromPairs } from '@acme/shared/helpers';
+import { computeHashFromPairs } from '@acme/client/helpers';
 import { Button } from '@acme/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@acme/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@acme/ui/form';

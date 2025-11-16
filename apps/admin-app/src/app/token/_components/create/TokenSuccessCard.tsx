@@ -1,6 +1,6 @@
 'use client';
 
-import { getExplorerUrl } from '@acme/shared/utils';
+import { getExplorerUrl } from '@acme/client/utils';
 import { ExplorerLink } from '@acme/ui/bootstrapped/explorer-address-link';
 import { Button } from '@acme/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';

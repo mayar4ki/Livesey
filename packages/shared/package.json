@@ -1,14 +1,30 @@
 {
   "name": "@acme/shared",
   "private": true,
-  "type": "module",
   "exports": {
-    ".": "./src/index.ts",
-    "./helpers": "./src/helpers/index.ts",
-    "./hooks": "./src/hooks/index.ts",
-    "./utils": "./src/utils/index.ts"
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./constants": {
+      "types": "./src/constants/index.ts",
+      "import": "./dist/constants.mjs",
+      "require": "./dist/constants.js"
+    },
+    "./types": {
+      "types": "./src/types/index.ts",
+      "import": "./dist/types.mjs",
+      "require": "./dist/types.js"
+    },
+    "./utils": {
+      "types": "./src/utils/index.ts",
+      "import": "./dist/utils.mjs",
+      "require": "./dist/utils.js"
+    }
   },
   "scripts": {
+    "build": "tsup",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "clean": "git clean -xdf .cache .turbo dist node_modules"
   },
@@ -19,13 +35,7 @@
     "@acme/tsconfig": "workspace:*",
     "@types/node": "catalog:",
     "typescript": "catalog:",
-    "@types/react": "catalog:react19",
-    "react": "catalog:react19",
-    "next": "catalog:react19"
-  },
-  "peerDependencies": {
-    "next": "catalog:react19",
-    "react": "catalog:react19"
+    "tsup": "catalog:"
   },
   "license": "MIT"
 }

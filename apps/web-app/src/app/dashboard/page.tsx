@@ -1,6 +1,6 @@
 'use client';
 
-import { useQueryParams } from '@acme/shared/hooks';
+import { useQueryParams } from '@acme/client/hooks';
 import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
 import { LoadingCard } from '@acme/ui/bootstrapped/loading-card';
 import { Card, CardContent } from '@acme/ui/card';

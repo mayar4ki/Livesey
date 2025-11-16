@@ -1,7 +1,7 @@
 'use client';
 
-import { useQueryParams } from '@acme/shared/hooks';
-import { formatDateTime, getChainUIName } from '@acme/shared/utils';
+import { useQueryParams } from '@acme/client/hooks';
+import { formatDateTime, getChainUIName } from '@acme/client/utils';
 import { Badge } from '@acme/ui/badge';
 import { DataTablePagination } from '@acme/ui/bootstrapped/data-table-pagination';
 import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';

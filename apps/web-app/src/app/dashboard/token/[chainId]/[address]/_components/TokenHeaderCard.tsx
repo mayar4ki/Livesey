@@ -1,6 +1,6 @@
 'use client';
 
-import { formatTokenBalance, getChainUIName, getExplorerUrl } from '@acme/shared/utils';
+import { formatTokenBalance, getChainUIName, getExplorerUrl } from '@acme/client/utils';
 import { Badge } from '@acme/ui/badge';
 import { ExplorerLink } from '@acme/ui/bootstrapped/explorer-address-link';
 import { Button } from '@acme/ui/button';

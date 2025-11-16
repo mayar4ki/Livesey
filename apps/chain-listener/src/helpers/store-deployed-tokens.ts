@@ -10,7 +10,7 @@ export type StoreDeployedTokenData = {
   name: string;
   symbol: string;
   assetRefHash: string;
-  totalSupply: bigint;
+  totalSupply: string;
   transactionHash: string;
   blockNumber: bigint;
 };
@@ -33,9 +33,9 @@ export async function storeDeployedTokens(
   const seedDataMap = new Map<string, any>();
 
   for (const token of tokens) {
-    const seedKey = getSeedDataKey(token.assetRefHash);
+    const SEED_DATA_KEY = getSeedDataKey(token.assetRefHash);
     try {
-      const seedValue = await redis.get(seedKey);
+      const seedValue = await redis.get(SEED_DATA_KEY);
       if (!seedValue) {
         throw new Error(
           `Seed data not found in Redis for assetRefHash: ${token.assetRefHash}`
@@ -43,7 +43,7 @@ export async function storeDeployedTokens(
       }
       seedDataMap.set(token.assetRefHash, JSON.parse(seedValue));
       // Delete seed from Redis after retrieving (cleanup)
-      await redis.del(seedKey);
+      await redis.del(SEED_DATA_KEY);
       console.log(`✅ Retrieved seed data for token ${token.contractAddress}`);
     } catch (error) {
       console.error(
@@ -60,49 +60,30 @@ export async function storeDeployedTokens(
   await prisma.$transaction(
     tokens.map((token) => {
       const seedData = seedDataMap.get(token.assetRefHash);
+      const { contractAddress, chainId, ...rest } = token;
 
       return prisma.deployedToken.upsert({
         where: {
           contractAddress_chainId: {
-            contractAddress: token.contractAddress,
-            chainId: token.chainId,
+            contractAddress,
+            chainId,
           },
         },
         update: {
           // Update if it already exists (shouldn't happen, but handle gracefully)
-          name: token.name,
-          symbol: token.symbol,
-          assetRefHash: token.assetRefHash,
-          totalSupply: token.totalSupply.toString(),
-          transactionHash: token.transactionHash,
-          blockNumber: token.blockNumber,
-          deployerAddress: token.deployerAddress,
+          ...rest,
           seedData: {
             upsert: {
-              create: {
-                seedData: seedData,
-              },
-              update: {
-                seedData: seedData,
-              },
+              create: { seedData },
+              update: { seedData },
             },
           },
         },
         create: {
-          contractAddress: token.contractAddress,
-          chainId: token.chainId,
-          name: token.name,
-          symbol: token.symbol,
-          assetRefHash: token.assetRefHash,
-          totalSupply: token.totalSupply.toString(),
-          transactionHash: token.transactionHash,
-          blockNumber: token.blockNumber,
-          deployerAddress: token.deployerAddress,
-          seedData: {
-            create: {
-              seedData: seedData,
-            },
-          },
+          contractAddress,
+          chainId,
+          ...rest,
+          seedData: { create: { seedData } },
         },
       });
     })

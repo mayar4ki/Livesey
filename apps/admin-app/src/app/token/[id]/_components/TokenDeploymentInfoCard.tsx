@@ -1,4 +1,4 @@
-import { formatDateTime } from '@acme/shared/utils';
+import { formatDateTime } from '@acme/client/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
 import { Token } from '~/services/token/types';
 
@@ -27,4 +27,3 @@ export function TokenDeploymentInfoCard({ token }: TokenDeploymentInfoCardProps)
     </Card>
   );
 }
-

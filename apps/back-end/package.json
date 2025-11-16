@@ -7,7 +7,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "dev": "PORT=3002 dotenv -e .env -- nest start --watch",
+    "dev": "PORT=3002 nest start --watch --env-file .env",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -20,18 +20,24 @@
     "clean": "git clean -xdf .cache .turbo dist node_modules"
   },
   "dependencies": {
+    "@acme/db": "workspace:*",
+    "@acme/queue": "workspace:*",
+    "@acme/shared": "workspace:*",
+    "@acme/smart-contract": "workspace:*",
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/mapped-types": "^2.0.5",
     "@nestjs/platform-express": "^11.0.1",
+    "@snapshot-labs/snapshot.js": "^0.14.15",
+    "axios": "^1.13.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
+    "pinata-sdk": "^0.1.7",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "viem": "catalog:",
-    "@acme/queue": "workspace:*",
-    "@acme/db": "workspace:*",
-    "@acme/smart-contract": "workspace:*"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -56,8 +62,7 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "catalog:",
-    "typescript-eslint": "^8.20.0",
-    "dotenv-cli": "catalog:"
+    "typescript-eslint": "^8.20.0"
   },
   "jest": {
     "moduleFileExtensions": [

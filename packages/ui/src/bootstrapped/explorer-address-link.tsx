@@ -1,6 +1,6 @@
 'use client';
 
-import { formatAddress, getExplorerUrl } from '@acme/shared/utils';
+import { formatAddress, getExplorerUrl } from '@acme/client/utils';
 import { cn } from '@acme/ui';
 
 type ExplorerLinkProps = {
@@ -32,4 +32,3 @@ export function ExplorerLink({ hash, chainId, className, showFull = false }: Exp
     </a>
   );
 }
-
