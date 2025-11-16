@@ -1,8 +1,5 @@
 ## Livesy
 
-
-<img width="507" height="344" alt="image" src="https://github.com/user-attachments/assets/289815f0-2684-47ff-bcaf-77ab1d4fc780" />
-
 ### Admin app
 
 - create token ✅
@@ -25,11 +22,12 @@
 - discover tokens (how all tokens)
 
 - actions on token
-  add to wallet
+  add to wallet ✅
   add to favorites
-  my assets (all erc20 tokens owned by user(any user))
-  copy address to share
+  my assets (all erc20 tokens owned by user(any user)) ✅
+  copy address to share ✅
 
+- voting ✅
 - limit order
 - orders list
 
