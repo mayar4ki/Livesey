@@ -24,4 +24,4 @@
 
 - all user actions +++
 - post events (news)
-- add profit to token holders
+- add profit to token holders (Payed by \_\_\_ token)
