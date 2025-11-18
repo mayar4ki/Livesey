@@ -17,6 +17,8 @@ contract ERC20Implementation is ERC20Upgradeable, ERC20PausableUpgradeable, Owna
     // Storage gap
     uint256[50] private __gap;
 
+    event NewOperatorAddress(address account);
+
     /**
      * @notice Disable initializers
      * @dev This is to prevent the contract from being initialized
@@ -45,6 +47,8 @@ contract ERC20Implementation is ERC20Upgradeable, ERC20PausableUpgradeable, Owna
     ) public initializer {
         __ERC20_init(_name, _symbol);
         _mint(_initialRecipient, _totalSupply);
+
+        // Owner will be the Factory Contract
         __Ownable_init(msg.sender);
         __ERC20Pausable_init();
 
@@ -53,14 +57,26 @@ contract ERC20Implementation is ERC20Upgradeable, ERC20PausableUpgradeable, Owna
     }
 
     /**
-     * @notice called by the admin to unpause, returns to normal state
+     * @notice Set operator address
+     * @param _operator: operator address
+     * @dev called by owner
+     */
+    function setOperator(address _operator) external onlyOwner {
+        operator = _operator;
+        emit NewOperatorAddress(_operator);
+    }
+
+    /**
+     * @notice returns to normal state
+     * @dev called by owner
      */
     function unpause() external onlyOwner {
         _unpause();
     }
 
     /**
-     * @notice called by the admin to pause, triggers stopped state
+     * @notice triggers stopped state
+     * @dev called by owner
      */
     function pause() external onlyOwner {
         _pause();

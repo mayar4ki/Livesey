@@ -19,4 +19,6 @@ interface IERC20Implementation {
     function pause() external;
 
     function unpause() external;
+
+    function setOperator(address _operator) external;
 }

@@ -8,6 +8,8 @@ import {BeaconProxy} from "@openzeppelin/contracts/proxy/beacon/BeaconProxy.sol"
 import {AccessControlled} from "./_libs/AccessControlled.sol";
 import {IERC20Implementation} from "./ERC20Implementation/IERC20Implementation.sol";
 import {IUpgradeableBeacon} from "./UpgradeableBeacon/IUpgradeableBeacon.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract MockOperator {
     struct OperatorInfo {
@@ -76,6 +78,7 @@ contract Factory is AccessControlled, MockOperator {
     address public immutable beaconAddress; // upgradeable beacon address
 
     struct TokenInfo {
+        address token;
         string name;
         string symbol;
         bytes32 assetRefHash;
@@ -98,6 +101,7 @@ contract Factory is AccessControlled, MockOperator {
 
     event TokenPaused(address indexed pausedToken);
     event TokenUnpaused(address indexed unpausedToken);
+    event TokenNewOperatorAddress(address indexed token, address indexed operator);
 
     event BeaconUpgraded(address indexed newImplementation);
 
@@ -154,6 +158,7 @@ contract Factory is AccessControlled, MockOperator {
         address tokenProxy = address(new BeaconProxy(beaconAddress, initData));
 
         tokensLedger[tokenProxy] = TokenInfo({
+            token: tokenProxy,
             name: _name,
             symbol: _symbol,
             totalSupply: _totalSupply,
@@ -168,10 +173,10 @@ contract Factory is AccessControlled, MockOperator {
     /**
      * @notice Pause a token
      * @param _token: token address
-     * @dev Only admin can pause a token
+     * @dev called by admin
      */
     function pauseToken(address _token) external onlyAdmin {
-        require(tokensLedger[_token].operator != address(0), "not found");
+        require(tokensLedger[_token].token != address(0), "token not found");
         require(tokensLedger[_token].isPaused == false, "already paused");
         tokensLedger[_token].isPaused = true;
 
@@ -182,10 +187,10 @@ contract Factory is AccessControlled, MockOperator {
     /**
      * @notice Unpause a token
      * @param _token: token address
-     * @dev Only admin can unpause a token
+     * @dev called by admin
      */
     function unpauseToken(address _token) external onlyAdmin {
-        require(tokensLedger[_token].operator != address(0), "not found");
+        require(tokensLedger[_token].token != address(0), "token not found");
         require(tokensLedger[_token].isPaused == true, "already unpaused");
         tokensLedger[_token].isPaused = false;
 
@@ -194,9 +199,25 @@ contract Factory is AccessControlled, MockOperator {
     }
 
     /**
+     * @notice Set the operator of a token
+     * @param _token: token address
+     * @param _operator: operator address
+     * @dev called by admin
+     */
+    function setTokenOperator(address _token, address _operator) external onlyAdmin {
+        require(tokensLedger[_token].token != address(0), "token not found");
+        require(operatorsLedger[_operator].operator != address(0), "operator not found");
+
+        tokensLedger[_token].operator = _operator;
+
+        IERC20Implementation(_token).setOperator(_operator);
+        emit TokenNewOperatorAddress(_token, _operator);
+    }
+
+    /**
      * @notice Upgrade the beacon
      * @param _newImplementation: new implementation address
-     * @dev Only owner can upgrade the beacon
+     * @dev called by owner
      */
     function _dangerous_upgrade_upgradeable_beacon_implementation(address _newImplementation) external onlyOwner {
         IUpgradeableBeacon(beaconAddress).upgradeTo(_newImplementation);
