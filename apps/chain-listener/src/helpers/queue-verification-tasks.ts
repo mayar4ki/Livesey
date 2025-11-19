@@ -19,7 +19,7 @@ export async function queueVerificationTasks(log: ValidatedLog) {
         args: [
           token.name,
           token.symbol,
-          token.totalSupply,
+          token.totalSupply.toString() as unknown as bigint,
           token.assetRefHash,
           token.operator,
           token.initialRecipient,

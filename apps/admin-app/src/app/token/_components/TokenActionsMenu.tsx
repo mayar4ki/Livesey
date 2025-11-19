@@ -42,13 +42,13 @@ export function TokenActionsMenu({ token }: TokenActionsMenuProps) {
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
-            window.open(getExplorerUrl(token.contractAddress as `0x${string}`, token.chainId), '_blank', 'noopener,noreferrer');
+            window.open(getExplorerUrl(token.token as `0x${string}`, token.chainId), '_blank', 'noopener,noreferrer');
           }}
         >
           <ExternalLink className="h-4 w-4 mr-2" />
           View on Explorer
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleCopyAddress(token.contractAddress)}>
+        <DropdownMenuItem onClick={() => handleCopyAddress(token.token)}>
           <Copy className="h-4 w-4 mr-2" />
           Copy Token Address
         </DropdownMenuItem>

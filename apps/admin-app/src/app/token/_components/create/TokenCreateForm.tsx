@@ -5,10 +5,12 @@ import { Button } from '@acme/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@acme/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@acme/ui/form';
 import { Input } from '@acme/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@acme/ui/select';
 import { Spinner } from '@acme/ui/spinner';
 import { Plus, Trash2 } from 'lucide-react';
 import { useEffect } from 'react';
 import { SubmitHandler, UseFormReturn, useFieldArray, useWatch } from 'react-hook-form';
+import { useOperators } from '~/services/factory/useOperators';
 import { TokenCreateFormSchema } from '../../_libs/tokenCreateFormSchema';
 
 type TokenCreateFormProps = {
@@ -18,6 +20,7 @@ type TokenCreateFormProps = {
 };
 
 export function TokenCreateForm({ onSubmit, isPending = false, form }: TokenCreateFormProps) {
+  const { operators, isLoading: isLoadingOperators } = useOperators();
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: 'assetRefPairs',
@@ -92,6 +95,40 @@ export function TokenCreateForm({ onSubmit, isPending = false, form }: TokenCrea
                     <FormControl>
                       <Input placeholder="0x0000000000..." {...field} />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="operator"
+                render={({ field }) => (
+                  <FormItem className="lg:col-span-2">
+                    <FormLabel>Operator</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value} disabled={isPending || isLoadingOperators}>
+                      <FormControl>
+                        <SelectTrigger className="w-full min-w-0 overflow-hidden">
+                          <SelectValue placeholder="Select an operator" className="font-mono" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {operators.length === 0 ? (
+                          <div className="px-2 py-1.5 text-sm text-muted-foreground">No operators available</div>
+                        ) : operators.filter((op) => !op.isPaused).length === 0 ? (
+                          <div className="px-2 py-1.5 text-sm text-muted-foreground">No active operators available</div>
+                        ) : (
+                          operators
+                            .filter((op) => !op.isPaused)
+                            .map((operator) => (
+                              <SelectItem key={operator.operator} value={operator.operator}>
+                                <div className="flex items-center min-w-0">
+                                  <span className="font-mono truncate">{operator.operator}</span>
+                                </div>
+                              </SelectItem>
+                            ))
+                        )}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

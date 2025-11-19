@@ -67,8 +67,9 @@ export default function Page() {
                   <TableHead>Total Supply</TableHead>
                   <TableHead>Contract Address</TableHead>
                   <TableHead>Chain</TableHead>
-                  <TableHead>Deployer</TableHead>
-                  <TableHead>Deployed At</TableHead>
+                  <TableHead>Operator</TableHead>
+                  <TableHead>Created By</TableHead>
+                  <TableHead>Created At</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -87,16 +88,19 @@ export default function Page() {
                       <span className="font-mono text-sm">{BigInt(token.totalSupply).toLocaleString('en-US')}</span>
                     </TableCell>
                     <TableCell>
-                      <ExplorerLink hash={token.contractAddress} chainId={token.chainId} />
+                      <ExplorerLink hash={token.token} chainId={token.chainId} />
                     </TableCell>
                     <TableCell>
                       <Badge variant="secondary">{getChainUIName(token.chainId)}</Badge>
                     </TableCell>
                     <TableCell>
-                      <ExplorerLink hash={token.deployerAddress} chainId={token.chainId} />
+                      <ExplorerLink hash={token.operator} chainId={token.chainId} />
                     </TableCell>
                     <TableCell>
-                      <span className="text-sm text-muted-foreground">{formatDateTime(token.deployedAt)}</span>
+                      <ExplorerLink hash={token.createdBy} chainId={token.chainId} />
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm text-muted-foreground">{formatDateTime(token.createdAt)}</span>
                     </TableCell>
                     <TableCell className="text-right">
                       <TokenActionsMenu token={token} />

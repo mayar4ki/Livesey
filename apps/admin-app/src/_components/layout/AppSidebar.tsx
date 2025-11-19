@@ -1,6 +1,6 @@
 'use client';
 
-import { Coins, Database, FilePlus, HelpCircle, LayoutDashboard, Settings } from 'lucide-react';
+import { Coins, Database, FilePlus, HelpCircle, LayoutDashboard, Settings, UserPlus, Users } from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@acme/ui';
@@ -29,6 +29,21 @@ const navGroups = [
         title: 'Dashboard',
         url: '/',
         icon: LayoutDashboard,
+      },
+    ],
+  },
+  {
+    label: 'Operators',
+    items: [
+      {
+        title: 'Operators List',
+        url: '/operator',
+        icon: Users,
+      },
+      {
+        title: 'New Operators',
+        url: '/operator/create',
+        icon: UserPlus,
       },
     ],
   },

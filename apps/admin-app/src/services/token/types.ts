@@ -1,15 +1,16 @@
 export type Token = {
   id: string;
-  contractAddress: string;
+  token: string;
   chainId: number;
   name: string;
   assetRefHash: string;
   seedData?: Record<string, string>;
   symbol: string;
   totalSupply: string;
+  operator: string;
+  createdBy: string;
   transactionHash: string;
   blockNumber: bigint | string;
-  deployerAddress: string;
   verifiedAt: Date | string | null;
-  deployedAt: Date | string;
+  createdAt: Date | string;
 };

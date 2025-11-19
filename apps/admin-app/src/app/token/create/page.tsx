@@ -26,6 +26,7 @@ export default function Page() {
       totalSupply: '1000',
       symbol: 'XY',
       owner: walletAddress,
+      operator: '' as `0x${string}`,
       assetRefPairs: [{ key: '', value: '' }],
       assetRefHash: '0x0000000000000000000000000000000000000000000000000000000000000000',
     },

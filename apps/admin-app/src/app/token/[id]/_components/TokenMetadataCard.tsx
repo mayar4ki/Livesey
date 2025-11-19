@@ -1,18 +1,20 @@
 import { CopyButton } from '@acme/ui/bootstrapped/copy-button';
 import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
+import { cn } from '@acme/ui';
 import { Token } from '~/services/token/types';
 
 interface TokenMetadataCardProps {
   token: Token;
+  className?: string;
 }
 
-export function TokenMetadataCard({ token }: TokenMetadataCardProps) {
+export function TokenMetadataCard({ token, className }: TokenMetadataCardProps) {
   // Handle seedData structure - it can be nested with seedData.seedData
   const getSeedDataValue = () => {
     if (!token.seedData) return null;
 
     // Check if seedData has a nested structure
-    const seedDataValue = (token.seedData as any).seedData ?? token.seedData;
+    const seedDataValue = (token.seedData as any).data;
 
     if (Array.isArray(seedDataValue)) {
       return seedDataValue.reduce((acc: Record<string, string>, item: { key: string; value: string }) => {
@@ -27,7 +29,7 @@ export function TokenMetadataCard({ token }: TokenMetadataCardProps) {
   const seedDataObj = getSeedDataValue();
 
   return (
-    <Card>
+    <Card className={cn(className)}>
       <CardHeader>
         <CardTitle>Metadata</CardTitle>
       </CardHeader>

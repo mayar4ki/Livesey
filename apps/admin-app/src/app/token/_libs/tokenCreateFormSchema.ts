@@ -11,6 +11,11 @@ export const tokenCreateFormSchema = yup.object().shape({
   symbol: yup.string().required().label('Symbol'),
   totalSupply: yup.string().required().label('Total Supply'),
   owner: yup.string<Address>().required().label('Owner'),
+  operator: yup
+    .string<Address>()
+    .required('Operator is required')
+    .matches(/^0x[a-fA-F0-9]{40}$/, 'Operator must be a valid Ethereum address (0x + 40 hex characters)')
+    .label('Operator'),
   assetRefPairs: yup.array().of(keyValuePairSchema).min(1, 'At least one key-value pair is required').default([]).label('Asset Reference Pairs'),
   assetRefHash: yup
     .string()

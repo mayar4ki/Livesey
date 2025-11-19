@@ -31,6 +31,7 @@ const client = new QueryClient({
 
         return false;
       },
+      refetchOnWindowFocus: false,
     },
     mutations: {
       onError(error) {

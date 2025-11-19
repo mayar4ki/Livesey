@@ -1,15 +1,9 @@
-import { useCreateBeaconProxy } from '~/services/factory/useCreateBeaconProxy';
+import { useCreateToken } from '~/services/factory/useCreateBeaconProxy';
 import { useStorePendingSeed } from '~/services/token/useStoreSeed';
 import { TokenCreateFormSchema } from '../_libs/tokenCreateFormSchema';
 
 export function useTokenCreation() {
-  const {
-    createBeaconProxy,
-    isPending: isCreatingBeaconProxy,
-    data: transactionHash,
-    transactionReceipt,
-    reset: resetCreateBeaconProxy,
-  } = useCreateBeaconProxy();
+  const { createToken, isPending: isCreating, data: transactionHash, transactionReceipt, reset: resetCreateBeaconProxy } = useCreateToken();
 
   const { mutateAsync: storePendingSeedAsync, isPending: isStoringSeed } = useStorePendingSeed();
 
@@ -18,16 +12,15 @@ export function useTokenCreation() {
       assetRefHash: values.assetRefHash,
       seedData: values.assetRefPairs,
     });
-    await createBeaconProxy([values.name, values.symbol, values.assetRefHash as `0x${string}`, BigInt(values.totalSupply), values.owner]);
+    await createToken([values.name, values.symbol, BigInt(values.totalSupply), values.assetRefHash as `0x${string}`, values.operator, values.owner]);
   };
 
   return {
-    createBeaconProxy,
     transactionHash,
     transactionReceipt,
     resetCreateBeaconProxy,
     storePendingSeedAsync,
-    isPending: isCreatingBeaconProxy || isStoringSeed,
+    isPending: isCreating || isStoringSeed,
     mutateCreateToken,
   };
 }

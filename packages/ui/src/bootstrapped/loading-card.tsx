@@ -23,4 +23,3 @@ export function LoadingCard({ message = 'Loading...', className }: LoadingCardPr
     </div>
   );
 }
-

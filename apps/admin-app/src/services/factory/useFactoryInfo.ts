@@ -10,7 +10,7 @@ export function useFactoryInfo() {
   const { data: beaconAddress, isLoading: isLoadingBeacon } = useReadContract({
     address: ADDRESS,
     abi: ABI,
-    functionName: 'beacon',
+    functionName: 'beaconAddress',
   });
 
   const { data: ownerAddress, isLoading: isLoadingOwner } = useReadContract({
