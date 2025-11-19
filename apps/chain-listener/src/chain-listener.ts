@@ -4,6 +4,7 @@ import { Address, createPublicClient, http } from "viem";
 
 import { handleNewAdminAddressEvent } from "./handlers/new-admin-address-handler.js";
 import { tokenCreatedEventHandler } from "./handlers/token-created-event-handler.js";
+import { handleTokenNewOperatorAddress } from "./handlers/token-new-operator-event-handler.js";
 import { validateEnv } from "./schemas/env-validation-schema.js";
 import { getChain } from "./utils/get-chain.js";
 
@@ -34,7 +35,7 @@ async function startListener() {
         abi: FactoryAbi,
         eventName: "TokenCreated",
         onError(error) {
-          console.error(error);
+          console.error("***connection***", error);
         },
         onLogs: async (logs) => {
           for (const log of logs) {
@@ -45,9 +46,22 @@ async function startListener() {
       publicClient.watchContractEvent({
         address: env.FACTORY_ADDRESS as Address,
         abi: FactoryAbi,
+        eventName: "TokenNewOperatorAddress",
+        onError(error) {
+          console.error("***connection***", error);
+        },
+        onLogs: async (logs) => {
+          for (const log of logs) {
+            await handleTokenNewOperatorAddress(log);
+          }
+        },
+      }),
+      publicClient.watchContractEvent({
+        address: env.FACTORY_ADDRESS as Address,
+        abi: FactoryAbi,
         eventName: "NewAdminAddress",
         onError(error) {
-          console.error(error);
+          console.error("***connection***", error);
         },
         onLogs: async (logs) => {
           for (const log of logs) {
