@@ -16,7 +16,7 @@ type NewAdminAddressEventsLog = WatchContractEventOnLogsParameter<
 export async function handleNewAdminAddressEvent(
   log: NewAdminAddressEventsLog
 ) {
-  const newAdminAddress = log?.args?.admin as `0x${string}`;
+  const newAdminAddress = log?.args?.admin;
 
   console.log(
     `📢 NewAdminAddress event detected:\n` +
@@ -27,7 +27,11 @@ export async function handleNewAdminAddressEvent(
 
   try {
     // Update the cached admin address in Redis with 30 minutes TTL
-    await redis.setEx(StoreKeys.FACTORY_ADMIN_ADDRESS, 1800, newAdminAddress);
+    if (newAdminAddress) {
+      await redis.setEx(StoreKeys.FACTORY_ADMIN_ADDRESS, 1800, newAdminAddress);
+    } else {
+      throw Error("admin address not found");
+    }
   } catch (error) {
     console.error(
       `❌ Error updating admin address cache in Redis:`,

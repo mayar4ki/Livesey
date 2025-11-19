@@ -9,7 +9,7 @@ import { type VerificationTask } from "./types.js";
  */
 export async function consumeVerificationTask(
   timeoutSeconds: number = 0
-): Promise<VerificationTask | null> {
+): Promise<{ task: VerificationTask; chainId: string } | null> {
   try {
     await ensureConnected();
     // BRPOP blocks until an item is available (timeout 0 = wait forever)
@@ -21,18 +21,15 @@ export async function consumeVerificationTask(
       return null;
     }
 
-    const [chainId, contractAddress] = result.element.split(":");
-    const task = await getVerificationTask(
-      Number(chainId),
-      contractAddress as Address
-    );
+    const [chainId, token] = result.element.split(":");
+    const task = await getVerificationTask(Number(chainId), token as Address);
 
     if (!task) {
-      console.warn(`❌ task not found: task:${chainId}:${contractAddress}`);
+      console.warn(`❌ task not found: task:${chainId}:${token}`);
       return null;
     }
 
-    return task;
+    return { task, chainId: chainId! };
   } catch (error) {
     console.error("Error consuming task:", error);
     throw error;

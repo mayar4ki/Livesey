@@ -9,16 +9,14 @@ import { VerificationTask } from "./types.js";
  */
 export async function updateVerificationTask(
   chainId: number,
-  contractAddress: Address,
-  updates: {
-    status: "pending" | "processing" | "completed" | "failed";
-  }
+  token: Address,
+  updates: Pick<VerificationTask, "status">
 ): Promise<VerificationTask> {
   try {
     await ensureConnected();
-    const task = await getVerificationTask(chainId, contractAddress);
+    const task = await getVerificationTask(chainId, token);
     if (!task) {
-      throw new Error(`Task ${contractAddress} on chain ${chainId} not found`);
+      throw new Error(`Task ${token} on chain ${chainId} not found`);
     }
 
     const updated: VerificationTask = {
@@ -27,18 +25,15 @@ export async function updateVerificationTask(
     };
 
     await redis.set(
-      getVerificationTaskKey(chainId, contractAddress),
+      getVerificationTaskKey(chainId, token),
       JSON.stringify(updated)
     );
     console.log(
-      `⚠️ updated: task:${chainId}:${contractAddress} status to: ${updates.status}`
+      `⚠️ updated: task:${chainId}:${token} status to: ${updates.status}`
     );
     return updated;
   } catch (error) {
-    console.error(
-      "❌ error updating: task:${chainId}:${contractAddress}",
-      error
-    );
+    console.error("❌ error updating: task:${chainId}:${token}", error);
     throw error;
   }
 }

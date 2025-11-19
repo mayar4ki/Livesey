@@ -2,7 +2,7 @@ import { prisma } from "@acme/db";
 import { Address } from "viem";
 
 export type StoreVerifiedContractProps = {
-  contractAddress: Address;
+  token: Address;
   chainId: number;
 };
 
@@ -10,14 +10,14 @@ export type StoreVerifiedContractProps = {
  * Mark deployed token as verified in PostgreSQL database
  * Updates the isVerified flag and sets verifiedAt timestamp
  */
-export async function storeVerifiedContract({
-  contractAddress,
-  chainId,
-}: StoreVerifiedContractProps): Promise<void> {
+export async function storeVerifiedContract(
+  token: Address,
+  chainId: number
+): Promise<void> {
   // Update the deployed token to mark it as verified
-  const updated = await prisma.deployedToken.updateMany({
+  const updated = await prisma.token.updateMany({
     where: {
-      contractAddress: contractAddress,
+      token: token,
       chainId: chainId,
     },
     data: {
@@ -27,11 +27,9 @@ export async function storeVerifiedContract({
 
   if (updated.count === 0) {
     console.warn(
-      `⚠️ Token not found in database: ${contractAddress} on chain ${chainId}. It may not have been deployed through the factory.`
+      `⚠️ Token not found in database: ${token} on chain ${chainId}. It may not have been deployed through the factory.`
     );
   } else {
-    console.log(
-      `✅ Token marked as verified in PostgreSQL: ${contractAddress}`
-    );
+    console.log(`✅ Token marked as verified in PostgreSQL: ${token}`);
   }
 }

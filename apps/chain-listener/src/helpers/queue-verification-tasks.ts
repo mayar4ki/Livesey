@@ -1,48 +1,39 @@
 import { createVerificationTask } from "@acme/queue";
-import { Address } from "viem";
+import { envValidationSchema } from "src/schemas/env-validation-schema";
+import { ValidatedLog } from "src/schemas/token-created-validation";
 
-export type QueueVerificationTaskData = {
-  contractAddress: Address;
-  chainId: number;
-  deployerAddress: Address;
-  name: string;
-  symbol: string;
-  totalSupply: bigint;
-};
+const env = envValidationSchema.parse(process.env);
 
 /**
  * Queue verification tasks for multiple deployed tokens
  * Each task is queued individually - failures don't affect other tasks
  */
-export async function queueVerificationTasks(
-  tokens: QueueVerificationTaskData[]
-): Promise<void> {
-  if (tokens.length === 0) {
-    return;
+export async function queueVerificationTasks(log: ValidatedLog) {
+  const token = log.args;
+
+  try {
+    await createVerificationTask({
+      chainId: env.CHAIN_ID,
+      token: {
+        token: token.token,
+        args: [
+          token.name,
+          token.symbol,
+          token.totalSupply,
+          token.assetRefHash,
+          token.operator,
+          token.initialRecipient,
+        ],
+      },
+    });
+
+    console.log(
+      `✅ Task queued: ${token.token} for verification (deployer: ${token.createdBy})`
+    );
+  } catch (error) {
+    console.error(
+      `❌ Error queuing verification task for ${token?.token}:`,
+      error instanceof Error ? error.message : error
+    );
   }
-
-  const results = await Promise.allSettled(
-    tokens.map(async (token) => {
-      await createVerificationTask({
-        contractAddress: token.contractAddress,
-        chainId: token.chainId,
-        args: [token.name, token.symbol, token.totalSupply.toString()],
-      });
-
-      console.log(
-        `✅ Task queued: ${token.contractAddress} for verification (deployer: ${token.deployerAddress})`
-      );
-    })
-  );
-
-  // Log any failures
-  results.forEach((result, index) => {
-    if (result.status === "rejected") {
-      const token = tokens[index];
-      console.error(
-        `❌ Error queuing verification task for ${token?.contractAddress}:`,
-        result.reason instanceof Error ? result.reason.message : result.reason
-      );
-    }
-  });
 }

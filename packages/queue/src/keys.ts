@@ -5,11 +5,8 @@ export enum StoreKeys {
   ADMIN_NONCE_PREFIX = "admin:nonce",
 }
 
-export function getVerificationTaskKey(
-  chainId: number,
-  contractAddress: Address
-) {
-  return `task:${chainId}:${contractAddress}`;
+export function getVerificationTaskKey(chainId: number, token: Address) {
+  return `task:${chainId}:${token}`;
 }
 
 export function getSeedDataKey(assetRefHash: string) {

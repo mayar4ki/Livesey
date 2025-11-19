@@ -24,7 +24,7 @@ async function startWorker() {
         const result = await consumeVerificationTask(0); // 0 = wait forever
 
         if (result) {
-          await handleContractVerification(result);
+          await handleContractVerification(result.task, result.chainId);
         }
       } catch (error) {
         console.error("Error processing task:", error);

@@ -8,13 +8,11 @@ import { VerificationTask } from "./types.js";
  */
 export async function getVerificationTask(
   chainId: number,
-  contractAddress: Address
+  token: Address
 ): Promise<VerificationTask | null> {
   try {
     await ensureConnected();
-    const data = await redis.get(
-      getVerificationTaskKey(chainId, contractAddress)
-    );
+    const data = await redis.get(getVerificationTaskKey(chainId, token));
     if (!data) {
       return null;
     }

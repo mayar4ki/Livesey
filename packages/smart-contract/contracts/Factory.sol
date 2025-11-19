@@ -90,13 +90,14 @@ contract Factory is AccessControlled, MockOperator {
     mapping(address => TokenInfo) public tokensLedger; // token address to token info
 
     event TokenCreated(
-        address indexed createdToken,
-        address indexed createdBy,
         string name,
         string symbol,
         uint256 totalSupply,
         bytes32 assetRefHash,
-        address operator
+        address operator,
+        address initialRecipient,
+        address indexed token,
+        address indexed createdBy
     );
 
     event TokenPaused(address indexed pausedToken);
@@ -167,7 +168,16 @@ contract Factory is AccessControlled, MockOperator {
             isPaused: false
         });
 
-        emit TokenCreated(tokenProxy, msg.sender, _name, _symbol, _totalSupply, _assetRefHash, _operator);
+        emit TokenCreated(
+            _name,
+            _symbol,
+            _totalSupply,
+            _assetRefHash,
+            _operator,
+            _initialRecipient,
+            tokenProxy,
+            msg.sender
+        );
     }
 
     /**

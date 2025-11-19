@@ -1,4 +1,3 @@
-import { Address } from "viem";
 import { QUEUE_NAME, ensureConnected, redis } from "../client.js";
 import { getVerificationTaskKey } from "../keys.js";
 import { VerificationTask } from "./types.js";
@@ -7,32 +6,29 @@ import { VerificationTask } from "./types.js";
  * Create a new verification task and add to queue
  */
 export async function createVerificationTask(data: {
-  contractAddress: Address;
   chainId: number;
-  args: any[];
+  token: Omit<VerificationTask, "status">;
 }) {
   try {
     await ensureConnected();
 
-    const { contractAddress, chainId, args } = data;
+    const { token, chainId } = data;
 
     const task: VerificationTask = {
-      contractAddress,
-      chainId,
-      args,
+      ...token,
       status: "pending",
     };
 
-    // Store task in Redis with key: task:{contractAddress}
+    // Store task in Redis with key: task:{token}
     await redis.set(
-      getVerificationTaskKey(chainId, contractAddress),
+      getVerificationTaskKey(chainId, token.token),
       JSON.stringify(task)
     );
 
     // Add tx to queue (using Redis List)
-    await redis.lPush(QUEUE_NAME, `${chainId}:${contractAddress}`);
+    await redis.lPush(QUEUE_NAME, `${chainId}:${token}`);
 
-    console.log(`✅ new task: task:${chainId}:${contractAddress}`);
+    console.log(`✅ new task: task:${chainId}:${token}`);
     return task;
   } catch (error) {
     console.error("Error creating verification task:", error);

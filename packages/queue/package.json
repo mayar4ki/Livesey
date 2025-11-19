@@ -20,7 +20,8 @@
   },
   "dependencies": {
     "redis": "^5.9.0",
-    "viem": "catalog:"
+    "viem": "catalog:",
+    "@acme/smart-contract": "workspace:*"
   },
   "devDependencies": {
     "@acme/tsconfig": "workspace:*",

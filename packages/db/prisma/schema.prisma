@@ -10,68 +10,73 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model DeployedToken {
-  id              String @id @default(cuid())
-  contractAddress String @db.VarChar(42) // Ethereum address (0x + 40 hex chars)
-  chainId         Int
+model Token {
+  id String @id @default(cuid())
 
-  name         String
+  token String @db.VarChar(42) // Ethereum address (0x + 40 hex chars)
+
+  name        String
+  symbol      String
+  totalSupply String // Store as string to handle large numbers (uint256)
+
   assetRefHash String @db.VarChar(66) // Asset reference hash (0x + 64 hex chars)
-  symbol       String
-  totalSupply  String // Store as string to handle large numbers (uint256)
+  operator     String @db.VarChar(42) // Ethereum address (0x + 40 hex chars)
+  createdBy    String @db.VarChar(42) // Ethereum wallet address (0x + 40 hex chars)
 
-  transactionHash String    @db.VarChar(66) // Transaction hash (0x + 64 hex chars)
+  chainId         Int
+  transactionHash String @db.VarChar(66) // Transaction hash (0x + 64 hex chars)
   blockNumber     BigInt
-  deployerAddress String    @db.VarChar(42) // Ethereum wallet address (0x + 40 hex chars)
-  verifiedAt      DateTime?
-  deployedAt      DateTime  @default(now())
 
-  seedData  TokenSeedData?
+  verifiedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  seedData  SeedData?
   proposals Proposal[]
 
-  @@unique([contractAddress, chainId])
-  @@index([contractAddress])
+  @@unique([token, chainId])
+  @@index([token])
   @@index([chainId])
-  @@index([deployedAt])
+  @@index([createdAt])
   @@index([verifiedAt])
-  @@index([deployerAddress])
+  @@index([createdBy])
   @@index([blockNumber])
-  @@index([transactionHash])
-  @@map("deployed_tokens")
+  @@map("tokens")
 }
 
-model TokenSeedData {
+model SeedData {
   id        String   @id @default(cuid())
-  seedData  Json // Asset reference seed data (key-value pairs)
+  data      Json // Asset reference seed data (key-value pairs)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  deployedToken   DeployedToken @relation(fields: [deployedTokenId], references: [id], onDelete: Cascade)
-  deployedTokenId String        @unique
+  token   Token  @relation(fields: [tokenId], references: [id], onDelete: Cascade)
+  tokenId String @unique
 
   @@map("token_seed_data")
 }
 
 model Proposal {
-  id          String @id @default(cuid())
+  id String @id @default(cuid())
+
   title       String
   description String @db.Text
-
-  creatorAddress String @db.VarChar(42) // Ethereum wallet address (0x + 40 hex chars)
-
   duration    Int // Duration in seconds
-  blockNumber BigInt // Block number when proposal was created
-  createdAt   DateTime @default(now())
-  expiresAt   DateTime // Calculated: createdAt + duration
+  createdBy   String @db.VarChar(42) // Ethereum wallet address (0x + 40 hex chars)
 
-  deployedToken   DeployedToken @relation(fields: [deployedTokenId], references: [id], onDelete: Cascade)
-  deployedTokenId String
+  blockNumber BigInt // Block number when proposal was created
+
+  createdAt DateTime @default(now())
+  expiresAt DateTime // Calculated: createdAt + duration
+
+  token   Token  @relation(fields: [tokenId], references: [id], onDelete: Cascade)
+  tokenId String
 
   votes Vote[]
 
-  @@index([deployedTokenId])
+  @@index([tokenId])
   @@index([createdAt])
   @@index([expiresAt])
+  @@index([createdBy])
   @@index([blockNumber])
   @@map("proposals")
 }
@@ -79,18 +84,18 @@ model Proposal {
 model Vote {
   id String @id @default(cuid())
 
-  voterAddress String  @db.VarChar(42) // Ethereum wallet address (0x + 40 hex chars)
-  votingPower  BigInt // Voting power (token balance or delegated power)
-  choice       Boolean // true = yes/for, false = no/against
+  createdBy   String  @db.VarChar(42) // Ethereum wallet address (0x + 40 hex chars)
+  votingPower BigInt // Voting power (token balance or delegated power)
+  choice      Boolean // true = yes/for, false = no/against
 
   createdAt DateTime @default(now())
 
   proposal   Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
   proposalId String
 
-  @@unique([proposalId, voterAddress]) // Prevent double voting
+  @@unique([proposalId, createdBy]) // Prevent double voting
   @@index([proposalId])
-  @@index([voterAddress])
+  @@index([createdBy])
   @@index([createdAt])
   @@map("votes")
 }

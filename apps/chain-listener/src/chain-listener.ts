@@ -2,8 +2,8 @@ import { closeRedisConnection } from "@acme/queue/client";
 import { FactoryAbi } from "@acme/smart-contract";
 import { Address, createPublicClient, http } from "viem";
 
-import { handleBeaconProxyCreatedEvents } from "./handlers/beacon-proxy-created-handler.js";
 import { handleNewAdminAddressEvent } from "./handlers/new-admin-address-handler.js";
+import { tokenCreatedEventHandler } from "./handlers/token-created-event-handler.js";
 import { validateEnv } from "./schemas/env-validation-schema.js";
 import { getChain } from "./utils/get-chain.js";
 
@@ -32,18 +32,26 @@ async function startListener() {
       publicClient.watchContractEvent({
         address: env.FACTORY_ADDRESS as Address,
         abi: FactoryAbi,
-        eventName: "BeaconProxyCreated",
+        eventName: "TokenCreated",
+        onError(error) {
+          console.error(error);
+        },
         onLogs: async (logs) => {
-          await handleBeaconProxyCreatedEvents(logs);
+          for (const log of logs) {
+            await tokenCreatedEventHandler(log);
+          }
         },
       }),
       publicClient.watchContractEvent({
         address: env.FACTORY_ADDRESS as Address,
         abi: FactoryAbi,
         eventName: "NewAdminAddress",
+        onError(error) {
+          console.error(error);
+        },
         onLogs: async (logs) => {
-          if (logs?.[0]) {
-            await handleNewAdminAddressEvent(logs?.[0]);
+          for (const log of logs) {
+            await handleNewAdminAddressEvent(log);
           }
         },
       }),
