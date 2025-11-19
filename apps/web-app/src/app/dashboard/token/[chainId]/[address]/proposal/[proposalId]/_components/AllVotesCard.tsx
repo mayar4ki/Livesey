@@ -22,7 +22,7 @@ export function AllVotesCard({ votes }: AllVotesCardProps) {
         {votes.length > 0 ? (
           <div className="space-y-2">
             {votes.map((vote) => {
-              const isUserVote = walletAddress && vote.voterAddress.toLowerCase() === walletAddress.toLowerCase();
+              const isUserVote = walletAddress && vote.createdBy.toLowerCase() === walletAddress.toLowerCase();
               const votingPower = typeof vote.votingPower === 'string' ? BigInt(vote.votingPower) : vote.votingPower;
               const choiceText = vote.choice ? 'For' : 'Against';
 
@@ -37,7 +37,7 @@ export function AllVotesCard({ votes }: AllVotesCardProps) {
                     {vote.choice ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <XCircle className="h-4 w-4 text-red-500" />}
                     <div>
                       <p className={`text-sm ${isUserVote ? 'font-medium' : ''}`}>
-                        {vote.voterAddress.slice(0, 6)}...{vote.voterAddress.slice(-4)}
+                        {vote.createdBy.slice(0, 6)}...{vote.createdBy.slice(-4)}
                         {isUserVote && ' (You)'}
                       </p>
                       <p className="text-xs text-muted-foreground">{formatRelativeTime(vote.createdAt)}</p>

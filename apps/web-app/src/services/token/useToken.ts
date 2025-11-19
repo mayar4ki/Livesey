@@ -4,18 +4,19 @@ import { BaseResponse } from '../types';
 
 export interface Token {
   id: string;
-  contractAddress: string;
+  token: string;
   chainId: number;
   name: string;
   assetRefHash: string;
   seedData?: TokenSeedData | null;
   symbol: string;
   totalSupply: string;
+  operator: string;
   transactionHash: string;
   blockNumber: bigint | string;
-  deployerAddress: string;
+  createdBy: string;
   verifiedAt: Date | string | null;
-  deployedAt: Date | string;
+  createdAt: Date | string;
 }
 
 export interface TokenSeedData {

@@ -19,7 +19,7 @@ interface CreateProposalFormProps {
   onSuccess?: () => void;
 }
 
-export function CreateProposalForm({ deployedTokenId, onSuccess }: CreateProposalFormProps) {
+export function CreateProposalForm({ deployedTokenId: tokenId, onSuccess }: CreateProposalFormProps) {
   const [showForm, setShowForm] = useState(false);
   const { isConnected } = useAccount();
   const createProposalMutation = useCreateProposal();
@@ -42,7 +42,7 @@ export function CreateProposalForm({ deployedTokenId, onSuccess }: CreateProposa
       title: data.title,
       description: data.description,
       duration: totalSeconds,
-      deployedTokenId,
+      tokenId,
     });
 
     // Reset form and close

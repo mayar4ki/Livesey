@@ -19,7 +19,7 @@ import {
 import { ArrowDown, ArrowUp, ArrowUpDown, Star } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
-import { Token } from '~/services/token/useTrendingTokens';
+import { Token } from '~/services/token/useToken';
 
 interface TokensTableProps {
   tokens: Token[];
@@ -66,7 +66,7 @@ export function TokensTable({ tokens }: TokensTableProps) {
         return (
           <div className="flex items-center gap-2">
             <Link
-              href={`/dashboard/token/${token.chainId}/${token.contractAddress}`}
+              href={`/dashboard/token/${token.chainId}/${token.token}`}
               className="font-medium hover:text-primary hover:underline transition-colors cursor-pointer"
             >
               {token.name}
@@ -98,8 +98,8 @@ export function TokensTable({ tokens }: TokensTableProps) {
       },
     },
     {
-      id: 'contractAddress',
-      accessorFn: (row) => row.contractAddress,
+      id: 'token',
+      accessorFn: (row) => row.token,
       header: ({ column }) => {
         return (
           <Button variant="ghost" onClick={() => column.toggleSorting()} className="h-8">
@@ -116,7 +116,7 @@ export function TokensTable({ tokens }: TokensTableProps) {
       },
       cell: ({ row }) => {
         const token = row.original;
-        return <ExplorerLink hash={token.contractAddress} chainId={token.chainId} />;
+        return <ExplorerLink hash={token.token} chainId={token.chainId} />;
       },
     },
     {
@@ -164,8 +164,8 @@ export function TokensTable({ tokens }: TokensTableProps) {
       },
     },
     {
-      id: 'deployer',
-      accessorFn: (row) => row.deployerAddress,
+      id: 'createdBy',
+      accessorFn: (row) => row.createdBy,
       header: ({ column }) => {
         return (
           <Button variant="ghost" onClick={() => column.toggleSorting()} className="h-8">
@@ -182,7 +182,29 @@ export function TokensTable({ tokens }: TokensTableProps) {
       },
       cell: ({ row }) => {
         const token = row.original;
-        return <ExplorerLink hash={token.deployerAddress} chainId={token.chainId} />;
+        return <ExplorerLink hash={token.createdBy} chainId={token.chainId} />;
+      },
+    },
+    {
+      id: 'operator',
+      accessorFn: (row) => row.operator,
+      header: ({ column }) => {
+        return (
+          <Button variant="ghost" onClick={() => column.toggleSorting()} className="h-8">
+            Operator
+            {column.getIsSorted() === 'asc' ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : column.getIsSorted() === 'desc' ? (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        const token = row.original;
+        return <ExplorerLink hash={token.operator} chainId={token.chainId} />;
       },
     },
     {

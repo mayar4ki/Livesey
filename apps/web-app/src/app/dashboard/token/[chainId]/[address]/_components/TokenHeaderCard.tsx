@@ -17,10 +17,10 @@ type TokenHeaderCardProps = {
 };
 
 export function TokenHeaderCard({ token, onAddToWallet, isAddingToWallet, decimals, isLoadingDecimals }: TokenHeaderCardProps) {
-  const explorerUrl = getExplorerUrl(token.contractAddress as `0x${string}`, token.chainId, 'token');
-  const tokenHoldersUrl = getExplorerUrl(token.contractAddress as `0x${string}`, token.chainId, 'token-holders');
+  const explorerUrl = getExplorerUrl(token.token as `0x${string}`, token.chainId, 'token');
+  const tokenHoldersUrl = getExplorerUrl(token.token as `0x${string}`, token.chainId, 'token-holders');
   const formattedTotalSupply = formatTokenBalance(token.totalSupply, decimals !== undefined ? Number(decimals) : 1, 0);
-  const deployedDate = new Date(token.deployedAt).toLocaleDateString('en-US', {
+  const deployedDate = new Date(token.createdAt).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -56,7 +56,7 @@ export function TokenHeaderCard({ token, onAddToWallet, isAddingToWallet, decima
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="text-xs font-medium">Contract:</span>
-                <ExplorerLink hash={token.contractAddress as `0x${string}`} chainId={token.chainId} type="token" className="text-xs" />
+                <ExplorerLink hash={token.token as `0x${string}`} chainId={token.chainId} type="token" className="text-xs" />
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="text-xs font-medium">Deployed:</span>

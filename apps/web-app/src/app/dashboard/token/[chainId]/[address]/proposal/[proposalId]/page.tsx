@@ -44,7 +44,7 @@ export default function ProposalPage() {
 
   const votes = proposal.votes || [];
   const status = getProposalStatus(proposal.expiresAt);
-  const userVote = walletAddress ? (votes.find((v) => v.voterAddress.toLowerCase() === walletAddress.toLowerCase()) ?? null) : null;
+  const userVote = walletAddress ? (votes.find((v) => v.createdBy.toLowerCase() === walletAddress.toLowerCase()) ?? null) : null;
   const isActive = status === 'active';
 
   const backUrl = `/dashboard/token/${chainId}/${tokenAddress}`;

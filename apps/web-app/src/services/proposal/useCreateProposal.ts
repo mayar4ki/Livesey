@@ -6,7 +6,7 @@ export interface CreateProposalRequest {
   title: string;
   description: string;
   duration: number; // Duration in seconds
-  deployedTokenId: string;
+  tokenId: string;
 }
 
 /**

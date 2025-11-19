@@ -22,10 +22,10 @@ export default function Page() {
   // Filter tokens based on view type
   const tokens = useMemo(() => {
     if (viewType === 'new') {
-      // Sort by deployedAt (most recent first)
+      // Sort by createdAt (most recent first)
       return [...allTokens].sort((a, b) => {
-        const dateA = new Date(a.deployedAt).getTime();
-        const dateB = new Date(b.deployedAt).getTime();
+        const dateA = new Date(a.createdAt).getTime();
+        const dateB = new Date(b.createdAt).getTime();
         return dateB - dateA;
       });
     }

@@ -36,7 +36,7 @@ export default function TokenPage() {
     if (!token) return;
 
     addTokenToWallet({
-      address: token.contractAddress,
+      address: token.token,
       symbol: token.symbol,
       decimals: decimals !== undefined ? Number(decimals) : undefined,
     });

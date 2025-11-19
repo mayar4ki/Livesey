@@ -10,14 +10,15 @@ export interface Proposal {
   blockNumber: bigint | string;
   createdAt: Date | string;
   expiresAt: Date | string;
-  deployedTokenId: string;
+  tokenId: string;
+  createdBy: string;
   votes?: Vote[];
 }
 
 export interface Vote {
   id: string;
   proposalId: string;
-  voterAddress: string;
+  createdBy: string;
   votingPower: bigint | string;
   choice: boolean; // true = yes/for, false = no/against
   createdAt: Date | string;
