@@ -5,9 +5,9 @@
 - create token ✅
 - token list ✅
 - view token info ✅
-- pause token
-- edit token operator (do-chain)
-- add operator (do-chain)
+- pause token ✅
+- edit token operator (do-chain) ✅
+- add operator (do-chain) ✅
 
 ---
 
