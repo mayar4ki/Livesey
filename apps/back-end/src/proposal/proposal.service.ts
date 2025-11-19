@@ -26,19 +26,19 @@ export class ProposalService {
   async create(dto: CreateProposalDto, creatorAddress: string) {
     const blockNumber = await this.viemPublicClient.client.getBlockNumber();
 
-    const deployedToken = await this.prisma.client.deployedToken.findUnique({
+    const token = await this.prisma.client.token.findUnique({
       where: {
-        id: dto.deployedTokenId,
+        id: dto.tokenId,
       },
     });
 
-    if (!deployedToken) {
-      throw new NotFoundException('Deployed token not found');
+    if (!token) {
+      throw new NotFoundException('Token not found');
     }
 
     // Get creator's voting power
     const votingPower = await this.calculateVotingPower(
-      deployedToken.contractAddress,
+      token.token,
       creatorAddress as Address,
       BigInt(blockNumber),
     );
@@ -51,7 +51,7 @@ export class ProposalService {
 
     // Get total supply from blockchain
     const totalSupply = await this.viemPublicClient.client.readContract({
-      address: deployedToken.contractAddress as Address,
+      address: token.token as Address,
       abi: ERC20ImplementationAbi,
       functionName: 'totalSupply',
       blockNumber: BigInt(blockNumber),
@@ -75,8 +75,8 @@ export class ProposalService {
         duration: dto.duration,
         blockNumber: BigInt(blockNumber),
         expiresAt: new Date(Date.now() + dto.duration * 1000),
-        deployedTokenId: deployedToken.id,
-        creatorAddress,
+        tokenId: token.id,
+        createdBy: creatorAddress,
       },
     });
 
@@ -84,13 +84,13 @@ export class ProposalService {
   }
 
   async findByDeployedToken(
-    deployedTokenId: string,
+    tokenId: string,
     query: ProposalListQueryDto,
   ): Promise<BaseResponse<ProposalEntity[]>> {
     const { skip = 0, take = 10 } = query;
 
     const where = {
-      deployedTokenId,
+      tokenId,
     };
 
     const [proposals, total] = await Promise.all([
@@ -143,9 +143,9 @@ export class ProposalService {
     const proposal = await this.prisma.client.proposal.findUnique({
       where: { id: dto.proposalId },
       include: {
-        deployedToken: {
+        token: {
           select: {
-            contractAddress: true,
+            token: true,
             chainId: true,
           },
         },
@@ -167,9 +167,9 @@ export class ProposalService {
     // Check if user has already voted (prevent double voting)
     const existingVote = await this.prisma.client.vote.findUnique({
       where: {
-        proposalId_voterAddress: {
+        proposalId_createdBy: {
           proposalId: dto.proposalId,
-          voterAddress: voterAddress,
+          createdBy: voterAddress,
         },
       },
     });
@@ -180,7 +180,7 @@ export class ProposalService {
 
     // Calculate voting power by reading token balance from blockchain at proposal's block number
     const votingPower = await this.calculateVotingPower(
-      proposal.deployedToken.contractAddress,
+      proposal.token.token,
       voterAddress as Address,
       proposal.blockNumber,
     );
@@ -194,7 +194,7 @@ export class ProposalService {
     await this.prisma.client.vote.create({
       data: {
         proposalId: dto.proposalId,
-        voterAddress: voterAddress,
+        createdBy: voterAddress,
         votingPower,
         choice: dto.choice,
       },

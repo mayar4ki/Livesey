@@ -19,5 +19,5 @@ export class CreateProposalDto {
 
   @IsNotEmpty()
   @IsString()
-  deployedTokenId: string;
+  tokenId: string;
 }

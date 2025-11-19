@@ -15,7 +15,7 @@ export class TokenService {
     private readonly redis: RedisService,
   ) {}
   async findOne(id: string): Promise<BaseResponse<TokenEntity>> {
-    const token = await this.prisma.client.deployedToken.findUnique({
+    const token = await this.prisma.client.token.findUnique({
       where: { id },
       include: {
         seedData: true,
@@ -34,10 +34,10 @@ export class TokenService {
     address: string,
     chainId: number,
   ): Promise<BaseResponse<TokenEntity>> {
-    const token = await this.prisma.client.deployedToken.findUnique({
+    const token = await this.prisma.client.token.findUnique({
       where: {
-        contractAddress_chainId: {
-          contractAddress: address,
+        token_chainId: {
+          token: address,
           chainId: chainId,
         },
       },
@@ -62,13 +62,13 @@ export class TokenService {
       ? {
           OR: [
             {
-              contractAddress: {
+              token: {
                 contains: search,
                 mode: 'insensitive' as const,
               },
             },
             {
-              deployerAddress: {
+              createdBy: {
                 contains: search,
                 mode: 'insensitive' as const,
               },
@@ -78,15 +78,15 @@ export class TokenService {
       : {};
 
     const [tokens, total] = await Promise.all([
-      this.prisma.client.deployedToken.findMany({
+      this.prisma.client.token.findMany({
         where,
         orderBy: {
-          deployedAt: 'desc',
+          createdAt: 'desc',
         },
         skip,
         take,
       }),
-      this.prisma.client.deployedToken.count({
+      this.prisma.client.token.count({
         where,
       }),
     ]);

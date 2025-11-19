@@ -33,13 +33,13 @@ export class ProposalController {
     return this.proposalService.create(dto, signer);
   }
 
-  @Get('token/:deployedTokenId')
+  @Get('token/:tokenId')
   @SerializeOptions({ type: BaseResponseDTO(ProposalEntity) })
   async findByDeployedToken(
-    @Param('deployedTokenId') deployedTokenId: string,
+    @Param('tokenId') tokenId: string,
     @Query() query: ProposalListQueryDto,
   ): Promise<BaseResponse<ProposalEntity[]>> {
-    return this.proposalService.findByDeployedToken(deployedTokenId, query);
+    return this.proposalService.findByDeployedToken(tokenId, query);
   }
 
   @Get(':id')
