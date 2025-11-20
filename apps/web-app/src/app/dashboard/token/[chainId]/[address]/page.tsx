@@ -4,15 +4,18 @@ import { ERC20ImplementationAbi } from '@acme/smart-contract';
 import { cn } from '@acme/ui';
 import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
 import { LoadingCard } from '@acme/ui/bootstrapped/loading-card';
+import { TokenContractDetailsCard } from '@acme/ui/bootstrapped/token/token-contract-details-card';
+import { TokenHeaderCard } from '@acme/ui/bootstrapped/token/token-header-card';
+import { TokenMetadataCard } from '@acme/ui/bootstrapped/token/token-metadata-card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@acme/ui/tabs';
 import { Wallet } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { Address } from 'viem';
 import { useReadContract } from 'wagmi';
 import { addTokenToWallet } from '~/_helpers/addTokenToWallet';
+import { useTokenInfo } from '~/services/factory/useTokenInfo';
 import { useToken } from '~/services/token/useToken';
-import { OverviewTab } from './_components/OverviewTab';
-import { TokenHeaderCard } from './_components/TokenHeaderCard';
+
 import { TradeTab } from './_components/TradeTab';
 import { VotingTab } from './_components/VotingTab';
 
@@ -23,6 +26,8 @@ export default function TokenPage() {
 
   const { data: tokenResponse, isLoading, error } = useToken(chainId, address);
   const token = tokenResponse?.data;
+
+  const { tokenInfo, isLoading: isLoadingTokenInfo } = useTokenInfo(address as Address | undefined);
 
   // Read decimals from the contract
   const { data: decimals, isLoading: isLoadingDecimals } = useReadContract({
@@ -61,17 +66,12 @@ export default function TokenPage() {
   return (
     <div className="p-4 md:p-6 flex-1">
       <div className="space-y-6">
-        <TokenHeaderCard
-          token={token}
-          onAddToWallet={handleAddToWallet}
-          isAddingToWallet={isLoadingDecimals || decimals === undefined}
-          decimals={decimals !== undefined ? Number(decimals) : undefined}
-          isLoadingDecimals={isLoadingDecimals}
-        />
+        <TokenHeaderCard token={token} onAddToWallet={handleAddToWallet} isPaused={tokenInfo?.isPaused} />
 
         <Tabs defaultValue="overview" className="w-full ">
           <TabsList className="grid w-full grid-cols-6 lg:flex lg:w-fit mb-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="metadata">Metadata</TabsTrigger>
             <TabsTrigger value="trade">Trade</TabsTrigger>
 
             <TabsTrigger value="voting">Voting</TabsTrigger>
@@ -79,7 +79,12 @@ export default function TokenPage() {
 
           {/* Overview Tab */}
           <TabsContent value="overview">
-            <OverviewTab token={token} decimals={decimals} isLoadingDecimals={isLoadingDecimals} />
+            <TokenContractDetailsCard token={token} chainId={+chainId ?? 1} />
+          </TabsContent>
+
+          {/* Metadata Tab */}
+          <TabsContent value="metadata">
+            <TokenMetadataCard token={token} />
           </TabsContent>
 
           {/* Voting Tab */}

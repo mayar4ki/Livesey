@@ -2,15 +2,16 @@ import { formatDateTime, getChainUIName, getExplorerUrl } from '@acme/client/uti
 import { Badge } from '@acme/ui/badge';
 import { Button } from '@acme/ui/button';
 import { Card, CardHeader } from '@acme/ui/card';
-import { Calendar, CheckCircle2, ExternalLink, Network, PauseCircle } from 'lucide-react';
-import { Token } from '~/services/token/types';
+import { Calendar, CheckCircle2, ExternalLink, Network, PauseCircle, Plus, Users } from 'lucide-react';
+import { Token } from './types';
 
 interface TokenHeaderCardProps {
   token: Token;
   isPaused?: boolean;
+  onAddToWallet?: () => void;
 }
 
-export function TokenHeaderCard({ token, isPaused }: TokenHeaderCardProps) {
+export function TokenHeaderCard({ token, isPaused, onAddToWallet }: TokenHeaderCardProps) {
   return (
     <Card>
       <CardHeader className="">
@@ -43,16 +44,34 @@ export function TokenHeaderCard({ token, isPaused }: TokenHeaderCardProps) {
             </div>
           </div>
 
-          <div className="shrink-0">
-            <Button asChild variant="outline" size="sm" className="w-full md:w-auto">
+          {/* Right: Actions */}
+          <div className="flex items-center gap-2 shrink-0">
+            {onAddToWallet && (
+              <Button onClick={onAddToWallet} size="sm" variant="default" className="gap-1.5">
+                <Plus className="h-3.5 w-3.5" />
+                Add to Wallet
+              </Button>
+            )}
+            <Button asChild variant="outline" size="sm" className="gap-1.5">
+              <a
+                href={getExplorerUrl(token.token as `0x${string}`, token.chainId, 'token-holders')}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center"
+              >
+                <Users className="h-3.5 w-3.5" />
+                Holders
+              </a>
+            </Button>
+            <Button asChild variant="outline" size="sm" className="gap-1.5">
               <a
                 href={getExplorerUrl(token.transactionHash as `0x${string}`, token.chainId)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2"
+                className="inline-flex items-center"
               >
-                View on Explorer
-                <ExternalLink className="h-4 w-4" />
+                <ExternalLink className="h-3.5 w-3.5" />
+                Explorer
               </a>
             </Button>
           </div>

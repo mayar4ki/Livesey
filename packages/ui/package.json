@@ -34,7 +34,10 @@
     "./bootstrapped/error-state-card": "./src/bootstrapped/error-state-card.tsx",
     "./bootstrapped/explorer-address-link": "./src/bootstrapped/explorer-address-link.tsx",
     "./bootstrapped/loading-card": "./src/bootstrapped/loading-card.tsx",
-    "./bootstrapped/copy-button": "./src/bootstrapped/copy-button.tsx"
+    "./bootstrapped/copy-button": "./src/bootstrapped/copy-button.tsx",
+    "./bootstrapped/token/token-contract-details-card": "./src/bootstrapped/token/token-contract-details-card.tsx",
+    "./bootstrapped/token/token-metadata-card": "./src/bootstrapped/token/token-metadata-card.tsx",
+    "./bootstrapped/token/token-header-card": "./src/bootstrapped/token/token-header-card.tsx"
   },
   "license": "MIT",
   "scripts": {

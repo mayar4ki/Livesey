@@ -10,9 +10,11 @@ import { useParams } from 'next/navigation';
 import { Address } from 'viem';
 import { useTokenInfo } from '~/services/factory/useTokenInfo';
 import { useToken } from '~/services/token/useToken';
-import { TokenContractDetailsCard } from './_components/TokenContractDetailsCard';
-import { TokenHeaderCard } from './_components/TokenHeaderCard';
-import { TokenMetadataCard } from './_components/TokenMetadataCard';
+
+import { TokenHeaderCard } from '@acme/ui/bootstrapped/token/token-header-card';
+
+import { TokenContractDetailsCard } from '@acme/ui/bootstrapped/token/token-contract-details-card';
+import { TokenMetadataCard } from '@acme/ui/bootstrapped/token/token-metadata-card';
 import { TokenOperatorSection } from './_components/TokenOperatorSection';
 import { TokenPauseSection } from './_components/TokenPauseSection';
 
@@ -78,7 +80,7 @@ export default function Page() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="contract" className="mt-5">
-            <TokenContractDetailsCard tokenInfo={token} chainId={token.chainId} />
+            <TokenContractDetailsCard token={token} chainId={token.chainId} />
           </TabsContent>
           <TabsContent value="metadata" className="mt-5">
             <TokenMetadataCard token={token} />

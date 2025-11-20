@@ -1,7 +1,7 @@
+import { cn } from '@acme/ui';
 import { CopyButton } from '@acme/ui/bootstrapped/copy-button';
 import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
-import { cn } from '@acme/ui';
-import { Token } from '~/services/token/types';
+import { Token } from './types';
 
 interface TokenMetadataCardProps {
   token: Token;
@@ -36,7 +36,7 @@ export function TokenMetadataCard({ token, className }: TokenMetadataCardProps) 
       <CardContent className="space-y-4">
         <div>
           <label className="text-sm font-medium text-muted-foreground">Token ID</label>
-          <p className="text-base font-mono mt-1 break-all">{token.id}</p>
+          <p className="text-base font-mono mt-1 break-all">{token?.id}</p>
         </div>
         <div>
           <div className="flex items-center justify-between mb-1">

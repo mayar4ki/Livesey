@@ -1,19 +1,19 @@
-export type Token = {
+export interface Token {
   id: string;
   token: string;
   chainId: number;
   name: string;
   assetRefHash: string;
-  seedData?: TokenSeedData;
+  seedData?: TokenSeedData | null;
   symbol: string;
   totalSupply: string;
   operator: string;
-  createdBy: string;
   transactionHash: string;
   blockNumber: bigint | string;
+  createdBy: string;
   verifiedAt: Date | string | null;
   createdAt: Date | string;
-};
+}
 
 export interface TokenSeedData {
   id: string;
