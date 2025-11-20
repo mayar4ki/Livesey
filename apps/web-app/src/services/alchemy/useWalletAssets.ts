@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { sepolia } from 'viem/chains';
+import { env } from '~/env';
 
 export interface AlchemyResponse {
   data: {
@@ -35,7 +36,7 @@ export function useWalletAssets(walletAddress: string | undefined, chainId: numb
     queryKey: ['wallet-assets', walletAddress, chainId],
     queryFn: async ({ signal }) =>
       await axios.post<AlchemyResponse>(
-        `https://api.g.alchemy.com/data/v1/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}/assets/tokens/by-address`,
+        `https://api.g.alchemy.com/data/v1/${env.NEXT_PUBLIC_ALCHEMY_API_KEY}/assets/tokens/by-address`,
         {
           addresses: [
             {
@@ -48,6 +49,6 @@ export function useWalletAssets(walletAddress: string | undefined, chainId: numb
           signal,
         }
       ),
-    enabled: !!walletAddress && !!process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
+    enabled: !!walletAddress,
   });
 }

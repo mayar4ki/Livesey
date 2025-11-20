@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { sepolia } from 'viem/chains';
 import { useAccount, useChainId } from 'wagmi';
+import { env } from '~/env';
 
 type AlchemyToken = {
   contractAddress: string;
@@ -50,7 +51,7 @@ export function useWalletAssets() {
       const network = chainId === sepolia.id ? 'eth-sepolia' : 'eth-mainnet';
 
       const { data } = await axios.post<AlchemyResponse>(
-        `https://api.g.alchemy.com/data/v1/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}/assets/tokens/by-address`,
+        `https://api.g.alchemy.com/data/v1/${env.NEXT_PUBLIC_ALCHEMY_API_KEY}/assets/tokens/by-address`,
         {
           addresses: [
             {

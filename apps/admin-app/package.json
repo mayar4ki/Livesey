@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack -p 3000",
-    "build": "next build --turbopack",
-    "start": "next start",
+    "dev": "pnpm with-env next dev --turbopack -p 3000",
+    "build": "pnpm with-env next build --turbopack",
+    "start": "pnpm with-env next start",
     "lint": "biome check",
     "format": "biome format --write",
     "typecheck": "tsc --noEmit",
-    "clean": "git clean -xdf .cache .next .turbo node_modules"
+    "clean": "git clean -xdf .cache .next .turbo node_modules",
+    "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
     "@acme/client": "workspace:*",
@@ -20,6 +21,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@tanstack/react-query": "^5.90.2",
     "@tanstack/react-table": "^8.21.3",
+    "@t3-oss/env-nextjs": "^0.13.8",
     "axios": "^1.13.1",
     "clsx": "^2.1.1",
     "ethers": "^5.7.0",
@@ -31,7 +33,8 @@
     "react-hook-form": "^7.65.0",
     "viem": "catalog:",
     "wagmi": "^2.17.5",
-    "yup": "^1.7.1"
+    "yup": "^1.7.1",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@acme/tsconfig": "workspace:*",

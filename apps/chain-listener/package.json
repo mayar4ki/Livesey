@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "dotenv -e .env -- tsx src/chain-listener.ts --watch",
+    "dev": "pnpm with-env tsx src/chain-listener.ts --watch",
     "build": "tsc",
+    "with-env": "dotenv -e ../../.env --",
     "start": "node dist/chain-listener.js",
     "typecheck": "tsc --noEmit",
     "clean": "git clean -xdf .cache .turbo dist node_modules"

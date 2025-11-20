@@ -1,5 +1,6 @@
 import { cookieStorage, createConfig, createStorage, http } from 'wagmi';
 import { sepolia } from 'wagmi/chains';
+import { env } from '~/env';
 
 export const getConfig = () => {
   return createConfig({
@@ -8,8 +9,8 @@ export const getConfig = () => {
       sepolia,
     ],
     transports: {
-      //[mainnet.id]: http(`https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`),
-      [sepolia.id]: http(`https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`),
+      //[mainnet.id]: http(`https://eth-mainnet.g.alchemy.com/v2/${env.NEXT_PUBLIC_ALCHEMY_API_KEY}`),
+      [sepolia.id]: http(`https://eth-sepolia.g.alchemy.com/v2/${env.NEXT_PUBLIC_ALCHEMY_API_KEY}`),
     },
     ssr: true,
     storage: createStorage({
