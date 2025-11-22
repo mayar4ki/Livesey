@@ -8,10 +8,9 @@ import { Token } from './types';
 
 interface TokenContractDetailsCardProps {
   token: Token;
-  chainId: number;
 }
 
-export function TokenContractDetailsCard({ token, chainId }: TokenContractDetailsCardProps) {
+export function TokenContractDetailsCard({ token }: TokenContractDetailsCardProps) {
   return (
     <Card>
       <CardHeader>
@@ -69,7 +68,7 @@ export function TokenContractDetailsCard({ token, chainId }: TokenContractDetail
                   />
                 </div>
                 <div className="mt-1">
-                  <ExplorerLink hash={token.token} chainId={chainId} showFull />
+                  <ExplorerLink hash={token.token} chainId={token.chainId} showFull />
                 </div>
               </div>
               <div>
@@ -84,7 +83,7 @@ export function TokenContractDetailsCard({ token, chainId }: TokenContractDetail
                   />
                 </div>
                 <div className="mt-1">
-                  <ExplorerLink hash={token.operator} chainId={chainId} showFull />
+                  <ExplorerLink hash={token.operator} chainId={token.chainId} showFull />
                 </div>
               </div>
               <div>
@@ -99,7 +98,7 @@ export function TokenContractDetailsCard({ token, chainId }: TokenContractDetail
                   />
                 </div>
                 <div className="mt-1">
-                  <ExplorerLink hash={token.createdBy} chainId={chainId} showFull />
+                  <ExplorerLink hash={token.createdBy} chainId={token.chainId} showFull />
                 </div>
               </div>
             </div>

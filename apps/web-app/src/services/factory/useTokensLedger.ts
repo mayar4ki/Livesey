@@ -18,7 +18,7 @@ export type TokenInfo = {
  * @param tokenAddress - The address of the token to fetch
  * @returns Token info and loading state
  */
-export function useTokenInfo(tokenAddress: Address | undefined) {
+export function useTokensLedger(tokenAddress: Address | undefined) {
   const { data, isLoading } = useReadContract({
     address: ADDRESS,
     abi: ABI,

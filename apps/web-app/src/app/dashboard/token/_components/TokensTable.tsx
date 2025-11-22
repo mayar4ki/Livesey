@@ -66,7 +66,7 @@ export function TokensTable({ tokens }: TokensTableProps) {
         return (
           <div className="flex items-center gap-2">
             <Link
-              href={`/dashboard/token/${token.chainId}/${token.token}`}
+              href={`/dashboard/token/${token.token}`}
               className="font-medium hover:text-primary hover:underline transition-colors cursor-pointer"
             >
               {token.name}

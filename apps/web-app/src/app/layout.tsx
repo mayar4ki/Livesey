@@ -36,12 +36,10 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <WagmiProvider initialState={wagmiInitialState}>
-          <ReactQueryProvider>
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-              <Toaster />
-              {children}
-            </ThemeProvider>
-          </ReactQueryProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+            <Toaster />
+            <ReactQueryProvider>{children}</ReactQueryProvider>
+          </ThemeProvider>
         </WagmiProvider>
       </body>
     </html>

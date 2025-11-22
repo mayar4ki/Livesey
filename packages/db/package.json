@@ -16,7 +16,8 @@
     "db:studio": "prisma studio --schema=./prisma/schema.prisma",
     "build": "pnpm db:generate && tsup",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "clean": "git clean -xdf .cache .turbo dist node_modules"
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0"

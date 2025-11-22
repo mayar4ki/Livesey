@@ -20,6 +20,7 @@
     "clean": "git clean -xdf .cache .turbo dist node_modules"
   },
   "dependencies": {
+    "@1inch/limit-order-sdk": "^5.2.3",
     "@acme/db": "workspace:*",
     "@acme/queue": "workspace:*",
     "@acme/shared": "workspace:*",

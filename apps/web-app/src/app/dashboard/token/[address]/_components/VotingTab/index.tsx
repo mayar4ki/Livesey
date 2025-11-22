@@ -7,6 +7,7 @@ import { useMemo } from 'react';
 import { Proposal } from '~/services/proposal/useProposal';
 import { useProposals } from '~/services/proposal/useProposals';
 import { getProposalStatus, type ProposalStatus } from '~/services/proposal/utils';
+import { Token } from '~/services/token/useToken';
 import { CreateProposalForm } from './CreateProposalForm';
 import { ProposalItem } from './ProposalItem';
 
@@ -51,13 +52,13 @@ function transformProposal(proposal: Proposal): ProposalDisplay {
 }
 
 export interface VotingTabProps {
-  tokenId: string;
+  token: Token;
 }
 
-export function VotingTab({ tokenId }: VotingTabProps) {
+export function VotingTab({ token }: VotingTabProps) {
   const { params: queryParams, setParams } = useQueryParams({ take: 10, skip: 0 });
 
-  const { data: proposalsResponse, isLoading: isLoadingProposals } = useProposals(tokenId, {
+  const { data: proposalsResponse, isLoading: isLoadingProposals } = useProposals(token.id, {
     skip: queryParams.skip,
     take: queryParams.take,
   });
@@ -70,7 +71,7 @@ export function VotingTab({ tokenId }: VotingTabProps) {
 
   return (
     <div className="space-y-6">
-      <CreateProposalForm deployedTokenId={tokenId} />
+      <CreateProposalForm deployedTokenId={token.id} />
 
       <Card>
         <CardHeader>

@@ -13,6 +13,7 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
+    "@1inch/limit-order-sdk": "^5.2.3",
     "@acme/client": "workspace:*",
     "@acme/shared": "workspace:*",
     "@acme/smart-contract": "workspace:*",

@@ -10,7 +10,7 @@ export const useEIP712 = () => {
 
   const { signTypedDataAsync } = useSignTypedData();
 
-  const makeSignatureRequest = async (method: 'POST' | 'GET' | 'PUT' | 'DELETE', path: string, body: any) => {
+  const makeSignatureRequest = async (method: 'POST' | 'GET' | 'PUT' | 'DELETE' | 'PATCH', path: string, body: any) => {
     const message = createSignatureRequestMessage({
       method,
       path,

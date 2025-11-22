@@ -1,83 +1,105 @@
 'use client';
 // Since QueryClientProvider relies on useContext under the hood, we have to put 'use client' on top
 import { toast } from '@acme/ui/sonner';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, isServer } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { JSX } from 'react';
+import { ReactNode } from 'react';
 
-// function makeQueryClient() {
-//   return new QueryClient({
-//     defaultOptions: {
-//       queries: {
-//         // With SSR, we usually want to set some default staleTime
-//         // above 0 to avoid refetching immediately on the client
-//         // staleTime: 60 * 1000,
-//       },
-//     },
-//   });
-// }
+function makeQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        throwOnError(error) {
+          if (error instanceof AxiosError) {
+            const errorData = error.response?.data;
+            const errorMessage = errorData?.error || error.message || 'An error occurred';
+            const description = Array.isArray(errorData?.message)
+              ? errorData.message.join(', ')
+              : typeof errorData?.message === 'string'
+                ? errorData.message
+                : error.message || '';
 
-const client = new QueryClient({
-  defaultOptions: {
-    queries: {
-      throwOnError(error) {
-        toast.error(`${(error as unknown as Record<string, string>).shortMessage ?? error.name}`, {
-          description: `${(typeof error?.cause === 'string' ? error?.cause : '') ?? error.name}`,
-          action: {
-            label: 'Close',
-            onClick: () => {},
-          },
-        });
+            toast.error(errorMessage, {
+              description: description || undefined,
+              action: {
+                label: 'Close',
+                onClick: () => {},
+              },
+            });
+          } else {
+            const errorMessage = (error as unknown as Record<string, string>).shortMessage ?? error.message ?? error.name ?? 'An error occurred';
+            const description = typeof error?.cause === 'string' ? error.cause : error.name || '';
 
-        return false;
+            toast.error(errorMessage, {
+              description: description || undefined,
+              action: {
+                label: 'Close',
+                onClick: () => {},
+              },
+            });
+          }
+
+          return false;
+        },
+      },
+      mutations: {
+        onError(error) {
+          if (error instanceof AxiosError) {
+            const errorData = error.response?.data;
+            const errorMessage = errorData?.error || error.message || 'An error occurred';
+            const description = Array.isArray(errorData?.message)
+              ? errorData.message.join(', ')
+              : typeof errorData?.message === 'string'
+                ? errorData.message
+                : error.message || '';
+
+            toast.error(errorMessage, {
+              description: description || undefined,
+              action: {
+                label: 'Close',
+                onClick: () => {},
+              },
+            });
+          } else {
+            const errorMessage = (error as unknown as Record<string, string>).shortMessage ?? error.message ?? 'An error occurred';
+            const description = typeof error?.cause === 'string' ? error.cause : error.name || '';
+
+            toast.error(errorMessage, {
+              description: description || undefined,
+              action: {
+                label: 'Close',
+                onClick: () => {},
+              },
+            });
+          }
+        },
       },
     },
-    mutations: {
-      onError(error) {
-        if (error instanceof AxiosError) {
-          toast.error(error.message, {
-            description: error.response?.data.message.join(', '),
-            action: {
-              label: 'Close',
-              onClick: () => {},
-            },
-          });
-        } else {
-          toast.error(`${(error as unknown as Record<string, string>).shortMessage ?? error.message}`, {
-            description: `${(typeof error?.cause === 'string' ? error?.cause : '') ?? error.name}`,
-            action: {
-              label: 'Close',
-              onClick: () => {},
-            },
-          });
-        }
-      },
-    },
-  },
-});
+  });
+}
 
-// let browserQueryClient: QueryClient | undefined = undefined;
+let browserQueryClient: QueryClient | undefined = undefined;
 
-// function getQueryClient() {
-//   if (isServer) {
-//     // Server: always make a new query client
-//     return makeQueryClient();
-//   } else {
-//     // Browser: make a new query client if we don't already have one
-//     // This is very important, so we don't re-make a new client if React
-//     // suspends during the initial render. This may not be needed if we
-//     // have a suspense boundary BELOW the creation of the query client
-//     if (!browserQueryClient) browserQueryClient = makeQueryClient();
-//     return browserQueryClient;
-//   }
-// }
+function getQueryClient() {
+  if (isServer) {
+    // Server: always make a new query client
+    return makeQueryClient();
+  } else {
+    // Browser: make a new query client if we don't already have one
+    // This is very important, so we don't re-make a new client if React
+    // suspends during the initial render. This may not be needed if we
+    // have a suspense boundary BELOW the creation of the query client
+    if (!browserQueryClient) browserQueryClient = makeQueryClient();
+    return browserQueryClient;
+  }
+}
 
-export const ReactQueryProvider = ({ children }: { children: JSX.Element }) => {
+export const ReactQueryProvider = ({ children }: { children: ReactNode }) => {
   // NOTE: Avoid useState when initializing the query client if you don't
   //       have a suspense boundary between this and the code that may
   //       suspend because React will throw away the client on the initial
   //       render if it suspends and there is no boundary
-  // const queryClient = getQueryClient();
+  const queryClient = getQueryClient();
 
-  return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 };

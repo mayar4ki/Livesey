@@ -30,8 +30,9 @@ model Token {
   verifiedAt DateTime?
   createdAt  DateTime  @default(now())
 
-  seedData  SeedData?
-  proposals Proposal[]
+  seedData    SeedData?
+  proposals   Proposal[]
+  limitOrders LimitOrder[]
 
   @@unique([token, chainId])
   @@index([token])
@@ -98,4 +99,43 @@ model Vote {
   @@index([createdBy])
   @@index([createdAt])
   @@map("votes")
+}
+
+model LimitOrder {
+  id String @id @default(cuid())
+
+  orderHash String @db.VarChar(66) // 1inch order hash (0x + 64 hex chars)
+  maker     String @db.VarChar(42) // Ethereum wallet address (0x + 40 hex chars)
+
+  makeToken String @db.VarChar(42) // Token address being sold
+  takeToken String @db.VarChar(42) // Token address being bought
+
+  makeAmount String // Amount to sell (as string to handle uint256)
+  takeAmount String // Amount to buy (as string to handle uint256)
+
+  signature String @db.VarChar(132) // EIP712 signature (0x + 130 hex chars)
+
+  nonce      BigInt // Order nonce
+  expiration BigInt // Expiration timestamp (Unix timestamp)
+
+  chainId Int // Chain ID where the order is valid
+
+  status String @default("pending") // pending, filled, cancelled, expired
+
+  // Optional relation to Token model (for makeToken or takeToken)
+  token   Token?  @relation(fields: [tokenId], references: [id], onDelete: SetNull)
+  tokenId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([orderHash, chainId]) // Order hash is unique per chain
+  @@index([maker])
+  @@index([makeToken])
+  @@index([takeToken])
+  @@index([chainId])
+  @@index([status])
+  @@index([expiration])
+  @@index([createdAt])
+  @@map("limit_orders")
 }

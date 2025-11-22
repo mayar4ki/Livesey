@@ -1,6 +1,6 @@
 'use client';
 
-import { BookOpen, ChartArea, Compass, HelpCircle, Settings } from 'lucide-react';
+import { BookOpen, ChartArea, Coins, Compass, HelpCircle, Settings } from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@acme/ui';
@@ -41,10 +41,16 @@ const navGroups = [
     label: 'Tokens',
     items: [
       {
+        title: 'Tokens List',
+        url: '/dashboard/token',
+        icon: Coins,
+      },
+      {
         title: 'My Assets',
         url: '/dashboard/my-assets',
         icon: ChartArea,
       },
+
       // {
       //   title: 'Governance',
       //   url: '/dashboard/governance',

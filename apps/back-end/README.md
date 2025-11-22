@@ -39,7 +39,7 @@ $ yarn install
 
 # Set up environment variables
 # Create a .env file with:
-# DATABASE_URL="postgresql://user:password@localhost:5432/dbname"
+# DATABASE_URL="postgresql://user:password@localhost:15432/dbname"
 # PORT=3000
 
 # Generate Prisma Client (from packages/db)

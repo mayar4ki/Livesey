@@ -1,6 +1,5 @@
 'use client';
 
-import { ERC20ImplementationAbi } from '@acme/smart-contract';
 import { cn } from '@acme/ui';
 import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
 import { LoadingCard } from '@acme/ui/bootstrapped/loading-card';
@@ -11,41 +10,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@acme/ui/tabs';
 import { Wallet } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { Address } from 'viem';
-import { useReadContract } from 'wagmi';
-import { addTokenToWallet } from '~/_helpers/addTokenToWallet';
-import { useTokenInfo } from '~/services/factory/useTokenInfo';
+import { useTokensLedger } from '~/services/factory/useTokensLedger';
 import { useToken } from '~/services/token/useToken';
 
+import { addTokenToWallet } from '~/_helpers/addTokenToWallet';
+import { useTokenDecimals } from '~/services/erc20/useTokenDecimals';
 import { TradeTab } from './_components/TradeTab';
 import { VotingTab } from './_components/VotingTab';
 
 export default function TokenPage() {
   const params = useParams();
-  const chainId = params.chainId as string;
   const address = params.address as string;
-
-  const { data: tokenResponse, isLoading, error } = useToken(chainId, address);
-  const token = tokenResponse?.data;
-
-  const { tokenInfo, isLoading: isLoadingTokenInfo } = useTokenInfo(address as Address | undefined);
-
-  // Read decimals from the contract
-  const { data: decimals, isLoading: isLoadingDecimals } = useReadContract({
-    address: address as Address,
-    abi: ERC20ImplementationAbi,
-    functionName: 'decimals',
-    chainId: parseInt(chainId, 10),
-  });
-
-  const handleAddToWallet = () => {
-    if (!token) return;
-
-    addTokenToWallet({
-      address: token.token,
-      symbol: token.symbol,
-      decimals: decimals !== undefined ? Number(decimals) : undefined,
-    });
-  };
+  const { data: token, isLoading, error } = useToken({ address });
+  const { data: decimals } = useTokenDecimals(token?.data.token);
+  const { tokenInfo } = useTokensLedger(address as Address | undefined);
 
   if (isLoading) {
     return (
@@ -66,35 +44,46 @@ export default function TokenPage() {
   return (
     <div className="p-4 md:p-6 flex-1">
       <div className="space-y-6">
-        <TokenHeaderCard token={token} onAddToWallet={handleAddToWallet} isPaused={tokenInfo?.isPaused} />
+        <TokenHeaderCard
+          token={token.data}
+          onAddToWallet={() => {
+            token &&
+              addTokenToWallet({
+                address: token.data.token,
+                symbol: token.data.symbol,
+                decimals: decimals !== undefined ? Number(decimals) : undefined,
+              });
+          }}
+          isPaused={tokenInfo?.isPaused}
+        />
 
-        <Tabs defaultValue="overview" className="w-full ">
+        <Tabs defaultValue="trade" className="w-full ">
           <TabsList className="grid w-full grid-cols-6 lg:flex lg:w-fit mb-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="metadata">Metadata</TabsTrigger>
-            <TabsTrigger value="trade">Trade</TabsTrigger>
+            <TabsTrigger value="trade">Sell / Buy</TabsTrigger>
 
             <TabsTrigger value="voting">Voting</TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
           <TabsContent value="overview">
-            <TokenContractDetailsCard token={token} chainId={+chainId ?? 1} />
+            <TokenContractDetailsCard token={token.data} />
           </TabsContent>
 
           {/* Metadata Tab */}
           <TabsContent value="metadata">
-            <TokenMetadataCard token={token} />
+            <TokenMetadataCard token={token.data} />
           </TabsContent>
 
           {/* Voting Tab */}
           <TabsContent value="voting">
-            <VotingTab tokenId={token.id} />
+            <VotingTab token={token.data} />
           </TabsContent>
 
           {/* Trade Tab */}
           <TabsContent value="trade" forceMount className={cn('space-y-6 data-[state=inactive]:hidden')}>
-            <TradeTab />
+            <TradeTab token={token.data} />
           </TabsContent>
         </Tabs>
       </div>

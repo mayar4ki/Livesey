@@ -1,4 +1,4 @@
-import type { CreateProposalFormSchema } from '~/app/dashboard/token/[chainId]/[address]/_components/VotingTab/createProposalFormSchema';
+import type { CreateProposalFormSchema } from '~/app/dashboard/token/[address]/_components/VotingTab/createProposalFormSchema';
 
 export type ProposalStatus = 'active' | 'closed' | 'pending';
 
