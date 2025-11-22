@@ -112,9 +112,7 @@ export class LimitOrderSignatureGuard implements CanActivate {
     const signer = req.headers['x-signer']; // From SignatureGuard
 
     if (!signer) {
-      throw new BadRequestException(
-        'Missing x-signer header. SignatureGuard must be applied before LimitOrderSignatureGuard',
-      );
+      throw new BadRequestException('Missing x-signer header.');
     }
 
     // Prepare order data once
@@ -137,7 +135,7 @@ export class LimitOrderSignatureGuard implements CanActivate {
     );
 
     if (!orderHashValid) {
-      throw new BadRequestException('Order hash does not match the order data');
+      throw new BadRequestException('Invalid order hash');
     }
 
     // Verify the order signature matches the order payload and maker
@@ -149,9 +147,7 @@ export class LimitOrderSignatureGuard implements CanActivate {
     );
 
     if (!signatureValid) {
-      throw new BadRequestException(
-        'Order signature is invalid or does not match the order data',
-      );
+      throw new BadRequestException('Invalid order signature');
     }
 
     return true;
