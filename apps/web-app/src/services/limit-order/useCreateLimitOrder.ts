@@ -70,6 +70,7 @@ export function useCreateLimitOrder() {
         takeAmount: order.takingAmount.toString(),
         signature,
         nonce: nonce.toString(), // Convert BigInt to string for JSON serialization
+        salt: order.salt.toString(),
         expiration: Number(expiration),
         chainId,
         tokenId: data.tokenId,

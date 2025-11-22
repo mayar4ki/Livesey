@@ -8,6 +8,19 @@ import {
 import { recoverTypedDataAddress } from 'viem';
 import { CreateLimitOrderDto } from './dto/create-limit-order.dto';
 
+type OrderData = Pick<
+  CreateLimitOrderDto,
+  | 'makeToken'
+  | 'takeToken'
+  | 'makeAmount'
+  | 'takeAmount'
+  | 'nonce'
+  | 'expiration'
+  | 'salt'
+> & {
+  maker: string;
+};
+
 /**
  * Guard that verifies 1inch limit order signature and order hash
  *
@@ -24,15 +37,7 @@ export class LimitOrderSignatureGuard implements CanActivate {
   /**
    * Reconstructs a LimitOrder from order data
    */
-  private reconstructOrder(orderData: {
-    makeToken: string;
-    takeToken: string;
-    makeAmount: string;
-    takeAmount: string;
-    maker: string;
-    nonce: string;
-    expiration: number;
-  }): LimitOrder {
+  private reconstructOrder(orderData: OrderData): LimitOrder {
     return new LimitOrder(
       {
         makerAsset: new Address(orderData.makeToken),
@@ -41,6 +46,7 @@ export class LimitOrderSignatureGuard implements CanActivate {
         takingAmount: BigInt(orderData.takeAmount),
         maker: new Address(orderData.maker),
         receiver: new Address(orderData.maker),
+        salt: BigInt(orderData.salt),
       },
       MakerTraits.default()
         .withExpiration(BigInt(orderData.expiration))
@@ -52,15 +58,7 @@ export class LimitOrderSignatureGuard implements CanActivate {
    * Verifies that the order hash matches the order data
    */
   verifyOrderHash(
-    orderData: {
-      makeToken: string;
-      takeToken: string;
-      makeAmount: string;
-      takeAmount: string;
-      maker: string;
-      nonce: string;
-      expiration: number;
-    },
+    orderData: OrderData,
     providedOrderHash: string,
     chainId: number,
   ): boolean {
@@ -81,15 +79,7 @@ export class LimitOrderSignatureGuard implements CanActivate {
    * Verifies that the order signature is valid and matches the maker address
    */
   async verifyOrderSignature(
-    orderData: {
-      makeToken: string;
-      takeToken: string;
-      makeAmount: string;
-      takeAmount: string;
-      maker: string;
-      nonce: string;
-      expiration: number;
-    },
+    orderData: OrderData,
     signature: string,
     expectedMaker: string,
     chainId: number,
@@ -128,13 +118,14 @@ export class LimitOrderSignatureGuard implements CanActivate {
     }
 
     // Prepare order data once
-    const orderData = {
+    const orderData: OrderData = {
       makeToken: dto.makeToken,
       takeToken: dto.takeToken,
       makeAmount: dto.makeAmount,
       takeAmount: dto.takeAmount,
       maker: signer,
       nonce: dto.nonce,
+      salt: dto.salt,
       expiration: dto.expiration,
     };
 

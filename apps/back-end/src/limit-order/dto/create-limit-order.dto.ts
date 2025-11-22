@@ -11,8 +11,8 @@ import { IsFutureTimestamp } from './validators/is-future-timestamp.validator';
 export class CreateLimitOrderDto {
   @IsNotEmpty()
   @IsString()
-  @Matches(/^0x[a-fA-F0-9]{66}$/, {
-    message: 'orderHash must be a valid 0x-prefixed 66-character hex string',
+  @Matches(/^0x[a-fA-F0-9]{64}$/, {
+    message: 'orderHash must be a valid 0x-prefixed 64-character hex string',
   })
   orderHash: string; // 1inch order hash
 
@@ -48,6 +48,10 @@ export class CreateLimitOrderDto {
   @IsNotEmpty()
   @IsString()
   nonce: string; // Order nonce
+
+  @IsNotEmpty()
+  @IsString()
+  salt: string; // Order nonce
 
   @IsNotEmpty()
   @Type(() => Number)
