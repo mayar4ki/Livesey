@@ -1,6 +1,6 @@
 'use client';
 
-import { BookOpen, ChartArea, Coins, Compass, HelpCircle, Settings } from 'lucide-react';
+import { ArrowRightLeft, BookOpen, ChartArea, Coins, Compass, HelpCircle, Settings } from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@acme/ui';
@@ -35,6 +35,16 @@ const navGroups = [
       //   url: '/dashboard/fund',
       //   icon: Calendar,
       // },
+    ],
+  },
+  {
+    label: 'Orders',
+    items: [
+      {
+        title: 'Limit Orders',
+        url: '/dashboard/limit-order',
+        icon: ArrowRightLeft,
+      },
     ],
   },
   {

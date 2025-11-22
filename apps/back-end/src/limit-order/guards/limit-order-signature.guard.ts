@@ -6,7 +6,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { recoverTypedDataAddress } from 'viem';
-import { CreateLimitOrderDto } from './dto/create-limit-order.dto';
+import { CreateLimitOrderDto } from '../dto/create-limit-order.dto';
 
 type OrderData = Pick<
   CreateLimitOrderDto,

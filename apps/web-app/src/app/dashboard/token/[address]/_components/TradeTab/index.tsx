@@ -1,24 +1,19 @@
 import { Token } from '~/services/token/useToken';
 import { LimitOrderCard } from './LimitOrderCard';
 
-import { LoadingCard } from '@acme/ui/bootstrapped/loading-card';
 import { BaseCurrency } from '~/_config/1inch';
-import { useTokenDecimals } from '~/services/erc20/useTokenDecimals';
+import { getOurTokenDecimals } from '~/utils/token-decimals';
 import { TokenChartCard } from './TokenChartCard';
 import { TradesListCard } from './TradesListCard';
 
 export const TradeTab = ({ token }: { token: Token }) => {
-  const { data: decimals, isLoading: isLoadingDecimals } = useTokenDecimals(token.token);
+  // Use env var decimals for our token
   const baseToken: BaseCurrency = {
     address: token.token,
     symbol: token.symbol,
     name: token.name,
-    decimals: decimals ?? 18,
+    decimals: getOurTokenDecimals(),
   };
-
-  if (isLoadingDecimals) {
-    return <LoadingCard message="Loading token decimals..." />;
-  }
 
   return (
     <>

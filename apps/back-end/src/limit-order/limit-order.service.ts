@@ -4,6 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { TokenEntity } from 'src/token/entities/token.entity';
 import { BaseResponse } from '../lib/base.dto';
 import { PrismaService } from '../lib/prisma/prisma.service';
 import { CreateLimitOrderDto } from './dto/create-limit-order.dto';
@@ -33,6 +34,33 @@ export class LimitOrderService {
     // Expiration validation is handled by DTO validation
     // At this point, we can trust that the order is valid
 
+    let token: TokenEntity | null = null;
+    // Try to find token by makeToken first (token being sold)
+    token = await this.prisma.client.token.findUnique({
+      where: {
+        token_chainId: {
+          token: dto.makeToken,
+          chainId: dto.chainId,
+        },
+      },
+    });
+
+    // If not found, try takeToken (token being bought)
+    if (!token) {
+      token = await this.prisma.client.token.findUnique({
+        where: {
+          token_chainId: {
+            token: dto.takeToken,
+            chainId: dto.chainId,
+          },
+        },
+      });
+    }
+
+    if (!token) {
+      throw new NotFoundException('Token not found');
+    }
+
     // Create the limit order
     const limitOrder = await this.prisma.client.limitOrder.create({
       data: {
@@ -47,7 +75,7 @@ export class LimitOrderService {
         expiration: BigInt(dto.expiration),
         chainId: dto.chainId,
         status: 'pending',
-        tokenId: dto.tokenId || null,
+        tokenId: token.id,
       },
     });
 
@@ -94,6 +122,13 @@ export class LimitOrderService {
         },
         skip,
         take,
+        include: {
+          token: {
+            include: {
+              seedData: true,
+            },
+          },
+        },
       }),
       this.prisma.client.limitOrder.count({
         where,
@@ -132,6 +167,13 @@ export class LimitOrderService {
         },
         skip,
         take,
+        include: {
+          token: {
+            include: {
+              seedData: true,
+            },
+          },
+        },
       }),
       this.prisma.client.limitOrder.count({
         where,
@@ -157,6 +199,13 @@ export class LimitOrderService {
         orderHash_chainId: {
           orderHash,
           chainId,
+        },
+      },
+      include: {
+        token: {
+          include: {
+            seedData: true,
+          },
         },
       },
     });

@@ -91,6 +91,6 @@ contract ERC20Implementation is ERC20Upgradeable, ERC20PausableUpgradeable, Owna
     }
 
     function decimals() public pure override returns (uint8) {
-        return 1;
+        return 6;
     }
 }

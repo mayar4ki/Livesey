@@ -17,7 +17,7 @@ import { BaseResponse, BaseResponseDTO } from 'src/lib/base.dto';
 import { CreateLimitOrderDto } from './dto/create-limit-order.dto';
 import { LimitOrderListQueryDto } from './dto/list-query.dto';
 import { LimitOrderEntity } from './entities/limit-order.entity';
-import { LimitOrderSignatureGuard } from './limit-order-signature.guard';
+import { LimitOrderSignatureGuard } from './guards/limit-order-signature.guard';
 import { LimitOrderService } from './limit-order.service';
 
 @Controller('limit-order')

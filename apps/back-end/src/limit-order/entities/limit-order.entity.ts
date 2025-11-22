@@ -1,4 +1,5 @@
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
+import { TokenEntity } from '../../token/entities/token.entity';
 
 export class LimitOrderEntity {
   id: string;
@@ -19,6 +20,9 @@ export class LimitOrderEntity {
   chainId: number;
   status: string;
   tokenId?: string | null;
+
+  @Type(() => TokenEntity)
+  token?: TokenEntity | null;
 
   createdAt: Date | string;
   updatedAt: Date | string;

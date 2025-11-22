@@ -1,11 +1,5 @@
 import { Type } from 'class-transformer';
-import {
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  Matches,
-  Min,
-} from 'class-validator';
+import { IsNotEmpty, IsString, Matches, Min } from 'class-validator';
 import { IsFutureTimestamp } from './validators/is-future-timestamp.validator';
 
 export class CreateLimitOrderDto {
@@ -62,8 +56,4 @@ export class CreateLimitOrderDto {
   @IsNotEmpty()
   @Type(() => Number)
   chainId: number; // Chain ID where the order is valid
-
-  @IsOptional()
-  @IsString()
-  tokenId?: string; // Optional: Token ID from our Token model (for makeToken or takeToken)
 }

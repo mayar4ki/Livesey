@@ -6,6 +6,31 @@ import { apiClient } from '~/services/apiClient';
 import { BaseResponse } from '~/services/types';
 import { use1inchLimitOrder } from '../1inche/use1inchLimitOrder';
 
+export interface TokenSeedData {
+  id: string;
+  tokenId: string;
+  data: any;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+}
+
+export interface LimitOrderToken {
+  id: string;
+  token: string;
+  chainId: number;
+  name: string;
+  assetRefHash: string;
+  symbol: string;
+  totalSupply: string;
+  operator: string;
+  createdBy: string;
+  transactionHash: string;
+  blockNumber: string;
+  verifiedAt: Date | string | null;
+  createdAt: Date | string;
+  seedData?: TokenSeedData | null;
+}
+
 export interface LimitOrder {
   id: string;
   orderHash: string;
@@ -20,6 +45,7 @@ export interface LimitOrder {
   chainId: number;
   status: 'pending' | 'filled' | 'cancelled' | 'expired';
   tokenId?: string | null;
+  token?: LimitOrderToken | null;
   createdAt: Date | string;
   updatedAt: Date | string;
 }
@@ -32,7 +58,6 @@ export interface CreateLimitOrderRequest {
   makeTokenDecimals: number;
   takeTokenDecimals: number;
   expiration: number; // Unix timestamp (seconds)
-  tokenId?: string;
 }
 
 /**
@@ -73,7 +98,6 @@ export function useCreateLimitOrder() {
         salt: order.salt.toString(),
         expiration: Number(expiration),
         chainId,
-        tokenId: data.tokenId,
       };
 
       // Step 3: Get EIP-712 signature headers for API authentication
