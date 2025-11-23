@@ -20,18 +20,4 @@ export class StorePendingSeedDto {
   @ValidateNested({ each: true })
   @Type(() => KeyValuePair)
   seedData: KeyValuePair[];
-
-  // @IsString()
-  // @IsNotEmpty()
-  // @Matches(/^0x[a-fA-F0-9]{130}$/, {
-  //   message: 'Invalid signature format (expected 65-byte signature)',
-  // })
-  // signature: string;
-
-  // @IsString()
-  // @IsNotEmpty()
-  // @Matches(/^0x[a-fA-F0-9]{40}$/, {
-  //   message: 'Invalid signer address format',
-  // })
-  // signer: string;
 }

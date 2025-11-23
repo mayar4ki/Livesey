@@ -17,7 +17,7 @@ export interface Token {
 
 export interface TokenSeedData {
   id: string;
-  seedData: Record<string, unknown>;
+  seedData: { key: string; value: string }[];
   createdAt: Date | string;
   updatedAt: Date | string;
 }

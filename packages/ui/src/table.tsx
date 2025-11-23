@@ -4,10 +4,12 @@ import * as React from 'react';
 
 import { cn } from '@acme/ui';
 
-function Table({ className, ...props }: React.ComponentProps<'table'>) {
+function Table({ className, ...props }: React.ComponentProps<'table'> & { wrapperClassName?: string }) {
+  const { wrapperClassName, ...rest } = props;
+
   return (
-    <div data-slot="table-container" className="relative w-full overflow-x-auto">
-      <table data-slot="table" className={cn('w-full caption-bottom text-sm', className)} {...props} />
+    <div data-slot="table-container" className={cn('relative w-full overflow-x-auto', wrapperClassName)}>
+      <table data-slot="table" className={cn('w-full caption-bottom text-sm', className)} {...rest} />
     </div>
   );
 }

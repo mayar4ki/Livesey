@@ -1,25 +1,12 @@
-import { Address, LimitOrder, MakerTraits } from '@1inch/limit-order-sdk';
 import {
   BadRequestException,
   CanActivate,
   ExecutionContext,
   Injectable,
 } from '@nestjs/common';
+import { OneInchService, OrderData } from 'src/lib/one-inche/one-inche.service';
 import { recoverTypedDataAddress } from 'viem';
 import { CreateLimitOrderDto } from '../dto/create-limit-order.dto';
-
-type OrderData = Pick<
-  CreateLimitOrderDto,
-  | 'makeToken'
-  | 'takeToken'
-  | 'makeAmount'
-  | 'takeAmount'
-  | 'nonce'
-  | 'expiration'
-  | 'salt'
-> & {
-  maker: string;
-};
 
 /**
  * Guard that verifies 1inch limit order signature and order hash
@@ -32,27 +19,7 @@ type OrderData = Pick<
  */
 @Injectable()
 export class LimitOrderSignatureGuard implements CanActivate {
-  constructor() {}
-
-  /**
-   * Reconstructs a LimitOrder from order data
-   */
-  private reconstructOrder(orderData: OrderData): LimitOrder {
-    return new LimitOrder(
-      {
-        makerAsset: new Address(orderData.makeToken),
-        takerAsset: new Address(orderData.takeToken),
-        makingAmount: BigInt(orderData.makeAmount),
-        takingAmount: BigInt(orderData.takeAmount),
-        maker: new Address(orderData.maker),
-        receiver: new Address(orderData.maker),
-        salt: BigInt(orderData.salt),
-      },
-      MakerTraits.default()
-        .withExpiration(BigInt(orderData.expiration))
-        .withNonce(BigInt(orderData.nonce)),
-    );
-  }
+  constructor(private readonly oneInchService: OneInchService) {}
 
   /**
    * Verifies that the order hash matches the order data
@@ -63,7 +30,7 @@ export class LimitOrderSignatureGuard implements CanActivate {
     chainId: number,
   ): boolean {
     try {
-      const order = this.reconstructOrder(orderData);
+      const order = this.oneInchService.reconstructOrder(orderData);
       const calculatedOrderHash = order.getOrderHash(chainId);
 
       return (
@@ -85,7 +52,7 @@ export class LimitOrderSignatureGuard implements CanActivate {
     chainId: number,
   ): Promise<boolean> {
     try {
-      const order = this.reconstructOrder(orderData);
+      const order = this.oneInchService.reconstructOrder(orderData);
       const typedData = order.getTypedData(chainId);
 
       const recoveredAddress = await recoverTypedDataAddress({

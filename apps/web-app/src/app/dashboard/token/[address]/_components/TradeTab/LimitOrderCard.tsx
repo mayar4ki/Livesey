@@ -134,6 +134,7 @@ export function LimitOrderCard({ token, baseToken, className }: LimitOrderCardPr
               tokenAmountFieldName="fromAmount"
               tokenOptions={tokens}
               baseToken={baseToken}
+              disabled={isLoading}
             />
 
             {/* Swap Button */}
@@ -151,6 +152,7 @@ export function LimitOrderCard({ token, baseToken, className }: LimitOrderCardPr
               tokenOptions={tokens}
               baseToken={baseToken}
               hidePercentageSelector
+              disabled={isLoading}
             />
 
             {/* Limit Price Section */}

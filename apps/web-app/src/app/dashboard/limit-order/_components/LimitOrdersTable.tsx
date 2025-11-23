@@ -1,6 +1,7 @@
 'use client';
 
 import { formatPrice, formatTokenAmount, getChainUIName } from '@acme/client/utils';
+import { cn } from '@acme/ui';
 import { Badge } from '@acme/ui/badge';
 import { Button } from '@acme/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@acme/ui/table';
@@ -15,61 +16,13 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { useLimitOrderTokens } from '~/services/1inche/useLimitOrderTokens';
 import { type LimitOrder } from '~/services/limit-order/useCreateLimitOrder';
-import { getOurTokenDecimals } from '~/utils/token-decimals';
+import { formatDate, formatRelativeTime, getOrderInfo, getStatusBadgeVariant, getTokenDecimals, getTokenSymbol } from '../_utils/format-helpers';
+import { LimitOrderActions } from './LimitOrderActions';
 import { LimitOrderExpandedRow } from './LimitOrderExpandedRow';
-
-function formatDate(date: Date | string): string {
-  const d = typeof date === 'string' ? new Date(date) : date;
-  return d.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
-
-function formatRelativeTime(date: Date | string): string {
-  const d = typeof date === 'string' ? new Date(date) : date;
-  const now = new Date();
-  const diffMs = now.getTime() - d.getTime();
-  const diffSeconds = Math.floor(diffMs / 1000);
-  const diffMinutes = Math.floor(diffSeconds / 60);
-  const diffHours = Math.floor(diffMinutes / 60);
-  const diffDays = Math.floor(diffHours / 24);
-
-  if (diffSeconds < 60) {
-    return 'just now';
-  }
-  if (diffMinutes < 60) {
-    return `${diffMinutes} ${diffMinutes === 1 ? 'minute' : 'minutes'} ago`;
-  }
-  if (diffHours < 24) {
-    return `${diffHours} ${diffHours === 1 ? 'hour' : 'hours'} ago`;
-  }
-  if (diffDays < 7) {
-    return `${diffDays} ${diffDays === 1 ? 'day' : 'days'} ago`;
-  }
-  return formatDate(d);
-}
-
-function getStatusBadgeVariant(status: LimitOrder['status']) {
-  switch (status) {
-    case 'pending':
-      return 'default';
-    case 'filled':
-      return 'secondary';
-    case 'cancelled':
-      return 'destructive';
-    case 'expired':
-      return 'outline';
-    default:
-      return 'secondary';
-  }
-}
 
 interface LimitOrdersTableProps {
   orders: LimitOrder[];
@@ -126,145 +79,158 @@ export function LimitOrdersTable({ orders }: LimitOrdersTableProps) {
       cell: ({ row }) => {
         const order = row.original;
 
-        // Determine if this is a sell or buy order by matching token with makeToken or takeToken
-        const isSellOrder = order.token && order.token.token.toLowerCase() === order.makeToken.toLowerCase();
-        const isBuyOrder = order.token && order.token.token.toLowerCase() === order.takeToken.toLowerCase();
+        // Get token info for both tokens
+        const makeTokenInfo = tokenMap.get(order.makeToken.toLowerCase());
+        const takeTokenInfo = tokenMap.get(order.takeToken.toLowerCase());
 
-        // Get user's token info (from order.token)
-        const userTokenSymbol =
-          order.token?.symbol ||
-          (isSellOrder
-            ? `${order.makeToken.slice(0, 6)}...${order.makeToken.slice(-4)}`
-            : `${order.takeToken.slice(0, 6)}...${order.takeToken.slice(-4)}`);
-        const userTokenName = order.token?.name;
+        // Determine if user's token is makeToken or takeToken
+        const isUserTokenMake = order.token && order.token.token.toLowerCase() === order.makeToken.toLowerCase();
+        const isUserTokenTake = order.token && order.token.token.toLowerCase() === order.takeToken.toLowerCase();
 
-        // Get the other token info from baseTokens list
-        const otherTokenAddress = isSellOrder ? order.takeToken : isBuyOrder ? order.makeToken : null;
-        const otherTokenInfo = otherTokenAddress ? tokenMap.get(otherTokenAddress.toLowerCase()) : null;
-        const otherTokenSymbol =
-          otherTokenInfo?.symbol || (otherTokenAddress ? `${otherTokenAddress.slice(0, 6)}...${otherTokenAddress.slice(-4)}` : '');
-        const otherTokenName = otherTokenInfo?.name;
+        // Get symbols with fallbacks
+        const makeTokenSymbol =
+          makeTokenInfo?.symbol || (isUserTokenMake ? order.token?.symbol : null) || `${order.makeToken.slice(0, 6)}...${order.makeToken.slice(-4)}`;
+        const takeTokenSymbol =
+          takeTokenInfo?.symbol || (isUserTokenTake ? order.token?.symbol : null) || `${order.takeToken.slice(0, 6)}...${order.takeToken.slice(-4)}`;
 
-        // Get the amount being sold/bought (the amount of the user's token)
-        const userTokenAmount = isSellOrder ? order.makeAmount : isBuyOrder ? order.takeAmount : null;
-        const otherTokenAmount = isSellOrder ? order.takeAmount : isBuyOrder ? order.makeAmount : null;
+        // Get token names
+        const makeTokenName = makeTokenInfo?.name || (isUserTokenMake ? order.token?.name : null);
+        const takeTokenName = takeTokenInfo?.name || (isUserTokenTake ? order.token?.name : null);
 
-        // Decimals: our token from env var, other token from baseTokens list
-        const userTokenDecimals = getOurTokenDecimals();
-        const otherTokenDecimals = otherTokenInfo?.decimals || 18;
+        // Get token address for navigation
+        const tokenAddress = order.token?.token;
 
-        if (!userTokenAmount || !otherTokenAmount) {
-          // Fallback if we can't determine sell/buy
-          const makeTokenSymbol =
-            order.token && order.token.token.toLowerCase() === order.makeToken.toLowerCase()
-              ? order.token.symbol
-              : `${order.makeToken.slice(0, 6)}...${order.makeToken.slice(-4)}`;
-          const takeTokenSymbol =
-            order.token && order.token.token.toLowerCase() === order.takeToken.toLowerCase()
-              ? order.token.symbol
-              : `${order.takeToken.slice(0, 6)}...${order.takeToken.slice(-4)}`;
-
-          return (
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1.5">
-                <Badge variant="outline" className="text-xs font-medium px-2 py-0.5">
-                  {makeTokenSymbol}
-                </Badge>
-                <span className="text-muted-foreground text-xs">→</span>
-                <Badge variant="outline" className="text-xs font-medium px-2 py-0.5">
-                  {takeTokenSymbol}
-                </Badge>
-              </div>
+        // Display pair: makeToken/takeToken
+        const pairContent = (
+          <div className="flex flex-col gap-0.5">
+            <div className="flex items-center gap-1.5">
+              <span className="text-sm font-semibold">{makeTokenSymbol}</span>
+              <span className="text-muted-foreground">/</span>
+              <span className="text-sm font-semibold">{takeTokenSymbol}</span>
             </div>
+            {(makeTokenName || takeTokenName) && (
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                {makeTokenName && <span>{makeTokenName}</span>}
+                {makeTokenName && takeTokenName && <span>/</span>}
+                {takeTokenName && <span>{takeTokenName}</span>}
+              </div>
+            )}
+          </div>
+        );
+
+        // If we have a token address, make it clickable
+        if (tokenAddress) {
+          return (
+            <Link href={`/dashboard/token/${tokenAddress}`} className="hover:text-primary hover:underline transition-colors cursor-pointer">
+              {pairContent}
+            </Link>
           );
         }
 
+        return pairContent;
+      },
+      enableSorting: false,
+    },
+    {
+      id: 'type',
+      header: 'Type',
+      accessorFn: (row) => {
+        const info = getOrderInfo(row);
+        return info.orderType || '';
+      },
+      cell: ({ row }) => {
+        const info = getOrderInfo(row.original);
+        if (!info.isOurToken) return <span className="text-xs text-muted-foreground">—</span>;
+
+        const isSpell = info.orderType === 'SELL';
+        return <Badge className={isSpell ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}>{info.orderType}</Badge>;
+      },
+    },
+    {
+      id: 'offer',
+      header: 'Offer',
+      cell: ({ row }) => {
+        const order = row.original;
+        const symbol = getTokenSymbol(order.makeToken, true, order, tokenMap);
+        const decimals = getTokenDecimals(order.makeToken, order, tokenMap);
+
+        const info = getOrderInfo(row.original);
+        const isSpell = info.orderType === 'SELL';
+
         return (
-          <div className="flex flex-col gap-1.5">
-            <div className="flex items-center gap-2 flex-wrap">
-              <Badge variant={isSellOrder ? 'destructive' : 'default'} className="text-xs font-medium px-2 py-0.5">
-                {isSellOrder ? 'Sell' : 'Buy'}
-              </Badge>
-              <span className="text-sm font-medium">
-                {formatTokenAmount(userTokenAmount, userTokenDecimals)} {userTokenSymbol}
-              </span>
-              {userTokenName && <span className="text-xs text-muted-foreground">({userTokenName})</span>}
-            </div>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
-              <span>for</span>
-              <span className="font-medium">
-                {formatTokenAmount(otherTokenAmount, otherTokenDecimals)} {otherTokenSymbol}
-              </span>
-              {otherTokenName && <span className="text-muted-foreground">({otherTokenName})</span>}
-            </div>
+          <div className={cn('flex flex-col gap-0.5', isSpell ? 'text-red-500' : 'text-green-500')}>
+            <span className="text-sm font-medium">{formatTokenAmount(order.makeAmount, decimals)}</span>
+            <span className="text-xs text-muted-foreground">{symbol}</span>
           </div>
         );
       },
       enableSorting: false,
     },
     {
-      id: 'makeAmount',
-      accessorFn: (row) => BigInt(row.makeAmount),
-      header: ({ column }) => {
-        return (
-          <Button variant="ghost" onClick={() => column.toggleSorting()} className="h-8">
-            Make Amount
-            {column.getIsSorted() === 'asc' ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === 'desc' ? (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            )}
-          </Button>
-        );
-      },
+      id: 'ask',
+      header: 'Ask',
       cell: ({ row }) => {
         const order = row.original;
-        return <span className="font-mono text-sm">{formatTokenAmount(order.makeAmount)}</span>;
-      },
-    },
-    {
-      id: 'takeAmount',
-      accessorFn: (row) => BigInt(row.takeAmount),
-      header: ({ column }) => {
+        const symbol = getTokenSymbol(order.takeToken, false, order, tokenMap);
+        const decimals = getTokenDecimals(order.takeToken, order, tokenMap);
+
         return (
-          <Button variant="ghost" onClick={() => column.toggleSorting()} className="h-8">
-            Take Amount
-            {column.getIsSorted() === 'asc' ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === 'desc' ? (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            )}
-          </Button>
+          <div className="flex flex-col gap-0.5">
+            <span className="text-sm font-medium">{formatTokenAmount(order.takeAmount, decimals)}</span>
+            <span className="text-xs text-muted-foreground">{symbol}</span>
+          </div>
         );
       },
-      cell: ({ row }) => {
-        const order = row.original;
-        return <span className="font-mono text-sm">{formatTokenAmount(order.takeAmount)}</span>;
-      },
+      enableSorting: false,
     },
     {
       id: 'price',
-      header: 'Price',
-      cell: ({ row }) => {
-        const order = row.original;
+      header: ({ column }) => (
+        <Button variant="ghost" onClick={() => column.toggleSorting()} className="h-8">
+          Price
+          {column.getIsSorted() === 'asc' ? (
+            <ArrowUp className="ml-2 h-4 w-4" />
+          ) : column.getIsSorted() === 'desc' ? (
+            <ArrowDown className="ml-2 h-4 w-4" />
+          ) : (
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          )}
+        </Button>
+      ),
+      accessorFn: (row) => {
         try {
-          const makeAmount = BigInt(order.makeAmount);
-          const takeAmount = BigInt(order.takeAmount);
-          if (makeAmount === BigInt(0)) {
-            return <span className="text-sm text-muted-foreground">N/A</span>;
-          }
-          // Price = takeAmount / makeAmount (how much you get per unit you sell)
-          const price = Number(takeAmount) / Number(makeAmount);
-          return <span className="font-mono text-sm">{formatPrice(price)}</span>;
+          const makeDecimals = getTokenDecimals(row.makeToken, row, tokenMap);
+          const takeDecimals = getTokenDecimals(row.takeToken, row, tokenMap);
+          const makeAmountNum = Number(row.makeAmount) / 10 ** makeDecimals;
+          return makeAmountNum === 0 ? 0 : Number(row.takeAmount) / 10 ** takeDecimals / makeAmountNum;
         } catch {
-          return <span className="text-sm text-muted-foreground">N/A</span>;
+          return 0;
         }
       },
-      enableSorting: false,
+      cell: ({ row }) => {
+        try {
+          const order = row.original;
+          const makeDecimals = getTokenDecimals(order.makeToken, order, tokenMap);
+          const takeDecimals = getTokenDecimals(order.takeToken, order, tokenMap);
+          const makeAmountNum = Number(order.makeAmount) / 10 ** makeDecimals;
+          if (makeAmountNum === 0) return <span className="text-xs text-muted-foreground">N/A</span>;
+
+          const price = Number(order.takeAmount) / 10 ** takeDecimals / makeAmountNum;
+          const makeSymbol = getTokenSymbol(order.makeToken, true, order, tokenMap);
+          const takeSymbol = getTokenSymbol(order.takeToken, false, order, tokenMap);
+
+          return (
+            <div className="flex flex-col gap-0.5">
+              <span className="text-sm font-medium">{formatPrice(price)}</span>
+              <span className="text-xs text-muted-foreground">
+                {takeSymbol}/{makeSymbol}
+              </span>
+            </div>
+          );
+        } catch {
+          return <span className="text-xs text-muted-foreground">N/A</span>;
+        }
+      },
     },
     {
       id: 'status',
@@ -291,6 +257,14 @@ export function LimitOrdersTable({ orders }: LimitOrdersTableProps) {
           </Badge>
         );
       },
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => {
+        return <LimitOrderActions order={row.original} />;
+      },
+      enableSorting: false,
     },
     {
       id: 'chainId',
@@ -401,52 +375,56 @@ export function LimitOrdersTable({ orders }: LimitOrdersTableProps) {
   });
 
   return (
-    <div>
-      <div className="overflow-x-auto rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => {
-                const order = row.original;
-                const isExpanded = expandedRows[row.id];
-                const seedData = order.token?.seedData?.data;
-
+    <div className=" rounded-md border  ">
+      <Table wrapperClassName=" max-h-[65vh] relative overflow-auto">
+        <TableHeader className="sticky top-0 bg-background z-10">
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => {
                 return (
-                  <>
-                    <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-                      ))}
-                    </TableRow>
-                    {isExpanded && seedData && (
-                      <LimitOrderExpandedRow key={`${row.id}-expanded`} order={order} colSpan={columns.length} seedData={seedData} />
-                    )}
-                  </>
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                  </TableHead>
                 );
-              })
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No orders found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              })}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row) => {
+              const order = row.original;
+              const isExpanded = expandedRows[row.id];
+              const seedData = order.token?.seedData?.data;
+
+              return (
+                <>
+                  <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'} className=" border-0 bg-primary/5">
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                    ))}
+                  </TableRow>
+                  {seedData && (
+                    <LimitOrderExpandedRow
+                      key={`${row.id}-expanded`}
+                      order={order}
+                      colSpan={columns.length}
+                      seedData={seedData}
+                      isExpanded={!!isExpanded}
+                    />
+                  )}
+                </>
+              );
+            })
+          ) : (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="h-24 text-center">
+                No orders found.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
     </div>
   );
 }

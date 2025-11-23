@@ -1,8 +1,9 @@
 'use client';
 
+import { useQueryParams } from '@acme/client/hooks';
+import { DataTablePagination } from '@acme/ui/bootstrapped/data-table-pagination';
 import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
 import { LoadingCard } from '@acme/ui/bootstrapped/loading-card';
-import { Button } from '@acme/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@acme/ui/select';
 import { ArrowRightLeft, Filter } from 'lucide-react';
@@ -13,13 +14,12 @@ import { LimitOrdersTable } from './_components/LimitOrdersTable';
 
 export default function LimitOrderPage() {
   const chainId = useChainId();
+  const { params, setParams } = useQueryParams({ take: 10, skip: 0 });
   const [statusFilter, setStatusFilter] = useState<'pending' | 'filled' | 'cancelled' | 'expired' | 'all'>('all');
-  const [page, setPage] = useState(0);
-  const pageSize = 50;
 
   const { data, isLoading, error } = useLimitOrders({
-    skip: page * pageSize,
-    take: pageSize,
+    skip: params.skip,
+    take: params.take,
     status: statusFilter === 'all' ? undefined : statusFilter,
     chainId,
   });
@@ -65,7 +65,7 @@ export default function LimitOrderPage() {
                 value={statusFilter}
                 onValueChange={(value) => {
                   setStatusFilter(value as typeof statusFilter);
-                  setPage(0);
+                  setParams({ skip: 0, take: params.take });
                 }}
               >
                 <SelectTrigger className="w-[180px]">
@@ -94,21 +94,13 @@ export default function LimitOrderPage() {
           ) : (
             <>
               <LimitOrdersTable orders={orders} />
-              {total > pageSize && (
-                <div className="flex items-center justify-end space-x-2 pt-4 border-t">
-                  <div className="text-muted-foreground flex-1 text-sm">
-                    Showing {page * pageSize + 1} - {Math.min((page + 1) * pageSize, total)} of {total} orders
-                  </div>
-                  <div className="flex items-center justify-end gap-2">
-                    <Button variant="outline" size="sm" onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={page === 0}>
-                      Previous
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={() => setPage((p) => p + 1)} disabled={(page + 1) * pageSize >= total}>
-                      Next
-                    </Button>
-                  </div>
-                </div>
-              )}
+              <DataTablePagination
+                currentPage={Math.floor(params.skip / params.take) + 1}
+                totalPages={data?.pagination?.total ? Math.ceil(data?.pagination?.total / data?.pagination?.take) : 0}
+                onPageChange={(page: number) => {
+                  setParams({ skip: (page - 1) * params.take, take: params.take });
+                }}
+              />
             </>
           )}
         </CardContent>

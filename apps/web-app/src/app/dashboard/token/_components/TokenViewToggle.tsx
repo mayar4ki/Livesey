@@ -9,7 +9,7 @@ import { Flame, Sparkles } from 'lucide-react';
 type ViewType = 'trending' | 'new';
 
 export function TokenViewToggle() {
-  const { params, setParams } = useQueryParams({ view: 'trending' });
+  const { params, setParams } = useQueryParams({ view: 'trending', take: 15, skip: 0 });
   const viewType = (params.view as ViewType) || 'trending';
 
   return (
@@ -17,7 +17,7 @@ export function TokenViewToggle() {
       <div className="inline-flex items-center gap-2 p-1 bg-mute rounded-lg ">
         <Button
           variant="secondary"
-          onClick={() => setParams({ view: 'trending' })}
+          onClick={() => setParams({ view: 'trending', skip: 0 })}
           className={cn(
             'bg-sidebar min-w-0 overflow-hidden relative transition-all duration-300 shadow-xs',
             'hover:bg-linear-to-r hover:from-orange-500/10 hover:via-foreground/10 hover:to-orange-500/10',
@@ -38,7 +38,7 @@ export function TokenViewToggle() {
         </Button>
         <Button
           variant="secondary"
-          onClick={() => setParams({ view: 'new' })}
+          onClick={() => setParams({ view: 'new', skip: 0 })}
           className={cn(
             'bg-sidebar min-w-0 overflow-hidden relative transition-all duration-300 shadow-xs',
             'hover:bg-linear-to-r hover:from-green-500/10 hover:via-foreground/10 hover:to-green-500/10',

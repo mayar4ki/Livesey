@@ -46,7 +46,7 @@ contract ERC20Implementation is ERC20Upgradeable, ERC20PausableUpgradeable, Owna
         address _initialRecipient
     ) public initializer {
         __ERC20_init(_name, _symbol);
-        _mint(_initialRecipient, _totalSupply);
+        _mint(_initialRecipient, _totalSupply * (10 ** uint256(decimals())));
 
         // Owner will be the Factory Contract
         __Ownable_init(msg.sender);

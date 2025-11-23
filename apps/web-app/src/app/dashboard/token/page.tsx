@@ -1,6 +1,7 @@
 'use client';
 
 import { useQueryParams } from '@acme/client/hooks';
+import { DataTablePagination } from '@acme/ui/bootstrapped/data-table-pagination';
 import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
 import { LoadingCard } from '@acme/ui/bootstrapped/loading-card';
 import { Card, CardContent } from '@acme/ui/card';
@@ -13,11 +14,11 @@ import { TokensTable } from './_components/TokensTable';
 type ViewType = 'trending' | 'new';
 
 export default function Page() {
-  const { data, isLoading, error } = useTrendingTokens({ take: 15 });
-  const allTokens = data?.data || [];
-
-  const { params } = useQueryParams({ view: 'trending' });
+  const { params, setParams } = useQueryParams({ view: 'trending', take: 10, skip: 0 });
   const viewType = (params.view as ViewType) || 'trending';
+
+  const { data, isLoading, error } = useTrendingTokens({ skip: params.skip, take: params.take });
+  const allTokens = data?.data || [];
 
   // Filter tokens based on view type
   const tokens = useMemo(() => {
@@ -67,7 +68,16 @@ export default function Page() {
               </p>
             </div>
           ) : (
-            <TokensTable tokens={tokens} />
+            <>
+              <TokensTable tokens={tokens} />
+              <DataTablePagination
+                currentPage={Math.floor(params.skip / params.take) + 1}
+                totalPages={data?.pagination?.total ? Math.ceil(data?.pagination?.total / data?.pagination?.take) : 0}
+                onPageChange={(page: number) => {
+                  setParams({ skip: (page - 1) * params.take, take: params.take });
+                }}
+              />
+            </>
           )}
         </CardContent>
       </Card>
