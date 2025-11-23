@@ -17,7 +17,7 @@ export interface Token {
 
 export interface TokenSeedData {
   id: string;
-  seedData: { key: string; value: string }[];
+  data: { key: string; value: string }[];
   createdAt: Date | string;
   updatedAt: Date | string;
 }

@@ -10,6 +10,9 @@ interface TokenMetadataCardProps {
 
 export function TokenMetadataCard({ token, className }: TokenMetadataCardProps) {
   // Handle seedData structure - it can be nested with seedData.seedData
+
+  const seedData = token.seedData;
+
   const getSeedDataValue = () => {
     if (!token.seedData) return null;
 
@@ -53,6 +56,21 @@ export function TokenMetadataCard({ token, className }: TokenMetadataCardProps) 
             <code className="text-xs font-mono bg-muted px-3 py-2 rounded break-all flex-1 min-w-0">{token.assetRefHash}</code>
           </div>
         </div>
+
+        {seedData && (
+          <div className="grid grid-cols-1  sm:grid-cols-4 gap-2 p-2">
+            {seedData.data.map(({ key, value }) => (
+              <div key={key} className="  border  rounded p-2">
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <div className="h-1.5 w-1.5 rounded-full bg-green-500/40 group-hover:bg-primary/60 transition-colors" />
+                  <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">{key}</div>
+                </div>
+                <div className="mt-0.5 break-all font-mono text-xs text-foreground">{value}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {seedDataObj && (
           <div>
             <div className="flex items-center justify-between mb-1">
