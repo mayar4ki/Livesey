@@ -1,10 +1,8 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { TokenEntity } from 'src/token/entities/token.entity';
 import { BaseResponse } from '../lib/base.dto';
 import { PrismaService } from '../lib/prisma/prisma.service';
 import { CreateLimitOrderDto } from './dto/create-limit-order.dto';
@@ -16,72 +14,36 @@ export class LimitOrderService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreateLimitOrderDto, makerAddress: string) {
-    // Check if order with this hash already exists
-    const existingOrder = await this.prisma.client.limitOrder.findUnique({
-      where: {
-        orderHash_chainId: {
-          orderHash: dto.orderHash,
-          chainId: dto.chainId,
-        },
-      },
-    });
-
-    if (existingOrder) {
-      throw new ConflictException('Limit order with this hash already exists');
-    }
-
     // Note: Order hash and signature verification are handled by LimitOrderSignatureGuard
     // Expiration validation is handled by DTO validation
     // At this point, we can trust that the order is valid
-
-    let token: TokenEntity | null = null;
-    // Try to find token by makeToken first (token being sold)
-    token = await this.prisma.client.token.findUnique({
+    await this.prisma.client.token.update({
       where: {
         token_chainId: {
           token: dto.makeToken,
           chainId: dto.chainId,
         },
       },
-    });
-
-    // If not found, try takeToken (token being bought)
-    if (!token) {
-      token = await this.prisma.client.token.findUnique({
-        where: {
-          token_chainId: {
-            token: dto.takeToken,
+      data: {
+        limitOrders: {
+          create: {
+            orderHash: dto.orderHash,
+            maker: makerAddress,
+            makeToken: dto.makeToken,
+            takeToken: dto.takeToken,
+            makeAmount: dto.makeAmount,
+            takeAmount: dto.takeAmount,
+            signature: dto.signature,
+            nonce: BigInt(dto.nonce),
+            expiration: BigInt(dto.expiration),
             chainId: dto.chainId,
+            status: 'pending',
           },
         },
-      });
-    }
-
-    if (!token) {
-      throw new NotFoundException('Token not found');
-    }
-
-    // Create the limit order
-    const limitOrder = await this.prisma.client.limitOrder.create({
-      data: {
-        orderHash: dto.orderHash,
-        maker: makerAddress,
-        makeToken: dto.makeToken.toLowerCase(),
-        takeToken: dto.takeToken.toLowerCase(),
-        makeAmount: dto.makeAmount,
-        takeAmount: dto.takeAmount,
-        signature: dto.signature,
-        nonce: BigInt(dto.nonce),
-        expiration: BigInt(dto.expiration),
-        chainId: dto.chainId,
-        status: 'pending',
-        tokenId: token.id,
       },
     });
 
-    return {
-      data: limitOrder,
-    };
+    return {};
   }
 
   async findAll(
@@ -96,23 +58,12 @@ export class LimitOrderService {
       chainId,
     } = query;
 
-    const where: any = {};
-
-    if (status) {
-      where.status = status;
-    }
-
-    if (makeToken) {
-      where.makeToken = makeToken.toLowerCase();
-    }
-
-    if (takeToken) {
-      where.takeToken = takeToken.toLowerCase();
-    }
-
-    if (chainId) {
-      where.chainId = chainId;
-    }
+    const where: any = {
+      ...(status && { status }),
+      ...(makeToken && { makeToken }),
+      ...(takeToken && { takeToken }),
+      ...(chainId && { chainId }),
+    };
 
     const [orders, total] = await Promise.all([
       this.prisma.client.limitOrder.findMany({
@@ -129,6 +80,57 @@ export class LimitOrderService {
             },
           },
         },
+      }),
+      this.prisma.client.limitOrder.count({
+        where,
+      }),
+    ]);
+
+    return {
+      data: orders,
+      pagination: {
+        skip,
+        take,
+        total,
+      },
+    };
+  }
+
+  async findByToken(
+    tokenAddress: string,
+    chainId: number,
+    query: LimitOrderListQueryDto,
+  ): Promise<BaseResponse<LimitOrderEntity[]>> {
+    const { skip = 0, take = 10, status } = query;
+
+    // First, find the token to get its ID for efficient foreign key lookup
+    const token = await this.prisma.client.token.findUnique({
+      where: {
+        token_chainId: {
+          token: tokenAddress,
+          chainId,
+        },
+      },
+    });
+
+    // Return early if token doesn't exist
+    if (!token) {
+      throw new NotFoundException('Token not found');
+    }
+
+    const where: any = {
+      tokenId: token.id,
+      ...(status && { status }),
+    };
+
+    const [orders, total] = await Promise.all([
+      this.prisma.client.limitOrder.findMany({
+        where,
+        orderBy: {
+          createdAt: 'desc',
+        },
+        skip,
+        take,
       }),
       this.prisma.client.limitOrder.count({
         where,

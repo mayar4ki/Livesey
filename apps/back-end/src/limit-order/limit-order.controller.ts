@@ -31,7 +31,7 @@ export class LimitOrderController {
   async create(
     @Headers('x-signer') signer: string,
     @Body() dto: CreateLimitOrderDto,
-  ): Promise<BaseResponse<LimitOrderEntity>> {
+  ) {
     return this.limitOrderService.create(dto, signer);
   }
 
@@ -43,6 +43,17 @@ export class LimitOrderController {
     return this.limitOrderService.findAll(query);
   }
 
+  @Get('token/:token/:chainId')
+  @SerializeOptions({ type: BaseResponseDTO(LimitOrderEntity) })
+  async findByToken(
+    @Param('token') token: string,
+    @Param('chainId') chainId: number,
+    @Query() query: LimitOrderListQueryDto,
+  ): Promise<BaseResponse<LimitOrderEntity[]>> {
+    return this.limitOrderService.findByToken(token, chainId, query);
+  }
+
+  /**---------------------------------  xxx --------------------------------- */
   @Get('my-orders')
   @UseGuards(SignatureGuard)
   @SerializeOptions({ type: BaseResponseDTO(LimitOrderEntity) })

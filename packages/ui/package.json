@@ -33,6 +33,7 @@
     "./table": "./src/table.tsx",
     "./tabs": "./src/tabs.tsx",
     "./tooltip": "./src/tooltip.tsx",
+    "./bootstrapped/data-table-column-sort-header": "./src/bootstrapped/data-table-column-sort-header.tsx",
     "./bootstrapped/data-table-pagination": "./src/bootstrapped/data-table-pagination.tsx",
     "./bootstrapped/error-state-card": "./src/bootstrapped/error-state-card.tsx",
     "./bootstrapped/explorer-address-link": "./src/bootstrapped/explorer-address-link.tsx",

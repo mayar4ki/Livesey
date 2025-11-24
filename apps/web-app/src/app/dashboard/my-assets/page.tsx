@@ -59,7 +59,7 @@ export default function Page() {
         return (
           <div className="flex items-center gap-3">
             <Link
-              href={`/dashboard/token/${chainId}/${contractAddress}`}
+              href={`/dashboard/token/${contractAddress}`}
               className="font-medium hover:text-primary hover:underline transition-colors cursor-pointer"
             >
               {asset.tokenMetadata?.name || asset.tokenMetadata?.symbol || 'Unknown Token'}

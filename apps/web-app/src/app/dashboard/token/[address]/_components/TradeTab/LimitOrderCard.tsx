@@ -15,19 +15,26 @@ import { useLimitOrderTokens } from '~/services/1inche/useLimitOrderTokens';
 import { useTokenApproval } from '~/services/erc20/useTokenApproval';
 import { useCreateLimitOrder } from '~/services/limit-order/useCreateLimitOrder';
 import { Token } from '~/services/token/useToken';
+import { getOurTokenDecimals } from '~/utils/token-decimals';
 import { LimitOrderInput } from './LimitOrderInput';
 import { LimitOrderPriceLimitInput } from './LimitOrderPriceLimitInput';
 import { limitOrderFormSchema, type LimitOrderFormSchema } from './limitOrderFormSchema';
 
 export interface LimitOrderCardProps {
   token: Token;
-  baseToken: BaseCurrency;
   className?: string;
 }
 
-export function LimitOrderCard({ token, baseToken, className }: LimitOrderCardProps) {
+export function LimitOrderCard({ token, className }: LimitOrderCardProps) {
   const { address: limitOrderProtocolAddress } = useLimitOrderProtocolAddress();
   const { tokens } = useLimitOrderTokens();
+
+  const baseToken: BaseCurrency = {
+    address: token.token,
+    symbol: token.symbol,
+    name: token.name,
+    decimals: getOurTokenDecimals(),
+  };
 
   const nowWithExtraHour = new Date(Date.now() + 3600 * 1000).toISOString().slice(0, 16);
 

@@ -3,10 +3,10 @@
 import { formatTokenAmount } from '@acme/client/utils';
 import { ExplorerLink } from '@acme/ui/bootstrapped/explorer-address-link';
 import { TableCell, TableRow } from '@acme/ui/table';
+import { useGetOrderTokensInfo } from '~/_hooks/useGetOrderTokensInfo';
 import { type LimitOrder } from '~/services/limit-order/useCreateLimitOrder';
 import { TokenSeedData } from '~/services/token/useToken';
 import { getOurTokenDecimals } from '~/utils/token-decimals';
-import { getOrderInfo } from '../_utils/format-helpers';
 
 interface LimitOrderExpandedRowProps {
   order: LimitOrder;
@@ -16,12 +16,15 @@ interface LimitOrderExpandedRowProps {
 }
 
 export function LimitOrderExpandedRow({ order, colSpan, seedData, isExpanded }: LimitOrderExpandedRowProps) {
-  const info = getOrderInfo(order);
+  const getOrderTokensInfo = useGetOrderTokensInfo();
+  const { isUserTokenMake } = getOrderTokensInfo(order);
+  const isSell = isUserTokenMake;
 
   // Calculate supply and percentage
   const decimals = getOurTokenDecimals();
   const totalSupply = order.token ? Number(order.token.totalSupply) : 0;
-  const transactedAmount = info.isMake ? Number(order.makeAmount) / 10 ** decimals : Number(order.takeAmount) / 10 ** decimals;
+
+  const transactedAmount = isSell ? Number(order.makeAmount) / 10 ** decimals : Number(order.takeAmount) / 10 ** decimals;
   const percentage = totalSupply > 0 ? ((transactedAmount / totalSupply) * 100).toFixed(2) : '0';
 
   return (
@@ -42,14 +45,14 @@ export function LimitOrderExpandedRow({ order, colSpan, seedData, isExpanded }: 
                   </div>
 
                   <div>
-                    <div className="text-[10px] text-muted-foreground mb-0.5">{info.isMake ? 'Selling' : 'Buying'}</div>
+                    <div className="text-[10px] text-muted-foreground mb-0.5">{isSell ? 'Selling' : 'Buying'}</div>
                     <div className="font-semibold text-foreground">
-                      {info.isMake ? formatTokenAmount(order.makeAmount, decimals) : formatTokenAmount(order.takeAmount, decimals)}
+                      {isSell ? formatTokenAmount(order.makeAmount, decimals) : formatTokenAmount(order.takeAmount, decimals)}
                     </div>
                   </div>
                   <div>
                     <div className="text-[10px] text-muted-foreground mb-0.5">Percentage of Total Supply</div>
-                    <div className={`font-bold ${info.isMake ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
+                    <div className={`font-bold ${isSell ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
                       {percentage}%
                     </div>
                   </div>

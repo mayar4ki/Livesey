@@ -1,8 +1,9 @@
 'use client';
 
-import { formatPrice, formatTokenAmount, getChainUIName } from '@acme/client/utils';
+import { formatAddress, formatDateTime, formatPrice, formatTokenAmount, getChainUIName } from '@acme/client/utils';
 import { cn } from '@acme/ui';
 import { Badge } from '@acme/ui/badge';
+import { DataTableColumnSortHeader } from '@acme/ui/bootstrapped/data-table-column-sort-header';
 import { Button } from '@acme/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@acme/ui/table';
 import {
@@ -15,12 +16,12 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
-import { useLimitOrderTokens } from '~/services/1inche/useLimitOrderTokens';
+import { useState } from 'react';
+import { useGetOrderTokensInfo } from '~/_hooks/useGetOrderTokensInfo';
 import { type LimitOrder } from '~/services/limit-order/useCreateLimitOrder';
-import { formatDate, formatRelativeTime, getOrderInfo, getStatusBadgeVariant, getTokenDecimals, getTokenSymbol } from '../_utils/format-helpers';
+import { getStatusBadgeVariant } from '../../../../_utils/getStatusBadgeVariant';
 import { LimitOrderActions } from './LimitOrderActions';
 import { LimitOrderExpandedRow } from './LimitOrderExpandedRow';
 
@@ -32,20 +33,8 @@ export function LimitOrdersTable({ orders }: LimitOrdersTableProps) {
   const [sorting, setSorting] = useState<SortingState>([{ id: 'createdAt', desc: true }]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
-  const { tokens: baseTokens } = useLimitOrderTokens();
 
-  // Create a map of token addresses to token info for quick lookup
-  const tokenMap = useMemo(() => {
-    const map = new Map<string, { name: string; symbol: string; decimals: number }>();
-    baseTokens.forEach((token) => {
-      map.set(token.address.toLowerCase(), {
-        name: token.name,
-        symbol: token.symbol,
-        decimals: token.decimals,
-      });
-    });
-    return map;
-  }, [baseTokens]);
+  const getOrderTokensInfo = useGetOrderTokensInfo();
 
   const toggleRowExpansion = (rowId: string) => {
     setExpandedRows((prev) => ({
@@ -70,80 +59,41 @@ export function LimitOrdersTable({ orders }: LimitOrdersTableProps) {
           </Button>
         );
       },
-      enableSorting: false,
-      size: 50,
     },
     {
       id: 'pair',
       header: 'Pair',
       cell: ({ row }) => {
         const order = row.original;
-
-        // Get token info for both tokens
-        const makeTokenInfo = tokenMap.get(order.makeToken.toLowerCase());
-        const takeTokenInfo = tokenMap.get(order.takeToken.toLowerCase());
-
-        // Determine if user's token is makeToken or takeToken
-        const isUserTokenMake = order.token && order.token.token.toLowerCase() === order.makeToken.toLowerCase();
-        const isUserTokenTake = order.token && order.token.token.toLowerCase() === order.takeToken.toLowerCase();
-
-        // Get symbols with fallbacks
-        const makeTokenSymbol =
-          makeTokenInfo?.symbol || (isUserTokenMake ? order.token?.symbol : null) || `${order.makeToken.slice(0, 6)}...${order.makeToken.slice(-4)}`;
-        const takeTokenSymbol =
-          takeTokenInfo?.symbol || (isUserTokenTake ? order.token?.symbol : null) || `${order.takeToken.slice(0, 6)}...${order.takeToken.slice(-4)}`;
-
-        // Get token names
-        const makeTokenName = makeTokenInfo?.name || (isUserTokenMake ? order.token?.name : null);
-        const takeTokenName = takeTokenInfo?.name || (isUserTokenTake ? order.token?.name : null);
-
-        // Get token address for navigation
-        const tokenAddress = order.token?.token;
-
-        // Display pair: makeToken/takeToken
-        const pairContent = (
-          <div className="flex flex-col gap-0.5">
-            <div className="flex items-center gap-1.5">
-              <span className="text-sm font-semibold">{makeTokenSymbol}</span>
-              <span className="text-muted-foreground">/</span>
-              <span className="text-sm font-semibold">{takeTokenSymbol}</span>
-            </div>
-            {(makeTokenName || takeTokenName) && (
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                {makeTokenName && <span>{makeTokenName}</span>}
-                {makeTokenName && takeTokenName && <span>/</span>}
-                {takeTokenName && <span>{takeTokenName}</span>}
+        const { makeTokenInfo, takeTokenInfo } = getOrderTokensInfo(order);
+        return (
+          <Link href={`/dashboard/token/${order.token?.token}`} className="hover:text-primary transition-colors cursor-pointer">
+            <div className="flex flex-col gap-0.5">
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm font-semibold">{makeTokenInfo?.symbol ?? '_'}</span>
+                <span className="text-muted-foreground">/</span>
+                <span className="text-sm font-semibold">{takeTokenInfo?.symbol ?? '_'}</span>
+                <Badge variant="secondary">{getChainUIName(order.chainId)}</Badge>
               </div>
-            )}
-          </div>
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <span>{makeTokenInfo?.name ?? formatAddress(order.makeToken)}</span>/
+                <span>{takeTokenInfo?.name ?? formatAddress(order.takeToken)}</span>
+              </div>
+            </div>
+          </Link>
         );
-
-        // If we have a token address, make it clickable
-        if (tokenAddress) {
-          return (
-            <Link href={`/dashboard/token/${tokenAddress}`} className="hover:text-primary hover:underline transition-colors cursor-pointer">
-              {pairContent}
-            </Link>
-          );
-        }
-
-        return pairContent;
       },
-      enableSorting: false,
     },
     {
       id: 'type',
       header: 'Type',
-      accessorFn: (row) => {
-        const info = getOrderInfo(row);
-        return info.orderType || '';
-      },
       cell: ({ row }) => {
-        const info = getOrderInfo(row.original);
-        if (!info.isOurToken) return <span className="text-xs text-muted-foreground">—</span>;
-
-        const isSpell = info.orderType === 'SELL';
-        return <Badge className={isSpell ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}>{info.orderType}</Badge>;
+        const { isUserTokenMake } = getOrderTokensInfo(row.original);
+        return (
+          <Badge className={isUserTokenMake ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}>
+            {isUserTokenMake ? 'SELL' : 'BUY'}
+          </Badge>
+        );
       },
     },
     {
@@ -151,104 +101,49 @@ export function LimitOrdersTable({ orders }: LimitOrdersTableProps) {
       header: 'Offer',
       cell: ({ row }) => {
         const order = row.original;
-        const symbol = getTokenSymbol(order.makeToken, true, order, tokenMap);
-        const decimals = getTokenDecimals(order.makeToken, order, tokenMap);
-
-        const info = getOrderInfo(row.original);
-        const isSpell = info.orderType === 'SELL';
+        const { makeTokenInfo } = getOrderTokensInfo(order);
 
         return (
-          <div className={cn('flex flex-col gap-0.5', isSpell ? 'text-red-500' : 'text-green-500')}>
-            <span className="text-sm font-medium">{formatTokenAmount(order.makeAmount, decimals)}</span>
-            <span className="text-xs text-muted-foreground">{symbol}</span>
+          <div className={cn('flex flex-col gap-0.5')}>
+            <span className="text-sm font-medium">{formatTokenAmount(order.makeAmount, makeTokenInfo?.decimals)}</span>
+            <span className="text-xs text-muted-foreground">{makeTokenInfo?.symbol}</span>
           </div>
         );
       },
-      enableSorting: false,
     },
     {
       id: 'ask',
       header: 'Ask',
       cell: ({ row }) => {
         const order = row.original;
-        const symbol = getTokenSymbol(order.takeToken, false, order, tokenMap);
-        const decimals = getTokenDecimals(order.takeToken, order, tokenMap);
+        const { takeTokenInfo } = getOrderTokensInfo(order);
 
         return (
-          <div className="flex flex-col gap-0.5">
-            <span className="text-sm font-medium">{formatTokenAmount(order.takeAmount, decimals)}</span>
-            <span className="text-xs text-muted-foreground">{symbol}</span>
+          <div className={cn('flex flex-col gap-0.5')}>
+            <span className="text-sm font-medium">{formatTokenAmount(order.takeAmount, takeTokenInfo?.decimals)}</span>
+            <span className="text-xs text-muted-foreground">{takeTokenInfo?.symbol}</span>
           </div>
         );
       },
-      enableSorting: false,
     },
     {
       id: 'price',
-      header: ({ column }) => (
-        <Button variant="ghost" onClick={() => column.toggleSorting()} className="h-8">
-          Price
-          {column.getIsSorted() === 'asc' ? (
-            <ArrowUp className="ml-2 h-4 w-4" />
-          ) : column.getIsSorted() === 'desc' ? (
-            <ArrowDown className="ml-2 h-4 w-4" />
-          ) : (
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          )}
-        </Button>
-      ),
-      accessorFn: (row) => {
-        try {
-          const makeDecimals = getTokenDecimals(row.makeToken, row, tokenMap);
-          const takeDecimals = getTokenDecimals(row.takeToken, row, tokenMap);
-          const makeAmountNum = Number(row.makeAmount) / 10 ** makeDecimals;
-          return makeAmountNum === 0 ? 0 : Number(row.takeAmount) / 10 ** takeDecimals / makeAmountNum;
-        } catch {
-          return 0;
-        }
-      },
+      header: ({ column }) => <DataTableColumnSortHeader column={column}>Price</DataTableColumnSortHeader>,
       cell: ({ row }) => {
-        try {
-          const order = row.original;
-          const makeDecimals = getTokenDecimals(order.makeToken, order, tokenMap);
-          const takeDecimals = getTokenDecimals(order.takeToken, order, tokenMap);
-          const makeAmountNum = Number(order.makeAmount) / 10 ** makeDecimals;
-          if (makeAmountNum === 0) return <span className="text-xs text-muted-foreground">N/A</span>;
-
-          const price = Number(order.takeAmount) / 10 ** takeDecimals / makeAmountNum;
-          const makeSymbol = getTokenSymbol(order.makeToken, true, order, tokenMap);
-          const takeSymbol = getTokenSymbol(order.takeToken, false, order, tokenMap);
-
-          return (
-            <div className="flex flex-col gap-0.5">
-              <span className="text-sm font-medium">{formatPrice(price)}</span>
-              <span className="text-xs text-muted-foreground">
-                {takeSymbol}/{makeSymbol}
-              </span>
-            </div>
-          );
-        } catch {
-          return <span className="text-xs text-muted-foreground">N/A</span>;
-        }
+        const order = row.original;
+        const { _price } = getOrderTokensInfo(order);
+        return (
+          <div className="flex flex-col gap-0.5">
+            <span className="text-sm font-medium">{formatPrice(_price)}</span>
+            <span className="text-xs text-muted-foreground"> ~ 1 {row.original.token?.symbol}</span>
+          </div>
+        );
       },
     },
     {
       id: 'status',
       accessorFn: (row) => row.status,
-      header: ({ column }) => {
-        return (
-          <Button variant="ghost" onClick={() => column.toggleSorting()} className="h-8">
-            Status
-            {column.getIsSorted() === 'asc' ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === 'desc' ? (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            )}
-          </Button>
-        );
-      },
+      header: ({ column }) => <DataTableColumnSortHeader column={column}>Status</DataTableColumnSortHeader>,
       cell: ({ row }) => {
         const order = row.original;
         return (
@@ -259,103 +154,37 @@ export function LimitOrdersTable({ orders }: LimitOrdersTableProps) {
       },
     },
     {
-      id: 'actions',
-      header: 'Actions',
-      cell: ({ row }) => {
-        return <LimitOrderActions order={row.original} />;
-      },
-      enableSorting: false,
-    },
-    {
-      id: 'chainId',
-      accessorFn: (row) => row.chainId,
-      header: ({ column }) => {
-        return (
-          <Button variant="ghost" onClick={() => column.toggleSorting()} className="h-8">
-            Chain
-            {column.getIsSorted() === 'asc' ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === 'desc' ? (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            )}
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        const order = row.original;
-        return <Badge variant="secondary">{getChainUIName(order.chainId)}</Badge>;
-      },
-    },
-    {
       id: 'createdAt',
-      accessorFn: (row) => new Date(row.createdAt).getTime(),
-      header: ({ column }) => {
-        return (
-          <Button variant="ghost" onClick={() => column.toggleSorting()} className="h-8">
-            Created
-            {column.getIsSorted() === 'asc' ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === 'desc' ? (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            )}
-          </Button>
-        );
-      },
+      header: ({ column }) => <DataTableColumnSortHeader column={column}>Created At</DataTableColumnSortHeader>,
       cell: ({ row }) => {
         const order = row.original;
         return (
           <div className="flex flex-col">
-            <span className="text-sm">{formatRelativeTime(order.createdAt)}</span>
-            <span className="text-xs text-muted-foreground">{formatDate(order.createdAt)}</span>
+            <span className="text-xs text-muted-foreground">{formatDateTime(order.createdAt)}</span>
           </div>
         );
       },
     },
     {
       id: 'expiration',
-      accessorFn: (row) => {
-        try {
-          return Number(row.expiration) * 1000; // Convert Unix timestamp to milliseconds
-        } catch {
-          return 0;
-        }
-      },
-      header: ({ column }) => {
-        return (
-          <Button variant="ghost" onClick={() => column.toggleSorting()} className="h-8">
-            Expires
-            {column.getIsSorted() === 'asc' ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === 'desc' ? (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            )}
-          </Button>
-        );
-      },
+      header: ({ column }) => <DataTableColumnSortHeader column={column}>expire At</DataTableColumnSortHeader>,
       cell: ({ row }) => {
         const order = row.original;
-        try {
-          const expirationTimestamp = Number(order.expiration) * 1000;
-          const expirationDate = new Date(expirationTimestamp);
-          const now = new Date();
-          const isExpired = expirationDate < now;
-
-          return (
-            <div className="flex flex-col">
-              <span className={`text-sm ${isExpired ? 'text-destructive' : ''}`}>{isExpired ? 'Expired' : formatRelativeTime(expirationDate)}</span>
-              <span className="text-xs text-muted-foreground">{formatDate(expirationDate)}</span>
-            </div>
-          );
-        } catch {
-          return <span className="text-sm text-muted-foreground">N/A</span>;
-        }
+        const expirationDate = new Date(Number(order.expiration) * 1000);
+        return (
+          <div className="flex flex-col">
+            <span className="text-xs text-muted-foreground">{formatDateTime(expirationDate)}</span>
+          </div>
+        );
       },
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => {
+        return <LimitOrderActions order={row.original} />;
+      },
+      enableSorting: false,
     },
   ];
 
