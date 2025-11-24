@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '~/services/apiClient';
-import { BaseResponse } from './useCreateProposal';
+import { BaseResponse } from '../types';
 
 export interface Proposal {
   id: string;

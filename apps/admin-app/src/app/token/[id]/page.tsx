@@ -80,7 +80,7 @@ export default function Page() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="contract" className="mt-5">
-            <TokenContractDetailsCard token={token} chainId={token.chainId} />
+            <TokenContractDetailsCard token={token} />
           </TabsContent>
           <TabsContent value="metadata" className="mt-5">
             <TokenMetadataCard token={token} />

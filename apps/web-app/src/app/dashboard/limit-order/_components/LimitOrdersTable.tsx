@@ -1,6 +1,7 @@
 'use client';
 
 import { formatAddress, formatDateTime, formatPrice, formatTokenAmount, getChainUIName } from '@acme/client/utils';
+import { LimitOrderType } from '@acme/db';
 import { cn } from '@acme/ui';
 import { Badge } from '@acme/ui/badge';
 import { DataTableColumnSortHeader } from '@acme/ui/bootstrapped/data-table-column-sort-header';
@@ -88,12 +89,8 @@ export function LimitOrdersTable({ orders }: LimitOrdersTableProps) {
       id: 'type',
       header: 'Type',
       cell: ({ row }) => {
-        const { isUserTokenMake } = getOrderTokensInfo(row.original);
-        return (
-          <Badge className={isUserTokenMake ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}>
-            {isUserTokenMake ? 'SELL' : 'BUY'}
-          </Badge>
-        );
+        const isSell = row.original.type === LimitOrderType.SELL;
+        return <Badge className={isSell ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}>{isSell ? 'SELL' : 'BUY'}</Badge>;
       },
     },
     {

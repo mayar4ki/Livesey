@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useChainId } from 'wagmi';
 
+import { LimitOrderType } from '@acme/db';
 import { useEIP712 } from '~/_hooks/useEIP712';
 import { apiClient } from '~/services/apiClient';
-import { BaseResponse } from '~/services/types';
 import { use1inchLimitOrder } from '../1inche/use1inchLimitOrder';
 import { Token } from '../token/useToken';
 
@@ -24,6 +24,7 @@ export interface LimitOrder {
   token?: Token | null;
   createdAt: Date | string;
   updatedAt: Date | string;
+  type: LimitOrderType;
 }
 
 export interface CreateLimitOrderRequest {
@@ -80,7 +81,7 @@ export function useCreateLimitOrder() {
       const authHeaders = await makeSignatureRequest('POST', '/api/limit-order', backendPayload);
 
       // Step 4: Send to backend
-      const response = await apiClient.post<BaseResponse<LimitOrder>>('limit-order', backendPayload, {
+      const response = await apiClient.post('limit-order', backendPayload, {
         headers: authHeaders.headers,
       });
 

@@ -6,7 +6,6 @@ import { AlertTriangle } from 'lucide-react';
 import { useAccount } from 'wagmi';
 import { useFactoryInfo } from '~/services/factory/useFactoryInfo';
 import { ChangeAdminAddressSection } from './ChangeAdminAddressSection';
-import { DeleteBeaconProxySection } from './DeleteBeaconProxySection';
 import { PauseUnpauseFactorySection } from './PauseUnpauseFactorySection';
 import { UpgradeBeaconSection } from './UpgradeBeaconSection';
 
@@ -49,8 +48,6 @@ export function FactoryDangerZone() {
               <PauseUnpauseFactorySection paused={!!paused} isLoading={!!isLoading} isOwner={isOwner} />
 
               <UpgradeBeaconSection isLoading={!!isLoading} isOwner={isOwner} />
-
-              <DeleteBeaconProxySection isLoading={!!isLoading} isAdmin={isAdmin} />
 
               <ChangeAdminAddressSection isLoading={!!isLoading} isOwner={isOwner} />
             </CardContent>

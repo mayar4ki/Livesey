@@ -18,6 +18,7 @@
     "@acme/shared": "workspace:*",
     "@acme/smart-contract": "workspace:*",
     "@acme/ui": "workspace:*",
+    "@acme/db": "workspace:*",
     "@acme/white-label": "workspace:*",
     "@hookform/resolvers": "^5.2.2",
     "@snapshot-labs/snapshot.js": "^0.14.15",

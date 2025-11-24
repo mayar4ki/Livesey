@@ -5,7 +5,7 @@ import type { WriteContractParameters } from 'wagmi/actions';
 import { ABI } from '~/_config/smart-contracts/Factory/abi';
 import { ADDRESS } from '~/_config/smart-contracts/Factory/address';
 
-type UpgradeBeaconWriteParams = WriteContractParameters<typeof ABI, 'upgradeBeacon'>;
+type UpgradeBeaconWriteParams = WriteContractParameters<typeof ABI, '_dangerous_upgrade_upgradeable_beacon_implementation'>;
 type UpgradeBeaconArgs = NonNullable<UpgradeBeaconWriteParams['args']>;
 
 export const useUpgradeBeacon = () => {
@@ -16,7 +16,7 @@ export const useUpgradeBeacon = () => {
       {
         address: ADDRESS,
         abi: ABI,
-        functionName: 'upgradeBeacon',
+        functionName: '_dangerous_upgrade_upgradeable_beacon_implementation',
         args: [newImplementation],
       },
       options as never

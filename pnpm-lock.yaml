@@ -382,6 +382,9 @@ importers:
       '@acme/client':
         specifier: workspace:*
         version: link:../../packages/client
+      '@acme/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@acme/shared':
         specifier: workspace:*
         version: link:../../packages/shared

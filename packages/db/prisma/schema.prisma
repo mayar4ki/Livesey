@@ -129,7 +129,10 @@ model LimitOrder {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  type LimitOrderType
+
   @@unique([orderHash, chainId]) // Order hash is unique per chain
+  @@index([type])
   @@index([maker])
   @@index([makeToken])
   @@index([takeToken])
@@ -138,4 +141,9 @@ model LimitOrder {
   @@index([expiration])
   @@index([createdAt])
   @@map("limit_orders")
+}
+
+enum LimitOrderType {
+  BUY
+  SELL
 }

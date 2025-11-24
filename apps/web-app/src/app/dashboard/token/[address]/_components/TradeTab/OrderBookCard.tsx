@@ -2,6 +2,7 @@
 
 import { useQueryParams } from '@acme/client/hooks';
 import { formatDateTime, formatPrice, formatTokenAmount } from '@acme/client/utils';
+import { LimitOrderType } from '@acme/db';
 import { cn } from '@acme/ui';
 import { Badge } from '@acme/ui/badge';
 import { DataTableColumnSortHeader } from '@acme/ui/bootstrapped/data-table-column-sort-header';
@@ -18,18 +19,6 @@ import { LimitOrderActions } from '~/app/dashboard/limit-order/_components/Limit
 import { LimitOrder } from '~/services/limit-order';
 import { useLimitOrdersByToken } from '~/services/limit-order/useLimitOrdersByToken';
 import { Token } from '~/services/token/useToken';
-
-type Trade = {
-  id: string;
-  type: 'buy' | 'sell';
-  amount: string;
-  price: string;
-  priceValue: number; // For sorting
-  total: string;
-  timestamp: string;
-  timestampValue: number; // For sorting
-  trader: string;
-};
 
 export interface OrderBookCardProps {
   token: Token;
@@ -188,14 +177,12 @@ export function OrderBookCard({ token }: OrderBookCardProps) {
                   <TableBody>
                     {table.getRowModel().rows?.length ? (
                       table.getRowModel().rows.map((row) => {
-                        const { isUserTokenMake } = getOrderTokensInfo(row.original);
-                        const isSell = isUserTokenMake;
-
+                        const order = row.original;
                         return (
                           <TableRow
                             key={row.id}
                             data-state={row.getIsSelected() && 'selected'}
-                            className={cn(isSell ? 'bg-red-500/5' : 'bg-green-500/5')}
+                            className={cn(order.type === LimitOrderType.SELL ? 'bg-red-500/5' : 'bg-green-500/5')}
                           >
                             {row.getVisibleCells().map((cell) => (
                               <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>

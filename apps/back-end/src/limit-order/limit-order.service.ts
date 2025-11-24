@@ -1,3 +1,4 @@
+import { LimitOrderType } from '@acme/db';
 import {
   BadRequestException,
   Injectable,
@@ -17,12 +18,21 @@ export class LimitOrderService {
     // Note: Order hash and signature verification are handled by LimitOrderSignatureGuard
     // Expiration validation is handled by DTO validation
     // At this point, we can trust that the order is valid
+
+    const token = await this.prisma.client.token.findFirst({
+      where: {
+        chainId: dto.chainId,
+        OR: [{ token: dto.makeToken }, { token: dto.takeToken }],
+      },
+    });
+
+    if (!token) {
+      throw new NotFoundException('token not found');
+    }
+
     await this.prisma.client.token.update({
       where: {
-        token_chainId: {
-          token: dto.makeToken,
-          chainId: dto.chainId,
-        },
+        id: token.id,
       },
       data: {
         limitOrders: {
@@ -38,6 +48,10 @@ export class LimitOrderService {
             expiration: BigInt(dto.expiration),
             chainId: dto.chainId,
             status: 'pending',
+            type:
+              dto.makeToken === token.token
+                ? LimitOrderType.SELL
+                : LimitOrderType.BUY,
           },
         },
       },
