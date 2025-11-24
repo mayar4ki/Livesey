@@ -15,8 +15,9 @@
 
 - make proposal ✅
 - voting ✅
-- sell order
-- buy order
+- sell order  ✅
+- buy order ✅
+- fill order
 
 - comment on events (news)
 
