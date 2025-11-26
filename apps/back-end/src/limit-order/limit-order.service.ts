@@ -30,6 +30,14 @@ export class LimitOrderService {
       throw new NotFoundException('token not found');
     }
 
+    try {
+      console.log(dto);
+      console.log(dto.salt, typeof dto.salt);
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException('Invalid salt');
+    }
+
     await this.prisma.client.token.update({
       where: {
         id: token.id,
@@ -44,6 +52,7 @@ export class LimitOrderService {
             makeAmount: dto.makeAmount,
             takeAmount: dto.takeAmount,
             signature: dto.signature,
+            salt: dto.salt,
             nonce: BigInt(dto.nonce),
             expiration: BigInt(dto.expiration),
             chainId: dto.chainId,

@@ -1,11 +1,15 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useChainId } from 'wagmi';
 
-import { LimitOrderType } from '@acme/db';
 import { useEIP712 } from '~/_hooks/useEIP712';
 import { apiClient } from '~/services/apiClient';
 import { use1inchLimitOrder } from '../1inche/use1inchLimitOrder';
 import { Token } from '../token/useToken';
+
+export enum LimitOrderType {
+  BUY = 'BUY',
+  SELL = 'SELL',
+}
 
 export interface LimitOrder {
   id: string;
@@ -17,6 +21,7 @@ export interface LimitOrder {
   takeAmount: string;
   signature: string;
   nonce: string;
+  salt: string;
   expiration: string;
   chainId: number;
   status: 'pending' | 'filled' | 'cancelled' | 'expired';

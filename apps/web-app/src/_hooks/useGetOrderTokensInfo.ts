@@ -1,7 +1,7 @@
-import { LimitOrderType } from '@acme/db';
 import { formatUnits } from 'viem';
 import { useLimitOrderTokens } from '~/services/1inche/useLimitOrderTokens';
 import { LimitOrder } from '~/services/limit-order';
+import { LimitOrderType } from '~/services/limit-order/useCreateLimitOrder';
 import { getOurTokenDecimals } from '~/utils/token-decimals';
 
 export const useGetOrderTokensInfo = () => {

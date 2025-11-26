@@ -102,34 +102,35 @@ model Vote {
 }
 
 model LimitOrder {
-  id String @id @default(cuid())
-
-  orderHash String @db.VarChar(66) // 1inch order hash (0x + 64 hex chars)
-  maker     String @db.VarChar(42) // Ethereum wallet address (0x + 40 hex chars)
-
   makeToken String @db.VarChar(42) // Token address being sold
   takeToken String @db.VarChar(42) // Token address being bought
 
   makeAmount String // Amount to sell (as string to handle uint256)
   takeAmount String // Amount to buy (as string to handle uint256)
 
-  signature String @db.VarChar(132) // EIP712 signature (0x + 130 hex chars)
+  maker    String  @db.VarChar(42) // Ethereum wallet address (0x + 40 hex chars)
+  receiver String? @db.VarChar(42) // Ethereum wallet address (0x + 40 hex chars) null => maker
 
-  nonce      BigInt // Order nonce
   expiration BigInt // Expiration timestamp (Unix timestamp)
+  nonce      BigInt // Order nonce
+  salt       String
 
-  chainId Int // Chain ID where the order is valid
+  signature String @db.VarChar(132) // EIP712 signature (0x + 130 hex chars)
+  orderHash String @db.VarChar(66) // 1inch order hash (0x + 64 hex chars)
 
-  status String @default("pending") // pending, filled, cancelled, expired
+  id String @id @default(cuid())
 
   // Optional relation to Token model (for makeToken or takeToken)
   token   Token?  @relation(fields: [tokenId], references: [id], onDelete: SetNull)
   tokenId String?
+  chainId Int // Chain ID where the order is valid
+
+  type LimitOrderType // 
+
+  status String @default("pending") // pending, filled, cancelled, expired
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  type LimitOrderType
 
   @@unique([orderHash, chainId]) // Order hash is unique per chain
   @@index([type])

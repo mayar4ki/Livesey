@@ -1,10 +1,9 @@
 'use client';
 
 import { formatTokenAmount } from '@acme/client/utils';
-import { LimitOrderType } from '@acme/db';
 import { ExplorerLink } from '@acme/ui/bootstrapped/explorer-address-link';
 import { TableCell, TableRow } from '@acme/ui/table';
-import { type LimitOrder } from '~/services/limit-order/useCreateLimitOrder';
+import { LimitOrderType, type LimitOrder } from '~/services/limit-order/useCreateLimitOrder';
 import { TokenSeedData } from '~/services/token/useToken';
 import { getOurTokenDecimals } from '~/utils/token-decimals';
 

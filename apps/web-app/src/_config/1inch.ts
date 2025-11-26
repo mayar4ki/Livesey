@@ -64,9 +64,9 @@ export const BASE_CURRENCIES: Record<number, BaseCurrency[]> = {
       decimals: 18,
     },
     {
-      address: '0xfFf9976782d46CC05630D1f6eBAb18b2324d6b14' as `0x${string}`,
-      symbol: 'WETH2',
-      name: 'Wrapped Ether2',
+      address: '0x779877A7B0D9E8603169DdbD7836e478b4624789' as `0x${string}`,
+      symbol: 'LINK',
+      name: 'ChainLink',
       decimals: 18,
     },
   ],

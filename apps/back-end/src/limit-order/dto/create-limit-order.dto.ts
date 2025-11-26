@@ -45,7 +45,7 @@ export class CreateLimitOrderDto {
 
   @IsNotEmpty()
   @IsString()
-  salt: string; // Order nonce
+  salt: string; // Order salt
 
   @IsNotEmpty()
   @Type(() => Number)

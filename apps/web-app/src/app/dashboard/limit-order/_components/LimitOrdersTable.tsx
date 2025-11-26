@@ -1,7 +1,6 @@
 'use client';
 
 import { formatAddress, formatDateTime, formatPrice, formatTokenAmount, getChainUIName } from '@acme/client/utils';
-import { LimitOrderType } from '@acme/db';
 import { cn } from '@acme/ui';
 import { Badge } from '@acme/ui/badge';
 import { DataTableColumnSortHeader } from '@acme/ui/bootstrapped/data-table-column-sort-header';
@@ -21,7 +20,7 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useGetOrderTokensInfo } from '~/_hooks/useGetOrderTokensInfo';
-import { type LimitOrder } from '~/services/limit-order/useCreateLimitOrder';
+import { LimitOrderType, type LimitOrder } from '~/services/limit-order/useCreateLimitOrder';
 import { getStatusBadgeVariant } from '../../../../_utils/getStatusBadgeVariant';
 import { LimitOrderActions } from './LimitOrderActions';
 import { LimitOrderExpandedRow } from './LimitOrderExpandedRow';

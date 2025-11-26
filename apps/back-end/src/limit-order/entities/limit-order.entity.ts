@@ -17,6 +17,8 @@ export class LimitOrderEntity {
   @Transform(({ value }) => value.toString())
   expiration: bigint | string;
 
+  salt: string;
+
   chainId: number;
   status: string;
   tokenId?: string | null;
