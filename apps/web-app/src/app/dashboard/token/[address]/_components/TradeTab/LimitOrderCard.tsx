@@ -6,6 +6,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@acme/ui/fo
 import { Input } from '@acme/ui/input';
 import { toast } from '@acme/ui/sonner';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useQueryClient } from '@tanstack/react-query';
 import { ArrowUpDown, HelpCircle, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { usePublicClient } from 'wagmi';
@@ -57,6 +58,7 @@ export function LimitOrderCard({ token, className }: LimitOrderCardProps) {
   const isLoading = isApproving || createOrderMutation.isPending;
 
   const publicClient = usePublicClient();
+  const queryClient = useQueryClient();
 
   const onSubmit = async (data: LimitOrderFormSchema) => {
     const hash = await approveAsync(data.fromToken.address, limitOrderProtocolAddress!, BigInt(data.fromAmount), {
@@ -93,6 +95,8 @@ export function LimitOrderCard({ token, className }: LimitOrderCardProps) {
               onClick: () => {},
             },
           });
+
+          queryClient.invalidateQueries({ queryKey: ['limit-orders-by-token', token.token, token.chainId] });
         },
       }
     );

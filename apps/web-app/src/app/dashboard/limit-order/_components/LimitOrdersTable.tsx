@@ -225,7 +225,11 @@ export function LimitOrdersTable({ orders }: LimitOrdersTableProps) {
 
               return (
                 <>
-                  <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'} className=" border-0 bg-primary/5">
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && 'selected'}
+                    className={cn(' border-0 bg-primary/5', order.type === LimitOrderType.SELL ? 'bg-red-500/5' : 'bg-green-500/5')}
+                  >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                     ))}

@@ -11,7 +11,7 @@ export const useLimitOrderTokens = () => {
   const tokenMap = useMemo(() => {
     const map = new Map<string, { name: string; symbol: string; decimals: number }>();
     tokens.forEach((token) => {
-      map.set(token.address.toLocaleLowerCase(), {
+      map.set(token.address, {
         name: token.name,
         symbol: token.symbol,
         decimals: token.decimals,
