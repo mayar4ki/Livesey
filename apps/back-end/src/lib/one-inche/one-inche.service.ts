@@ -43,6 +43,8 @@ export class OneInchService {
         salt: BigInt(orderData.salt),
       },
       MakerTraits.default()
+        .disablePartialFills()
+        .disableMultipleFills()
         .withExpiration(BigInt(orderData.expiration))
         .withNonce(BigInt(orderData.nonce)),
     );

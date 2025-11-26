@@ -1,5 +1,5 @@
 import { useChainId } from 'wagmi';
-import { get1inchLimitOrderProtocolAddress } from '~/_config/1inch';
+import { get1inchLimitOrderProtocolAddress } from './config';
 
 export const useLimitOrderProtocolAddress = () => {
   const chainId = useChainId();

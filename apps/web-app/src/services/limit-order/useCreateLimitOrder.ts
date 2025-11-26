@@ -3,7 +3,7 @@ import { useChainId } from 'wagmi';
 
 import { useEIP712 } from '~/_hooks/useEIP712';
 import { apiClient } from '~/services/apiClient';
-import { use1inchLimitOrder } from '../1inche/use1inchLimitOrder';
+import { use1inchCreateLimitOrder } from '../1inche/use1inchCreateLimitOrder';
 import { Token } from '../token/useToken';
 
 export enum LimitOrderType {
@@ -53,12 +53,12 @@ export function useCreateLimitOrder() {
   const queryClient = useQueryClient();
   const chainId = useChainId();
   const { makeSignatureRequest } = useEIP712();
-  const { createLimitOrder: create1inchOrder } = use1inchLimitOrder();
+  const { createLimitOrder: create1inchCreateLimitOrder } = use1inchCreateLimitOrder();
 
   const mm = useMutation({
     mutationFn: async (data: CreateLimitOrderRequest) => {
       // Step 1: Create and sign the 1inch limit order
-      const { orderHash, signature, nonce, order, expiration } = await create1inchOrder({
+      const { orderHash, signature, nonce, order, expiration } = await create1inchCreateLimitOrder({
         makeToken: data.makeToken,
         takeToken: data.takeToken,
         makeAmount: data.makeAmount,

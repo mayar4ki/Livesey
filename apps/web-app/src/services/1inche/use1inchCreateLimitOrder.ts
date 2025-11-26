@@ -1,6 +1,7 @@
-import { Address, LimitOrder, MakerTraits, randBigInt } from '@1inch/limit-order-sdk';
+import { Address, LimitOrder, randBigInt } from '@1inch/limit-order-sdk';
 import { parseUnits } from 'viem';
 import { useAccount, useChainId, useSignTypedData } from 'wagmi';
+import { makeTraits } from './utils/1inch-order';
 
 export interface Create1inchLimitOrderParams {
   makeToken: string;
@@ -20,7 +21,7 @@ export interface Create1inchLimitOrderResult {
   expiration: bigint;
 }
 
-export function use1inchLimitOrder() {
+export function use1inchCreateLimitOrder() {
   const { address } = useAccount();
   const chainId = useChainId();
   const { signTypedDataAsync } = useSignTypedData();
@@ -53,7 +54,7 @@ export function use1inchLimitOrder() {
         maker: new Address(address!),
         receiver: new Address(address!),
       },
-      MakerTraits.default().withExpiration(BigInt(expiration)).withNonce(nonce)
+      makeTraits(BigInt(expiration), nonce)
     );
 
     const signature = await signOrderTypedDataAsync(order);

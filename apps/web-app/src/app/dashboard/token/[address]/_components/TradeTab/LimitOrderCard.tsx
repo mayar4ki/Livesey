@@ -10,7 +10,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { ArrowUpDown, HelpCircle, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { usePublicClient } from 'wagmi';
-import { BaseCurrency } from '~/_config/1inch';
+import { BaseCurrency } from '~/services/1inche/config';
 import { useLimitOrderProtocolAddress } from '~/services/1inche/useLimitOrderProtocolAddress';
 import { useLimitOrderTokens } from '~/services/1inche/useLimitOrderTokens';
 import { useTokenApproval } from '~/services/erc20/useTokenApproval';
@@ -150,7 +150,14 @@ export function LimitOrderCard({ token, className }: LimitOrderCardProps) {
 
             {/* Swap Button */}
             <div className="flex justify-center -my-2">
-              <Button type="button" variant="outline" size="icon" className="rounded-full" onClick={handleSwap} disabled={isLoading}>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="rounded-full"
+                onClick={handleSwap}
+                disabled={isLoading}
+              >
                 <ArrowUpDown className="h-4 w-4" />
               </Button>
             </div>
@@ -212,7 +219,9 @@ export function LimitOrderCard({ token, className }: LimitOrderCardProps) {
               </div>
             )} */}
 
-            {form.formState.errors.root && <p className="text-sm text-destructive">{form.formState.errors.root.message}</p>}
+            {form.formState.errors.root && (
+              <p className="text-sm text-destructive">{form.formState.errors.root.message}</p>
+            )}
 
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? (

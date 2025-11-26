@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useChainId } from 'wagmi';
-import { getBaseCurrencies } from '~/_config/1inch';
+import { getBaseCurrencies } from './config';
 
 export const useLimitOrderTokens = () => {
   const chainId = useChainId();

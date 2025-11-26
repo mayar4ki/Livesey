@@ -4,9 +4,9 @@
  */
 export const ONEINCH_LIMIT_ORDER_PROTOCOL_ADDRESSES: Record<number, `0x${string}`> = {
   // Ethereum Mainnet
-  1: '0x1111111254fb6c44bac0bed2854e76f90643097d' as `0x${string}`,
+  1: '0x111111125421cA6dc452d289314280a0f8842A65' as `0x${string}`,
   // Sepolia Testnet
-  11155111: '0x1111111254fb6c44bac0bed2854e76f90643097d' as `0x${string}`,
+  11155111: '0x65277B311e993eb7AecEba908C720fabcbD2fdc8' as `0x${string}`,
   // Add more chains as needed
   // Polygon: 137
   // BSC: 56
