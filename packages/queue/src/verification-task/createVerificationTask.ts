@@ -15,7 +15,8 @@ export async function createVerificationTask(data: {
     const { token, chainId } = data;
 
     const task: VerificationTask = {
-      ...token,
+      token: token.token,
+      args: token.args,
       status: "pending",
     };
 
@@ -26,9 +27,9 @@ export async function createVerificationTask(data: {
     );
 
     // Add tx to queue (using Redis List)
-    await redis.lPush(QUEUE_NAME, `${chainId}:${token}`);
+    await redis.lPush(QUEUE_NAME, `${chainId}:${token.token}`);
 
-    console.log(`✅ new task: task:${chainId}:${token}`);
+    console.log(`✅ new task: task:${chainId}:${token.token}`);
     return task;
   } catch (error) {
     console.error("Error creating verification task:", error);

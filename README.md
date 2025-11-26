@@ -15,7 +15,7 @@
 
 - make proposal ✅
 - voting ✅
-- sell order  ✅
+- sell order ✅
 - buy order ✅
 - fill order
 
@@ -26,3 +26,7 @@
 - all user actions +++
 - post events (news)
 - add profit to token holders (Payed by \_\_\_ token)
+
+---
+
+- update db when order get filled
