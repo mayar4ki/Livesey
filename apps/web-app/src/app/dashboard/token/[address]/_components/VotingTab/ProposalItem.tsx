@@ -19,10 +19,9 @@ interface ProposalItemProps {
 
 export function ProposalItem({ proposal }: ProposalItemProps) {
   const params = useParams();
-  const chainId = params.chainId as string;
   const tokenAddress = params.address as string;
 
-  const proposalUrl = `/dashboard/token/${chainId}/${tokenAddress}/proposal/${proposal.id}`;
+  const proposalUrl = `/dashboard/token/${tokenAddress}/proposal/${proposal.id}`;
 
   return (
     <Link href={proposalUrl} className="block group">
@@ -32,13 +31,12 @@ export function ProposalItem({ proposal }: ProposalItemProps) {
             <h3 className="font-semibold group-hover:text-primary transition-colors flex-1">{proposal.title}</h3>
             <div className="flex items-center gap-2 shrink-0">
               <span
-                className={`text-xs px-2 py-1 rounded ${
-                  proposal.status === 'active'
-                    ? 'bg-blue-500/10 text-blue-500'
-                    : proposal.status === 'closed'
-                      ? 'bg-gray-500/10 text-gray-500'
-                      : 'bg-yellow-500/10 text-yellow-500'
-                }`}
+                className={`text-xs px-2 py-1 rounded ${proposal.status === 'active'
+                  ? 'bg-blue-500/10 text-blue-500'
+                  : proposal.status === 'closed'
+                    ? 'bg-gray-500/10 text-gray-500'
+                    : 'bg-yellow-500/10 text-yellow-500'
+                  }`}
               >
                 {proposal.status === 'active' ? 'Active' : proposal.status === 'closed' ? 'Closed' : 'Pending'}
               </span>

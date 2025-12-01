@@ -43,17 +43,16 @@ export type Env = z.infer<typeof envValidationSchema>;
  * Throws an error with detailed messages if validation fails
  */
 export function validateEnv(env: any): Env {
-  try {
-    return envValidationSchema.parse(env);
-  } catch (error) {
-    console.error("❌ Environment validation failed:");
-    if (error instanceof z.ZodError) {
-      error.issues.forEach((issue) => {
-        console.error(`  - ${issue.path.join(".")}: ${issue.message}`);
-      });
-    } else {
-      console.error(error);
-    }
-    process.exit(1);
+  const result = envValidationSchema.safeParse(env);
+
+  if (result.success) {
+    return result.data;
   }
+
+  const details =
+    result.error.issues
+      .map((issue) => `  - ${issue.path.join(".")}: ${issue.message}`)
+      .join("\n") || "Unknown validation error";
+
+  throw new Error(`Environment validation failed:\n${details}`);
 }

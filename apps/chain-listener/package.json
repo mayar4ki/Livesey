@@ -2,12 +2,11 @@
   "name": "chain-listener",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "dev": "pnpm with-env tsx src/chain-listener.ts --watch",
+    "dev": "pnpm with-env tsx src/main.ts --watch",
     "build": "tsc",
     "with-env": "dotenv -e ../../.env --",
-    "start": "node dist/chain-listener.js",
+    "start": "node dist/main.js",
     "typecheck": "tsc --noEmit",
     "clean": "git clean -xdf .cache .turbo dist node_modules"
   },
@@ -15,7 +14,12 @@
     "@acme/db": "workspace:*",
     "@acme/queue": "workspace:*",
     "@acme/smart-contract": "workspace:*",
+    "@nestjs/common": "^11.0.1",
+    "@nestjs/core": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
     "axios": "^1.13.2",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1",
     "viem": "catalog:",
     "zod": "catalog:"
   },

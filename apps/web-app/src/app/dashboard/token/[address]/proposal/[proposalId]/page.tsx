@@ -14,7 +14,6 @@ import { VotingResultsCard } from './_components/VotingResultsCard';
 
 export default function ProposalPage() {
   const params = useParams();
-  const chainId = params.chainId as string;
   const tokenAddress = params.address as string;
   const proposalId = params.proposalId as string;
   const { address: walletAddress } = useAccount();
@@ -47,7 +46,7 @@ export default function ProposalPage() {
   const userVote = walletAddress ? (votes.find((v) => v.createdBy.toLowerCase() === walletAddress.toLowerCase()) ?? null) : null;
   const isActive = status === 'active';
 
-  const backUrl = `/dashboard/token/${chainId}/${tokenAddress}`;
+  const backUrl = `/dashboard/token/${tokenAddress}`;
 
   return (
     <div className="p-4 md:p-6 flex-1 max-w-4xl mx-auto">

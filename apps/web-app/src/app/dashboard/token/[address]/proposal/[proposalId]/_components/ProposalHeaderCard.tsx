@@ -30,13 +30,12 @@ export function ProposalHeaderCard({ proposal, status }: ProposalHeaderCardProps
             </div>
           </div>
           <span
-            className={`text-xs px-3 py-1 rounded-full font-medium ${
-              status === 'active'
+            className={`text-xs px-3 py-1 rounded-full font-medium ${status === 'active'
                 ? 'bg-blue-500/10 text-blue-500'
                 : status === 'closed'
                   ? 'bg-gray-500/10 text-gray-500'
                   : 'bg-yellow-500/10 text-yellow-500'
-            }`}
+              }`}
           >
             {status === 'active' ? 'Active' : status === 'closed' ? 'Closed' : 'Pending'}
           </span>
