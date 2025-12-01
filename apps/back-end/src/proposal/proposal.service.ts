@@ -1,11 +1,11 @@
-import { ERC20ImplementationAbi } from '@acme/smart-contract';
 import {
-  BadRequestException,
-  ConflictException,
-  Injectable,
-  NotFoundException,
+    BadRequestException,
+    ConflictException,
+    Injectable,
+    NotFoundException,
 } from '@nestjs/common';
 import { Address } from 'viem';
+import { ERC20ImplementationAbi } from '../../../../packages/core-contract';
 import { BaseResponse } from '../lib/base.dto';
 import { PrismaService } from '../lib/prisma/prisma.service';
 import { ViemPublicClientService } from '../lib/viem/viem.service';

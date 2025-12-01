@@ -15,7 +15,7 @@
     "viem": "catalog:",
     "@acme/db": "workspace:*",
     "@acme/queue": "workspace:*",
-    "@acme/smart-contract": "workspace:*",
+    "@acme/core-contract": "workspace:*",
     "zod": "catalog:"
   },
   "devDependencies": {

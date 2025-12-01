@@ -24,7 +24,7 @@
     "@acme/db": "workspace:*",
     "@acme/queue": "workspace:*",
     "@acme/shared": "workspace:*",
-    "@acme/smart-contract": "workspace:*",
+    "@acme/core-contract": "workspace:*",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",

@@ -16,7 +16,7 @@
     "@1inch/limit-order-sdk": "^5.2.3",
     "@acme/client": "workspace:*",
     "@acme/shared": "workspace:*",
-    "@acme/smart-contract": "workspace:*",
+    "@acme/core-contract": "workspace:*",
     "@acme/ui": "workspace:*",
     "@acme/white-label": "workspace:*",
     "@hookform/resolvers": "^5.2.2",

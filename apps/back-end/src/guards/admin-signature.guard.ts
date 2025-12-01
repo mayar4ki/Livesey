@@ -1,19 +1,19 @@
 import { StoreKeys } from '@acme/queue';
 import {
-  ADMIN_REQUEST_DOMAIN,
-  ADMIN_REQUEST_TYPES,
-  createAdminRequestMessage,
-  getAdminNonceKey,
+    ADMIN_REQUEST_DOMAIN,
+    ADMIN_REQUEST_TYPES,
+    createAdminRequestMessage,
+    getAdminNonceKey,
 } from '@acme/shared';
-import { FactoryAbi } from '@acme/smart-contract';
 import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
+    CanActivate,
+    ExecutionContext,
+    Injectable,
+    UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Address, recoverTypedDataAddress } from 'viem';
+import { FactoryAbi } from '../../../../packages/core-contract';
 import { Env } from '../config/env-validation.schema';
 import { RedisService } from '../lib/redis/redis.service';
 import { ViemPublicClientService } from '../lib/viem/viem.service';

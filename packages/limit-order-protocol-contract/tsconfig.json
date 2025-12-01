@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "moduleResolution": "node16",
+    "resolvePackageJsonExports": true
+  },
+  "include": ["**/*.js", "**/*.ts", "types/**/*.d.ts"]
+}
+

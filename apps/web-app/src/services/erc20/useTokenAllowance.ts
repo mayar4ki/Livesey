@@ -1,6 +1,6 @@
-import { ERC20ImplementationAbi } from '@acme/smart-contract';
 import { Address } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
+import { ERC20ImplementationAbi } from '../../../../../packages/core-contract';
 
 export const useTokenAllowance = (
   token: Address,

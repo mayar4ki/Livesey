@@ -1,1 +1,1 @@
-export { FactoryAbi as ABI } from '@acme/smart-contract';
+export { FactoryAbi as ABI } from '../../../../../../packages/core-contract';

@@ -1,0 +1,2 @@
+declare module 'solidity-coverage';
+

@@ -1,6 +1,6 @@
 import { closeRedisConnection } from "@acme/queue/client";
-import { FactoryAbi } from "@acme/smart-contract";
 import { Address, createPublicClient, http } from "viem";
+import { FactoryAbi } from "../../../packages/core-contract/index.js";
 
 import { handleNewAdminAddressEvent } from "./handlers/new-admin-address-handler.js";
 import { tokenCreatedEventHandler } from "./handlers/token-created-event-handler.js";
