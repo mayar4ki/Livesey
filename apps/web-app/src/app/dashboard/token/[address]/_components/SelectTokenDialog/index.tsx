@@ -6,8 +6,9 @@ import { useMemo, useState } from 'react';
 import { Button } from '@acme/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@acme/ui/dialog';
 import { Input } from '@acme/ui/input';
+import { BaseCurrency } from '~/services/1inche/config';
 
-import { BaseCurrency } from '~/_config/1inch';
+
 
 interface SelectTokenDialogProps {
   options: BaseCurrency[];

@@ -6,7 +6,7 @@ import { Input } from '@acme/ui/input';
 import { HelpCircle, RefreshCw, RotateCcw } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { Control, ControllerProps, FieldPath, FieldValues, useController, useWatch } from 'react-hook-form';
-import { BaseCurrency } from '~/_config/1inch';
+import { BaseCurrency } from '~/services/1inche/config';
 
 export interface LimitOrderPriceLimitInputProps<TFieldValues extends FieldValues = FieldValues, TContext = any, TTransformedValues = TFieldValues> {
   control: Control<TFieldValues, TContext, TTransformedValues>;

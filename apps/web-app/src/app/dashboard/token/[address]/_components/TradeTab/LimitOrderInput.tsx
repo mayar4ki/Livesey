@@ -7,7 +7,7 @@ import { Input } from '@acme/ui/input';
 import { useMemo } from 'react';
 import { Control, ControllerProps, FieldPath, FieldValues, useController } from 'react-hook-form';
 import { formatUnits } from 'viem';
-import { BaseCurrency } from '~/_config/1inch';
+import { BaseCurrency } from '~/services/1inche/config';
 import { useTokenBalance } from '~/services/erc20/useTokenBalance';
 import { SelectTokenDialog } from '../SelectTokenDialog';
 
