@@ -1,5 +1,5 @@
 {
-  "name": "@acme/core-contract",
+  "name": "@acme/smart-contract",
   "version": "1.0.0",
   "private": true,
   "type": "module",

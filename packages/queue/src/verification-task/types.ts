@@ -1,7 +1,7 @@
 import { Address } from "viem";
 
+import { ERC20ImplementationAbi } from "@acme/smart-contract";
 import { WriteContractParameters } from "viem";
-import { ERC20ImplementationAbi } from "../../../core-contract";
 
 export type TokenCreatedArgs = WriteContractParameters<
   typeof ERC20ImplementationAbi,

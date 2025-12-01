@@ -1,6 +1,6 @@
 import { prisma } from "@acme/db";
+import { FactoryAbi } from "@acme/smart-contract";
 import { WatchContractEventOnLogsParameter } from "viem";
-import { FactoryAbi } from "../../../../packages/core-contract";
 import { envValidationSchema } from "../schemas/env-validation-schema";
 
 const env = envValidationSchema.parse(process.env);

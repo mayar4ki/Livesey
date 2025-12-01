@@ -1,5 +1,5 @@
+import { FactoryAbi } from "@acme/smart-contract";
 import { WatchContractEventOnLogsParameter } from "viem";
-import { FactoryAbi } from "../../../../packages/core-contract";
 
 import { StoreKeys } from "@acme/queue";
 import { redis } from "@acme/queue/client";

@@ -1,4 +1,4 @@
-import { verifyContractSourcify } from "@acme/core-contract/utils/sourcify-verification";
+import { verifyContractSourcify } from "@acme/smart-contract/utils/sourcify-verification";
 
 export async function verifyProxy(beaconProxyAddress: string, chainId: string) {
   console.log(`📝 BeaconProxy address: ${beaconProxyAddress}`);

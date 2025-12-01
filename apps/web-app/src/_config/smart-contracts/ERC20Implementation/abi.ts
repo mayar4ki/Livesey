@@ -1,1 +1,1 @@
-export { ERC20ImplementationAbi as ABI } from '../../../../../../packages/core-contract';
+export { ERC20ImplementationAbi as ABI } from '@acme/smart-contract';

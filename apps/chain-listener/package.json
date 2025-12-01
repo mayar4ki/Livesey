@@ -14,7 +14,7 @@
   "dependencies": {
     "@acme/db": "workspace:*",
     "@acme/queue": "workspace:*",
-    "@acme/core-contract": "workspace:*",
+    "@acme/smart-contract": "workspace:*",
     "axios": "^1.13.2",
     "viem": "catalog:",
     "zod": "catalog:"

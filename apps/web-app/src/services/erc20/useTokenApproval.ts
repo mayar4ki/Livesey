@@ -1,7 +1,7 @@
+import { ERC20ImplementationAbi } from '@acme/smart-contract';
 import { MutateOptions } from '@tanstack/react-query';
 import { Address } from 'viem';
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
-import { ERC20ImplementationAbi } from '../../../../../packages/core-contract';
 
 /**
  * Hook to check and approve token spending for limit orders
