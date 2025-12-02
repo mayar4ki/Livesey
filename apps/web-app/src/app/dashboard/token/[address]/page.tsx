@@ -36,7 +36,11 @@ export default function TokenPage() {
   if (error || !token) {
     return (
       <div className="flex flex-1 flex-col gap-4 p-4">
-        <ErrorStateCard icon={Wallet} title="Token Not Found" message={error instanceof Error ? error.message : 'Failed to load token information'} />
+        <ErrorStateCard
+          icon={Wallet}
+          title="Token Not Found"
+          message={error instanceof Error ? error.message : 'Failed to load token information'}
+        />
       </div>
     );
   }
@@ -68,7 +72,7 @@ export default function TokenPage() {
 
           {/* Overview Tab */}
           <TabsContent value="overview">
-            <TokenContractDetailsCard token={token.data} />
+            <TokenContractDetailsCard token={token.data} decimals={decimals} />
           </TabsContent>
 
           {/* Metadata Tab */}

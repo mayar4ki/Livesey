@@ -11,7 +11,11 @@ import { BaseCurrency } from '~/services/1inche/config';
 import { useTokenBalance } from '~/services/erc20/useTokenBalance';
 import { SelectTokenDialog } from '../SelectTokenDialog';
 
-export interface LimitOrderInputProps<TFieldValues extends FieldValues = FieldValues, TContext = any, TTransformedValues = TFieldValues> {
+export interface LimitOrderInputProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TContext = any,
+  TTransformedValues = TFieldValues,
+> {
   control: Control<TFieldValues, TContext, TTransformedValues>;
   tokenFieldName: ControllerProps<TFieldValues, FieldPath<TFieldValues>, TTransformedValues>['name'];
   tokenOptions: BaseCurrency[];
@@ -29,7 +33,15 @@ export const LimitOrderInput = <
 >(
   props: LimitOrderInputProps<TFieldValues, TName, TTransformedValues>
 ) => {
-  const { control, tokenFieldName, tokenAmountFieldName, disabled, tokenOptions, baseToken, hidePercentageSelector = false } = props;
+  const {
+    control,
+    tokenFieldName,
+    tokenAmountFieldName,
+    disabled,
+    tokenOptions,
+    baseToken,
+    hidePercentageSelector = false,
+  } = props;
 
   const tokenAmountField = useController({
     name: tokenAmountFieldName,
@@ -42,13 +54,12 @@ export const LimitOrderInput = <
   });
 
   const tokenFieldValue = tokenField?.field?.value as BaseCurrency | undefined;
-  const tokenDecimals = tokenFieldValue?.decimals;
 
   const { data: tokenBalance } = useTokenBalance(tokenFieldValue?.address);
 
   const balance = useMemo(() => {
-    return tokenBalance && tokenDecimals ? formatUnits(tokenBalance.value, tokenDecimals) : '0';
-  }, [tokenBalance, tokenDecimals]);
+    return tokenBalance ? formatUnits(tokenBalance.value, tokenBalance.decimals) : '0';
+  }, [tokenBalance]);
 
   const handlePercentageClick = (percentage: number) => {
     const amount = parseFloat(balance) * (percentage / 100);
@@ -72,14 +83,19 @@ export const LimitOrderInput = <
         </div>
         <span className="text-sm text-muted-foreground">Balance: {parseFloat(balance).toFixed(4)}</span>
       </div>
-
       <FormField
         control={control as any}
         name={tokenAmountFieldName}
         render={({ field }) => (
           <FormItem>
             <FormControl>
-              <Input type="number" placeholder="0.0" className="text-lg font-medium" {...field} disabled={disabled} />
+              <Input
+                type="number"
+                placeholder="0.0"
+                className="text-lg font-medium"
+                {...field}
+                disabled={disabled}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>

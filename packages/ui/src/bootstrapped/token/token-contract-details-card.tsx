@@ -4,13 +4,15 @@ import { ExplorerLink } from '@acme/ui/bootstrapped/explorer-address-link';
 import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
 import { Separator } from '@acme/ui/separator';
 import { Wallet } from 'lucide-react';
+import { formatUnits } from 'viem';
 import { Token } from './types';
 
 interface TokenContractDetailsCardProps {
   token: Token;
+  decimals?: number;
 }
 
-export function TokenContractDetailsCard({ token }: TokenContractDetailsCardProps) {
+export function TokenContractDetailsCard({ token, decimals }: TokenContractDetailsCardProps) {
   return (
     <Card>
       <CardHeader>
@@ -40,7 +42,7 @@ export function TokenContractDetailsCard({ token }: TokenContractDetailsCardProp
               </div>
               <div>
                 <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Total Supply</label>
-                <p className="text-base font-mono font-semibold mt-1">{BigInt(token.totalSupply).toLocaleString()}</p>
+                <p className="text-base font-mono font-semibold mt-1">{decimals ? formatUnits(BigInt(token.totalSupply), decimals) : '...'}</p>
               </div>
             </div>
           </div>
