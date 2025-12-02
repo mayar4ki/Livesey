@@ -19,11 +19,11 @@ import { useGetOrderTokensInfo } from '~/_hooks/useGetOrderTokensInfo';
 import { use1inchFillLimitOrder } from '~/services/1inche/use1inchFillLimitOrder';
 import { LimitOrderType, type LimitOrder } from '~/services/limit-order/useCreateLimitOrder';
 
-interface LimitOrderActionsProps {
+interface FillOrderActionProps {
   order: LimitOrder;
 }
 
-export function LimitOrderActions({ order }: LimitOrderActionsProps) {
+export function FillOrderAction({ order }: FillOrderActionProps) {
   const { fillOrder, isPending: isFilling, transactionReceipt } = use1inchFillLimitOrder();
   const [openDialog, setOpenDialog] = useState(false);
   const getOrderTokensInfo = useGetOrderTokensInfo();
@@ -150,3 +150,4 @@ export function LimitOrderActions({ order }: LimitOrderActionsProps) {
     </>
   );
 }
+

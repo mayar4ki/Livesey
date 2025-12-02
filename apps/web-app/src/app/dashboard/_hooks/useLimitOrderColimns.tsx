@@ -5,10 +5,7 @@ import { cn } from '@acme/ui';
 import { Badge } from '@acme/ui/badge';
 import { DataTableColumnSortHeader } from '@acme/ui/bootstrapped/data-table-column-sort-header';
 import { Button } from '@acme/ui/button';
-import {
-  CellContext,
-  ColumnDef
-} from '@tanstack/react-table';
+import { CellContext, ColumnDef } from '@tanstack/react-table';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { useGetOrderTokensInfo } from '~/_hooks/useGetOrderTokensInfo';
@@ -16,41 +13,49 @@ import { getStatusBadgeVariant } from '~/_utils/getStatusBadgeVariant';
 import { LimitOrderType, type LimitOrder } from '~/services/limit-order/useCreateLimitOrder';
 import { LimitOrderActions } from '../_components/limit-order/LimitOrderActions';
 
-
-
 export interface UseLimitOrderColimnsProps {
   expandable?: {
-    expandedRows: Record<string, boolean>
-    toggleRowExpansion: (rowId: string) => void
-  },
-  filter?: Array<'pair' | 'type' | (string & {})>
+    expandedRows: Record<string, boolean>;
+    toggleRowExpansion: (rowId: string) => void;
+  };
+  filter?: Array<'pair' | 'type' | (string & {})>;
 }
 
 export const useLimitOrderColimns = (props: UseLimitOrderColimnsProps) => {
-
   const getOrderTokensInfo = useGetOrderTokensInfo();
 
   const { expandable } = props;
 
   const columns: ColumnDef<LimitOrder>[] = [
-    ...(
-
-      expandable ? [{
-        id: 'expand',
-        header: '',
-        cell: ({ row }: CellContext<LimitOrder, unknown>) => {
-          const order = row.original;
-          const hasSeedData = order.token?.seedData?.data;
-          if (!hasSeedData) {
-            return null;
-          }
-          return (
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => expandable.toggleRowExpansion(row.id)}>
-              {expandable.expandedRows[row.id] ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-            </Button>
-          );
-        },
-      },] : []),
+    ...(expandable
+      ? [
+          {
+            id: 'expand',
+            header: '',
+            cell: ({ row }: CellContext<LimitOrder, unknown>) => {
+              const order = row.original;
+              const hasSeedData = order.token?.seedData?.data;
+              if (!hasSeedData) {
+                return null;
+              }
+              return (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => expandable.toggleRowExpansion(row.id)}
+                >
+                  {expandable.expandedRows[row.id] ? (
+                    <ChevronDown className="h-4 w-4" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4" />
+                  )}
+                </Button>
+              );
+            },
+          },
+        ]
+      : []),
     {
       id: 'pair',
       header: 'Pair',
@@ -58,7 +63,10 @@ export const useLimitOrderColimns = (props: UseLimitOrderColimnsProps) => {
         const order = row.original;
         const { makeTokenInfo, takeTokenInfo } = getOrderTokensInfo(order);
         return (
-          <Link href={`/dashboard/token/${order.token?.token}`} className="hover:text-primary transition-colors cursor-pointer">
+          <Link
+            href={`/dashboard/token/${order.token?.token}`}
+            className="hover:text-primary transition-colors cursor-pointer"
+          >
             <div className="flex flex-col gap-0.5">
               <div className="flex items-center gap-1.5">
                 <span className="text-sm font-semibold">{makeTokenInfo?.symbol ?? '_'}</span>
@@ -80,7 +88,11 @@ export const useLimitOrderColimns = (props: UseLimitOrderColimnsProps) => {
       header: 'Type',
       cell: ({ row }) => {
         const isSell = row.original.type === LimitOrderType.SELL;
-        return <Badge className={isSell ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}>{isSell ? 'SELL' : 'BUY'}</Badge>;
+        return (
+          <Badge className={isSell ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}>
+            {isSell ? 'SELL' : 'BUY'}
+          </Badge>
+        );
       },
     },
     {
@@ -92,7 +104,9 @@ export const useLimitOrderColimns = (props: UseLimitOrderColimnsProps) => {
 
         return (
           <div className={cn('flex flex-col gap-0.5')}>
-            <span className="text-sm font-medium">{formatTokenAmount(order.makeAmount, makeTokenInfo?.decimals)}</span>
+            <span className="text-sm font-medium">
+              {formatTokenAmount(order.makeAmount, makeTokenInfo?.decimals)}
+            </span>
             <span className="text-xs text-muted-foreground">{makeTokenInfo?.symbol}</span>
           </div>
         );
@@ -107,7 +121,9 @@ export const useLimitOrderColimns = (props: UseLimitOrderColimnsProps) => {
 
         return (
           <div className={cn('flex flex-col gap-0.5')}>
-            <span className="text-sm font-medium">{formatTokenAmount(order.takeAmount, takeTokenInfo?.decimals)}</span>
+            <span className="text-sm font-medium">
+              {formatTokenAmount(order.takeAmount, takeTokenInfo?.decimals)}
+            </span>
             <span className="text-xs text-muted-foreground">{takeTokenInfo?.symbol}</span>
           </div>
         );
@@ -175,5 +191,5 @@ export const useLimitOrderColimns = (props: UseLimitOrderColimnsProps) => {
     },
   ];
 
-  return columns.filter(el => props.filter ? !!!props.filter?.includes(el.id ?? '') : true)
-}
+  return columns.filter((el) => (props.filter ? !!!props.filter?.includes(el.id ?? '') : true));
+};
