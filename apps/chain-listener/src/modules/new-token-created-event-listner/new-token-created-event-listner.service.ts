@@ -4,10 +4,10 @@ import { ConfigService } from "@nestjs/config";
 import { Address } from "viem";
 
 
-import { validateLog } from "src/schemas/token-created-validation.js";
-import { TokenCreatedEvent } from "src/types/index.js";
 import { ViemPublicClientService } from "../../lib/viem/viem.service.js";
 import type { Env } from "../../schemas/env-validation-schema.js";
+import { validateLog } from "../../schemas/token-created-validation.js";
+import { TokenCreatedEvent } from "../../types/index.js";
 import { QueueVerificationTaskService } from "./queue-verification-task.service.js";
 import { StoreDepolyedTokenService } from "./store-deployed-token.service.js";
 
@@ -19,11 +19,10 @@ export class NewTokenCreatedEventListnerService implements OnModuleInit, OnModul
   private readonly logger = new Logger(NewTokenCreatedEventListnerService.name);
 
   constructor(
+    private readonly storeDepolyedTokenService: StoreDepolyedTokenService,
     private readonly configService: ConfigService<Env>,
     private readonly viemPublicClient: ViemPublicClientService,
-
     private readonly queueVerificationTaskService: QueueVerificationTaskService,
-    private readonly storeDepolyedTokenService: StoreDepolyedTokenService,
   ) { }
 
   onModuleInit() {

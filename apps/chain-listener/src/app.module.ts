@@ -8,20 +8,20 @@ import { ViemModule } from "./lib/viem/viem.module.js";
 import { NewAdminAddressEventListnerModule } from "./modules/new-admin-address-event-listner/new-admin-address-event-listner.module.js";
 import { NewOperatorAddressEventListnerModule } from "./modules/new-operator-address-event-listner/new-operator-address-event-listner.module.js";
 import { NewTokenCreatedEventListnerModule } from "./modules/new-token-created-event-listner/new-token-created-event-listner.module.js";
-import { envValidationSchema } from "./schemas/env-validation-schema.js";
+import { validateEnv } from "./schemas/env-validation-schema.js";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      validate: (config) => envValidationSchema.parse(config),
-    }),
     PrismaModule,
     RedisModule,
     ViemModule,
     NewAdminAddressEventListnerModule,
     NewTokenCreatedEventListnerModule,
     NewOperatorAddressEventListnerModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validate: validateEnv,
+    }),
   ],
   providers: [Logger],
 })

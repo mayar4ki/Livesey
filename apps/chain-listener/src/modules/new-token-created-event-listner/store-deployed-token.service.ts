@@ -2,8 +2,8 @@ import { getSeedDataKey } from "@acme/queue";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Env } from "src/schemas/env-validation-schema.js";
-import type { PrismaService } from "../../lib/prisma/prisma.service.js";
-import type { RedisService } from "../../lib/redis/redis.service.js";
+import { PrismaService } from "../../lib/prisma/prisma.service.js";
+import { RedisService } from "../../lib/redis/redis.service.js";
 import { ValidatedLog } from "../../schemas/token-created-validation.js";
 
 
@@ -11,9 +11,9 @@ import { ValidatedLog } from "../../schemas/token-created-validation.js";
 export class StoreDepolyedTokenService {
 
   constructor(
+    private readonly configService: ConfigService<Env>,
     private readonly prismaService: PrismaService,
     private readonly redisService: RedisService,
-    private readonly configService: ConfigService<Env>,
   ) { }
 
 

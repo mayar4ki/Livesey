@@ -3,7 +3,7 @@ import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from "@nestjs/commo
 import { ConfigService } from "@nestjs/config";
 import { Address, WatchContractEventOnLogsParameter } from "viem";
 
-import { PrismaService } from "src/lib/prisma/prisma.service.js";
+import { PrismaService } from "../../lib/prisma/prisma.service.js";
 import { ViemPublicClientService } from "../../lib/viem/viem.service.js";
 import type { Env } from "../../schemas/env-validation-schema.js";
 

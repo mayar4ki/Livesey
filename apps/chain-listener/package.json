@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "pnpm with-env tsx src/main.ts --watch",
-    "build": "tsc",
+    "dev": "pnpm with-env nest start --watch",
+    "build": "nest build",
     "with-env": "dotenv -e ../../.env --",
     "start": "node dist/main.js",
     "typecheck": "tsc --noEmit",
@@ -25,6 +25,8 @@
   },
   "devDependencies": {
     "@acme/tsconfig": "workspace:*",
+    "@nestjs/cli": "^11.0.0",
+    "@nestjs/schematics": "^11.0.0",
     "@types/node": "catalog:",
     "dotenv-cli": "catalog:",
     "tsx": "catalog:",

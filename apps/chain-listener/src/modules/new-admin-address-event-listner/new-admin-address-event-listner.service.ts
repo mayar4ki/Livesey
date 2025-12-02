@@ -2,8 +2,8 @@ import { StoreKeys } from "@acme/queue";
 import { FactoryAbi } from "@acme/smart-contract";
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { RedisService } from "src/lib/redis/redis.service.js";
 import { Address, WatchContractEventOnLogsParameter } from "viem";
+import { RedisService } from "../../lib/redis/redis.service.js";
 import { ViemPublicClientService } from "../../lib/viem/viem.service.js";
 import { Env } from "../../schemas/env-validation-schema.js";
 
