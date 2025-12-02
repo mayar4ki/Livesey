@@ -38,4 +38,8 @@ export class LimitOrderListQueryDto {
   @Type(() => Number)
   @IsInt()
   chainId?: number; // Filter by chain ID
+
+  @IsOptional()
+  @IsString()
+  maker?: string; // Filter by maker address
 }

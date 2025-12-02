@@ -1,6 +1,6 @@
 'use client';
 
-import { BookOpen, ChartArea, Coins, Compass, HelpCircle, Settings } from 'lucide-react';
+import { ArrowRightLeft, BookOpen, ChartArea, Coins, Compass, HelpCircle, Search, Settings, User } from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@acme/ui';
@@ -19,84 +19,113 @@ import {
 } from '@acme/ui/sidebar';
 import { siteName } from '@acme/white-label/web-app';
 import Link from 'next/link';
+import { useAccount } from 'wagmi';
 import { AppLogo } from '~/_components/common/AppBrand';
 
-const navGroups = [
-  {
-    label: 'Home',
-    items: [
-      {
-        title: 'Discover',
-        url: '/dashboard',
-        icon: Compass,
-      },
-      // {
-      //   title: 'Fund Campaign',
-      //   url: '/dashboard/fund',
-      //   icon: Calendar,
-      // },
-    ],
-  },
-  {
-    label: 'Orders',
-    items: [
-      {
-        title: 'Explore Limit Orders',
-        url: '/dashboard/limit-order',
-        icon: Compass,
-      },
-    ],
-  },
-  {
-    label: 'Tokens',
-    items: [
-      {
-        title: 'Tokens List',
-        url: '/dashboard/token',
-        icon: Coins,
-      },
-      {
-        title: 'My Assets',
-        url: '/dashboard/my-assets',
-        icon: ChartArea,
-      },
+const useNavGroups = () => {
 
-      // {
-      //   title: 'Governance',
-      //   url: '/dashboard/governance',
-      //   icon: Landmark,
-      // },
+  const { address } = useAccount();
+  const navGroups = [
+    {
+      label: 'Home',
+      items: [
+        {
+          title: 'Discover',
+          url: '/dashboard',
+          icon: Compass,
+        },
+        // {
+        //   title: 'Fund Campaign',
+        //   url: '/dashboard/fund',
+        //   icon: Calendar,
+        // },
+      ],
+    },
+    {
+      label: 'Orders',
+      items: [
+        {
+          title: 'Limit Orders List',
+          url: '/dashboard/limit-order',
+          icon: ArrowRightLeft,
+        },
+        {
+          title: 'My Limit Orders',
+          url: `/dashboard/lookup/${address}?tab=orders`,
+          icon: ChartArea,
+        },
+      ],
+    },
+    {
+      label: 'Tokens',
+      items: [
+        {
+          title: 'Tokens List',
+          url: '/dashboard/token',
+          icon: Coins,
+        },
+        {
+          title: 'My Assets',
+          url: `/dashboard/lookup/${address}?tab=assets`,
+          icon: ChartArea,
+        },
 
-      // {
-      //   title: 'Limit Orders',
-      //   url: '/dashboard/orders/public',
-      //   icon: ArrowRightLeft,
-      // },
-    ],
-  },
-  {
-    label: '',
-    items: [
-      {
-        title: 'Settings',
-        url: '/dashboard/settings',
-        icon: Settings,
-      },
-      {
-        title: 'Learn',
-        url: '/',
-        icon: BookOpen,
-      },
-      {
-        title: 'Support',
-        url: '/dashboard/support',
-        icon: HelpCircle,
-      },
-    ],
-  },
-];
+        // {
+        //   title: 'Governance',
+        //   url: '/dashboard/governance',
+        //   icon: Landmark,
+        // },
 
-export const SidebarMenuItem2 = ({ item }: { item: (typeof navGroups)[number]['items'][number] }) => {
+        // {
+        //   title: 'Limit Orders',
+        //   url: '/dashboard/orders/public',
+        //   icon: ArrowRightLeft,
+        // },
+      ],
+    },
+    {
+      label: 'Profile',
+      items: [
+        {
+          title: 'My Profile',
+          url: `/dashboard/lookup/${address}`,
+          icon: User,
+        },
+        {
+          title: 'Lookup Profile',
+          url: '/dashboard/lookup',
+          icon: Search,
+        },
+      ],
+    },
+    {
+      label: '',
+      items: [
+        {
+          title: 'Settings',
+          url: '/dashboard/settings',
+          icon: Settings,
+        },
+        {
+          title: 'Learn',
+          url: '/',
+          icon: BookOpen,
+        },
+        {
+          title: 'Support',
+          url: '/dashboard/support',
+          icon: HelpCircle,
+        },
+      ],
+    },
+  ];
+
+  return { navGroups };
+}
+
+type NavGroups = ReturnType<typeof useNavGroups>['navGroups']
+
+export const SidebarMenuItem2 = ({ item }: { item: NavGroups[number]['items'][number] }) => {
   return (
     <SidebarMenuItem>
       <Link href={item.url}>
@@ -111,6 +140,8 @@ export const SidebarMenuItem2 = ({ item }: { item: (typeof navGroups)[number]['i
 
 export function DashboardSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { open } = useSidebar();
+
+  const { navGroups } = useNavGroups();
 
   return (
     <Sidebar collapsible="icon" {...props}>

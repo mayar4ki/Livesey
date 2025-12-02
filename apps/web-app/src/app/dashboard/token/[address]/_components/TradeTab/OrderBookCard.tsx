@@ -1,20 +1,15 @@
 'use client';
 
 import { useQueryParams } from '@acme/client/hooks';
-import { formatDateTime, formatPrice, formatTokenAmount } from '@acme/client/utils';
 
 import { cn } from '@acme/ui';
-import { Badge } from '@acme/ui/badge';
-import { DataTableColumnSortHeader } from '@acme/ui/bootstrapped/data-table-column-sort-header';
 import { DataTablePagination } from '@acme/ui/bootstrapped/data-table-pagination';
 import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@acme/ui/table';
-import { ColumnDef, SortingState, flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
+import { SortingState, flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { Loader2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { useGetOrderTokensInfo } from '~/_hooks/useGetOrderTokensInfo';
-import { getStatusBadgeVariant } from '~/_utils/getStatusBadgeVariant';
-import { LimitOrderActions } from '~/app/dashboard/limit-order/_components/LimitOrderActions';
+import { useLimitOrderColimns } from '~/app/dashboard/_hooks/useLimitOrderColimns';
 
 import { LimitOrder } from '~/services/limit-order';
 import { LimitOrderType } from '~/services/limit-order/useCreateLimitOrder';
@@ -34,101 +29,9 @@ export function OrderBookCard({ token }: OrderBookCardProps) {
     take: params.take,
   });
 
-  const getOrderTokensInfo = useGetOrderTokensInfo();
-
-  const columns: ColumnDef<LimitOrder>[] = [
-    {
-      id: 'offer',
-      header: 'Offer',
-      cell: ({ row }) => {
-        const order = row.original;
-        const { makeTokenInfo } = getOrderTokensInfo(order);
-
-        return (
-          <div className={cn('flex flex-col gap-0.5')}>
-            <span className="text-sm font-medium">{formatTokenAmount(order.makeAmount, makeTokenInfo?.decimals)}</span>
-            <span className="text-xs text-muted-foreground">{makeTokenInfo?.symbol}</span>
-          </div>
-        );
-      },
-    },
-    {
-      id: 'ask',
-      header: 'Ask',
-      cell: ({ row }) => {
-        const order = row.original;
-        const { takeTokenInfo } = getOrderTokensInfo(order);
-
-        return (
-          <div className={cn('flex flex-col gap-0.5')}>
-            <span className="text-sm font-medium">{formatTokenAmount(order.takeAmount, takeTokenInfo?.decimals)}</span>
-            <span className="text-xs text-muted-foreground">{takeTokenInfo?.symbol}</span>
-          </div>
-        );
-      },
-    },
-    {
-      id: 'price',
-      header: ({ column }) => <DataTableColumnSortHeader column={column}>Price</DataTableColumnSortHeader>,
-      cell: ({ row }) => {
-        const order = row.original;
-        const { _price } = getOrderTokensInfo(order);
-        return (
-          <div className="flex flex-col gap-0.5">
-            <span className="text-sm font-medium">{formatPrice(_price)}</span>
-            <span className="text-xs text-muted-foreground"> ~ 1 {row.original.token?.symbol}</span>
-          </div>
-        );
-      },
-    },
-    {
-      id: 'status',
-      accessorFn: (row) => row.status,
-      header: ({ column }) => <DataTableColumnSortHeader column={column}>Status</DataTableColumnSortHeader>,
-      cell: ({ row }) => {
-        const order = row.original;
-        const expirationDate = new Date(Number(order.expiration) * 1000);
-        const isExpired = new Date() > expirationDate;
-        return (
-          <Badge variant={isExpired ? 'outline' : getStatusBadgeVariant(order.status)} className="capitalize">
-            {isExpired ? 'Expired' : order.status}
-          </Badge>
-        );
-      },
-    },
-    {
-      id: 'createdAt',
-      header: ({ column }) => <DataTableColumnSortHeader column={column}>Created At</DataTableColumnSortHeader>,
-      cell: ({ row }) => {
-        const order = row.original;
-        return (
-          <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground">{formatDateTime(order.createdAt)}</span>
-          </div>
-        );
-      },
-    },
-    {
-      id: 'expiration',
-      header: ({ column }) => <DataTableColumnSortHeader column={column}>Expired At</DataTableColumnSortHeader>,
-      cell: ({ row }) => {
-        const order = row.original;
-        const expirationDate = new Date(Number(order.expiration) * 1000);
-        return (
-          <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground">{formatDateTime(expirationDate)}</span>
-          </div>
-        );
-      },
-    },
-    {
-      id: 'actions',
-      header: 'Actions',
-      cell: ({ row }) => {
-        return <LimitOrderActions order={row.original} />;
-      },
-    },
-  ];
+  const columns = useLimitOrderColimns({
+    filter: ['pair', 'type']
+  });
 
   const table = useReactTable<LimitOrder>({
     data: (data?.data ?? []).map((el) => ({ ...el, token })),

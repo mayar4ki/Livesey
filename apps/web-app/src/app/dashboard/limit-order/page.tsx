@@ -10,7 +10,7 @@ import { ArrowRightLeft, Filter } from 'lucide-react';
 import { useState } from 'react';
 import { useChainId } from 'wagmi';
 import { useLimitOrders } from '~/services/limit-order/useLimitOrders';
-import { LimitOrdersTable } from './_components/LimitOrdersTable';
+import { LimitOrdersTable } from '../_components/limit-order/LimitOrdersTable';
 
 export default function LimitOrderPage() {
   const chainId = useChainId();
