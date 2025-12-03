@@ -1,23 +1,27 @@
-import { Logger, Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
+import { Logger, Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 
-import { PrismaModule } from "./lib/prisma/prisma.module.js";
-import { RedisModule } from "./lib/redis/redis.module.js";
-import { ViemModule } from "./lib/viem/viem.module.js";
+import { PrismaModule } from './lib/prisma/prisma.module.js';
+import { RedisModule } from './lib/redis/redis.module.js';
+import { ViemModule } from './lib/viem/viem.module.js';
 
-import { NewAdminAddressEventListnerModule } from "./modules/new-admin-address-event-listner/new-admin-address-event-listner.module.js";
-import { NewOperatorAddressEventListnerModule } from "./modules/new-operator-address-event-listner/new-operator-address-event-listner.module.js";
-import { NewTokenCreatedEventListnerModule } from "./modules/new-token-created-event-listner/new-token-created-event-listner.module.js";
-import { validateEnv } from "./schemas/env-validation-schema.js";
+import { NewAdminAddressEventListenerModule } from './modules/new-admin-address-event-listener/new-admin-address-event-listener.module.js';
+import { NewOperatorAddressEventListenerModule } from './modules/new-operator-address-event-listener/new-operator-address-event-listener.module.js';
+import { NewTokenCreatedEventListenerModule } from './modules/new-token-created-event-listener/new-token-created-event-listener.module.js';
+import { OrderCanceledEventListenerModule } from './modules/order-canceled-event-listener/order-canceled-event-listener.module.js';
+import { OrderFilledEventListenerModule } from './modules/order-fill-event-listener/order-fill-event-listener.module.js';
+import { validateEnv } from './schemas/env-validation-schema.js';
 
 @Module({
   imports: [
     PrismaModule,
     RedisModule,
     ViemModule,
-    NewAdminAddressEventListnerModule,
-    NewTokenCreatedEventListnerModule,
-    NewOperatorAddressEventListnerModule,
+    NewAdminAddressEventListenerModule,
+    NewTokenCreatedEventListenerModule,
+    NewOperatorAddressEventListenerModule,
+    OrderFilledEventListenerModule,
+    OrderCanceledEventListenerModule,
     ConfigModule.forRoot({
       isGlobal: true,
       validate: validateEnv,
@@ -25,4 +29,4 @@ import { validateEnv } from "./schemas/env-validation-schema.js";
   ],
   providers: [Logger],
 })
-export class AppModule { }
+export class AppModule {}

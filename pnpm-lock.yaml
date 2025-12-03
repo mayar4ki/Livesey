@@ -311,6 +311,9 @@ importers:
       '@acme/queue':
         specifier: workspace:*
         version: link:../../packages/queue
+      '@acme/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@acme/smart-contract':
         specifier: workspace:*
         version: link:../../packages/smart-contract

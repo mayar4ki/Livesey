@@ -12,7 +12,7 @@ import { LimitOrderEntity } from './entities/limit-order.entity';
 
 @Injectable()
 export class LimitOrderService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreateLimitOrderDto, makerAddress: string) {
     // Note: Order hash and signature verification are handled by LimitOrderSignatureGuard
@@ -50,6 +50,7 @@ export class LimitOrderService {
             makeToken: dto.makeToken,
             takeToken: dto.takeToken,
             makeAmount: dto.makeAmount,
+            remainingMakingAmount: dto.makeAmount,
             takeAmount: dto.takeAmount,
             signature: dto.signature,
             salt: dto.salt,

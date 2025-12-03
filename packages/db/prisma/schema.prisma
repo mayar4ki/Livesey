@@ -105,8 +105,9 @@ model LimitOrder {
   makeToken String @db.VarChar(42) // Token address being sold
   takeToken String @db.VarChar(42) // Token address being bought
 
-  makeAmount String // Amount to sell (as string to handle uint256)
-  takeAmount String // Amount to buy (as string to handle uint256)
+  makeAmount            String // Amount to sell (as string to handle uint256)
+  takeAmount            String // Amount to buy (as string to handle uint256)
+  remainingMakingAmount String // Amount to buy (as string to handle uint256)
 
   maker    String  @db.VarChar(42) // Ethereum wallet address (0x + 40 hex chars)
   receiver String? @db.VarChar(42) // Ethereum wallet address (0x + 40 hex chars) null => maker
@@ -127,7 +128,7 @@ model LimitOrder {
 
   type LimitOrderType // 
 
-  status String @default("pending") // pending, filled, cancelled, expired
+  status LimitOrderStatus @default(pending)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -147,4 +148,11 @@ model LimitOrder {
 enum LimitOrderType {
   BUY
   SELL
+}
+
+enum LimitOrderStatus {
+  pending
+  filled
+  cancelled
+  expired
 }

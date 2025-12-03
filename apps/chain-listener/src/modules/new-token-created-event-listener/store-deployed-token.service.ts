@@ -1,26 +1,23 @@
-import { getSeedDataKey } from "@acme/queue";
-import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { Env } from "src/schemas/env-validation-schema.js";
-import { PrismaService } from "../../lib/prisma/prisma.service.js";
-import { RedisService } from "../../lib/redis/redis.service.js";
-import { ValidatedLog } from "../../schemas/token-created-validation.js";
-
+import { getSeedDataKey } from '@acme/queue';
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { Env } from 'src/schemas/env-validation-schema.js';
+import { PrismaService } from '../../lib/prisma/prisma.service.js';
+import { RedisService } from '../../lib/redis/redis.service.js';
+import { ValidatedLog } from '../../schemas/token-created-validation.js';
 
 @Injectable()
-export class StoreDepolyedTokenService {
-
+export class StoreDeployedTokenService {
   constructor(
     private readonly configService: ConfigService<Env>,
     private readonly prismaService: PrismaService,
     private readonly redisService: RedisService,
-  ) { }
-
+  ) {}
 
   /**
- * Store deployed token in PostgreSQL database
-  * Also retrieves seed data from Redis if available
- */
+   * Store deployed token in PostgreSQL database
+   * Also retrieves seed data from Redis if available
+   */
   public async storeDeployedToken(log: ValidatedLog): Promise<void> {
     await this.redisService.ensureConnected();
 
@@ -33,28 +30,22 @@ export class StoreDepolyedTokenService {
     try {
       const seedValue = await this.redisService.client.get(SEED_DATA_KEY);
       if (!seedValue) {
-        throw new Error(
-          `Seed data not found in Redis for assetRefHash: ${token.assetRefHash}`
-        );
+        throw new Error(`Seed data not found in Redis for assetRefHash: ${token.assetRefHash}`);
       }
       seedData = JSON.parse(seedValue);
       // Delete seed from Redis after retrieving (cleanup)
       await this.redisService.client.del(SEED_DATA_KEY);
       console.log(`✅ Retrieved seed data for token ${token.token}`);
     } catch (error) {
-      console.error(
-        `❌ Failed to retrieve seed data for ${token.assetRefHash}:`,
-        error
-      );
+      console.error(`❌ Failed to retrieve seed data for ${token.assetRefHash}:`, error);
       throw new Error(
-        `Cannot store token ${token.token}: seed data is required but not found in Redis for assetRefHash ${token.assetRefHash}`
+        `Cannot store token ${token.token}: seed data is required but not found in Redis for assetRefHash ${token.assetRefHash}`,
       );
     }
 
     // Store tokens with seed data in database transaction
 
-    const chainId = this.configService.get("CHAIN_ID", { infer: true }) ?? 11155111;
-
+    const chainId = this.configService.get('CHAIN_ID', { infer: true }) ?? 11155111;
 
     await this.prismaService.client.token.upsert({
       where: {
@@ -107,6 +98,4 @@ export class StoreDepolyedTokenService {
 
     console.log(`✅ Token ${token} Stored in db`);
   }
-
 }
-
