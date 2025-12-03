@@ -9,7 +9,9 @@ export const useLimitOrderTokens = () => {
 
   // Create a map of token addresses to token info for quick lookup
   const tokenMap = useMemo(() => {
+
     const map = new Map<string, { name: string; symbol: string; decimals: number }>();
+
     tokens.forEach((token) => {
       map.set(token.address, {
         name: token.name,

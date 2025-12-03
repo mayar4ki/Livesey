@@ -26,6 +26,7 @@ export const env = createEnv({
     NEXT_PUBLIC_ALCHEMY_API_KEY: z.string(),
     NEXT_PUBLIC_BACKEND_URL: z.url(),
     NEXT_PUBLIC_FACTORY_ADDRESS: ethAddress,
+    NEXT_PUBLIC_ERC20_IMPLEMENTATION_ADDRESS: ethAddress,
     NEXT_PUBLIC_OUR_ERC20_DECIMALS: z.coerce.number(),
   },
   /**
@@ -36,6 +37,7 @@ export const env = createEnv({
     NEXT_PUBLIC_ALCHEMY_API_KEY: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
     NEXT_PUBLIC_BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL,
     NEXT_PUBLIC_FACTORY_ADDRESS: process.env.NEXT_PUBLIC_FACTORY_ADDRESS,
+    NEXT_PUBLIC_ERC20_IMPLEMENTATION_ADDRESS: process.env.NEXT_PUBLIC_FACTORY_ADDRESS,
     NEXT_PUBLIC_OUR_ERC20_DECIMALS: process.env.NEXT_PUBLIC_OUR_ERC20_DECIMALS,
   },
   skipValidation: !!process.env.CI || process.env.npm_lifecycle_event === 'lint',

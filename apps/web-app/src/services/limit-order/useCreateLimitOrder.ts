@@ -19,6 +19,7 @@ export interface LimitOrder {
   takeToken: string;
   makeAmount: string;
   takeAmount: string;
+  remainingMakingAmount: string;
   signature: string;
   nonce: string;
   salt: string;

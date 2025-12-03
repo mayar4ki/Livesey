@@ -13,9 +13,10 @@ import {
 } from '@acme/ui/alert-dialog';
 import { Badge } from '@acme/ui/badge';
 import { Button } from '@acme/ui/button';
-import { AlertTriangle, XCircle } from 'lucide-react';
+import { AlertTriangle, Loader2, XCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useGetOrderTokensInfo } from '~/_hooks/useGetOrderTokensInfo';
+import { use1inchCancelLimitOrder } from '~/services/1inche/use1inchCancelLimitOrder';
 import { LimitOrderType, type LimitOrder } from '~/services/limit-order/useCreateLimitOrder';
 
 interface CancelOrderActionProps {
@@ -23,8 +24,11 @@ interface CancelOrderActionProps {
 }
 
 export function CancelOrderAction({ order }: CancelOrderActionProps) {
+  const { cancelOrder, isPending: isCancelling, transactionReceipt } = use1inchCancelLimitOrder();
   const [openDialog, setOpenDialog] = useState(false);
   const getOrderTokensInfo = useGetOrderTokensInfo();
+
+  const isPending = isCancelling || transactionReceipt.isLoading;
 
   const isOrderPending = order.status === 'pending';
   const isOrderCancelled = order.status === 'cancelled';
@@ -32,8 +36,7 @@ export function CancelOrderAction({ order }: CancelOrderActionProps) {
 
   const handleCancelOrder = () => {
     setOpenDialog(false);
-    // TODO: Add cancel order API call here
-    console.log('Cancel order:', order.id);
+    cancelOrder({ order });
   };
 
   const { makeTokenInfo, takeTokenInfo, _price } = getOrderTokensInfo(order);
@@ -45,11 +48,20 @@ export function CancelOrderAction({ order }: CancelOrderActionProps) {
         variant="outline"
         size="sm"
         onClick={() => setOpenDialog(true)}
-        disabled={!isOrderPending || isOrderCancelled || isOrderFilled}
+        disabled={!isOrderPending || isOrderCancelled || isOrderFilled || isPending}
         className="text-xs"
       >
-        <XCircle className="mr-1.5 h-3.5 w-3.5" />
-        Cancel
+        {isPending ? (
+          <>
+            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            {isCancelling ? 'Approving...' : 'Confirming...'}
+          </>
+        ) : (
+          <>
+            <XCircle className="mr-1.5 h-3.5 w-3.5" />
+            Cancel
+          </>
+        )}
       </Button>
 
       <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
@@ -67,7 +79,9 @@ export function CancelOrderAction({ order }: CancelOrderActionProps) {
                     {/* Order Type */}
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Order Type</span>
-                      <Badge className={isSell ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}>
+                      <Badge
+                        className={isSell ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}
+                      >
                         {isSell ? 'SELL' : 'BUY'}
                       </Badge>
                     </div>
@@ -81,7 +95,9 @@ export function CancelOrderAction({ order }: CancelOrderActionProps) {
                         <div className="text-lg font-bold text-foreground">
                           {formatTokenAmount(order.makeAmount, makeTokenInfo?.decimals ?? 18)}
                         </div>
-                        <div className="text-xs text-muted-foreground mt-1">{makeTokenInfo?.symbol ?? 'Token'}</div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          {makeTokenInfo?.symbol ?? 'Token'}
+                        </div>
                       </div>
 
                       <div>
@@ -91,7 +107,9 @@ export function CancelOrderAction({ order }: CancelOrderActionProps) {
                         <div className="text-lg font-bold text-foreground">
                           {formatTokenAmount(order.takeAmount, takeTokenInfo?.decimals ?? 18)}
                         </div>
-                        <div className="text-xs text-muted-foreground mt-1">{takeTokenInfo?.symbol ?? 'Token'}</div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          {takeTokenInfo?.symbol ?? 'Token'}
+                        </div>
                       </div>
                     </div>
 
@@ -131,8 +149,8 @@ export function CancelOrderAction({ order }: CancelOrderActionProps) {
                   <div className="flex items-start gap-2 p-3 bg-destructive/10 rounded-lg border border-destructive/20">
                     <AlertTriangle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
                     <p className="text-sm text-muted-foreground">
-                      This will cancel your limit order. Once cancelled, this order cannot be filled. You will need to
-                      create a new order if you want to place it again. This action will consume gas fees.
+                      This will cancel your limit order. Once cancelled, this order cannot be filled. You will need
+                      to create a new order if you want to place it again. This action will consume gas fees.
                     </p>
                   </div>
                 </div>
@@ -152,4 +170,3 @@ export function CancelOrderAction({ order }: CancelOrderActionProps) {
     </>
   );
 }
-

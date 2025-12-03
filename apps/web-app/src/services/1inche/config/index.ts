@@ -1,17 +1,4 @@
-/**
- * 1inch Limit Order Protocol contract addresses
- * Source: https://docs.1inch.io/docs/limit-order-protocol/smart-contract
- */
-export const ONEINCH_LIMIT_ORDER_PROTOCOL_ADDRESSES: Record<number, `0x${string}`> = {
-  // Ethereum Mainnet
-  1: '0x111111125421cA6dc452d289314280a0f8842A65' as `0x${string}`,
-  // Sepolia Testnet
-  11155111: '0x65277B311e993eb7AecEba908C720fabcbD2fdc8' as `0x${string}`,
-  // Add more chains as needed
-  // Polygon: 137
-  // BSC: 56
-  // etc.
-};
+import { oneInchLimitOrderProtocolAddresses } from "@acme/shared";
 
 /**
  * Get the 1inch Limit Order Protocol contract address for a given chain ID
@@ -19,7 +6,7 @@ export const ONEINCH_LIMIT_ORDER_PROTOCOL_ADDRESSES: Record<number, `0x${string}
  * @returns The contract address or undefined if not supported
  */
 export function get1inchLimitOrderProtocolAddress(chainId: number): `0x${string}` | undefined {
-  return ONEINCH_LIMIT_ORDER_PROTOCOL_ADDRESSES[chainId];
+  return oneInchLimitOrderProtocolAddresses[chainId];
 }
 
 /**

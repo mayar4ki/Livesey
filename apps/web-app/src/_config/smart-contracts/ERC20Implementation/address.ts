@@ -1,1 +1,4 @@
-export const ADDRESS = '0x7F191acD54efb9101CA8F9c9b8bB02893bB8d2C6';
+import { Address } from 'viem';
+import { env } from '~/env';
+
+export const ADDRESS = env.NEXT_PUBLIC_ERC20_IMPLEMENTATION_ADDRESS as Address;
