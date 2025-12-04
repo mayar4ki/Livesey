@@ -1,17 +1,9 @@
 import { LimitOrderStatus } from '@acme/db';
-import {
-  ONEINCH_LIMIT_ORDER_PROTOCOL_ABI,
-  oneInchLimitOrderProtocolAddresses,
-} from '@acme/shared';
-import {
-  Injectable,
-  Logger,
-  OnModuleDestroy,
-  OnModuleInit,
-} from '@nestjs/common';
+import { ONEINCH_LIMIT_ORDER_PROTOCOL_ABI, oneInchLimitOrderProtocolAddresses } from '@acme/shared';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaService } from 'src/lib/prisma/prisma.service.js';
 import { Address, WatchContractEventOnLogsParameter } from 'viem';
+import { PrismaService } from '../../lib/prisma/prisma.service.js';
 import { ViemPublicClientService } from '../../lib/viem/viem.service.js';
 import { Env } from '../../schemas/env-validation-schema.js';
 
@@ -23,9 +15,7 @@ type EventsLog = WatchContractEventOnLogsParameter<
 >[number];
 
 @Injectable()
-export class OrderCanceledEventListenerService
-  implements OnModuleInit, OnModuleDestroy
-{
+export class OrderCanceledEventListenerService implements OnModuleInit, OnModuleDestroy {
   private unwatch?: Unwatch;
   private readonly logger = new Logger(OrderCanceledEventListenerService.name);
 
@@ -49,10 +39,7 @@ export class OrderCanceledEventListenerService
       abi: ONEINCH_LIMIT_ORDER_PROTOCOL_ABI,
       eventName: 'OrderCancelled',
       onError: (error) => {
-        this.logger.error(
-          'OrderCancelled watcher error',
-          error instanceof Error ? error.stack : String(error),
-        );
+        this.logger.error('OrderCancelled watcher error', error instanceof Error ? error.stack : String(error));
       },
       onLogs: async (logs) => {
         for (const log of logs) {

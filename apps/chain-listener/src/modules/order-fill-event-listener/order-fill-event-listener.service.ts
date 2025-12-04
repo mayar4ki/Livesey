@@ -2,8 +2,8 @@ import { LimitOrderStatus } from '@acme/db';
 import { ONEINCH_LIMIT_ORDER_PROTOCOL_ABI, oneInchLimitOrderProtocolAddresses } from '@acme/shared';
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaService } from 'src/lib/prisma/prisma.service.js';
 import { Address, WatchContractEventOnLogsParameter } from 'viem';
+import { PrismaService } from '../../lib/prisma/prisma.service.js';
 import { ViemPublicClientService } from '../../lib/viem/viem.service.js';
 import { Env } from '../../schemas/env-validation-schema.js';
 
