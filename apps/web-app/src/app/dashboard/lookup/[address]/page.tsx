@@ -53,7 +53,7 @@ export default function LookupAddressPage() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="assets" className="mt-4 border p-0">
+          <TabsContent value="assets" className="mt-4">
             <AssetsCard address={address} />
           </TabsContent>
 
