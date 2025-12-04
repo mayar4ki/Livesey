@@ -96,7 +96,11 @@ export const AssetsCard = ({ address }: { address: Address }) => {
       },
       cell: ({ row }) => {
         const asset = row.original;
-        return <span className="font-mono font-medium">{formatTokenBalance(asset.tokenBalance || '0', asset.tokenMetadata?.decimals || 18)}</span>;
+        return (
+          <span className="font-mono font-medium">
+            {formatTokenBalance(asset.tokenBalance || '0', asset.tokenMetadata?.decimals || 18)}
+          </span>
+        );
       },
     },
     {
@@ -131,20 +135,18 @@ export const AssetsCard = ({ address }: { address: Address }) => {
     },
   });
 
-
-
   if (error) {
     return (
-      <ErrorStateCard icon={Wallet}
-
-        title="Error Loading Assets" message={error instanceof Error ? error.message : 'Failed to load wallet assets'} />
+      <ErrorStateCard
+        icon={Wallet}
+        title="Error Loading Assets"
+        message={error instanceof Error ? error.message : 'Failed to load wallet assets'}
+      />
     );
   }
 
   if (isLoading) {
-    return <LoadingCard
-
-      message={`Loading assets for ${formatAddress(address)}...`} />;
+    return <LoadingCard message={`Loading assets for ${formatAddress(address)}...`} />;
   }
 
   return (
@@ -178,7 +180,9 @@ export const AssetsCard = ({ address }: { address: Address }) => {
                       {headerGroup.headers.map((header) => {
                         return (
                           <TableHead key={header.id}>
-                            {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(header.column.columnDef.header, header.getContext())}
                           </TableHead>
                         );
                       })}
@@ -190,7 +194,9 @@ export const AssetsCard = ({ address }: { address: Address }) => {
                     table.getRowModel().rows.map((row) => (
                       <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                         {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                          <TableCell key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </TableCell>
                         ))}
                       </TableRow>
                     ))
@@ -209,11 +215,21 @@ export const AssetsCard = ({ address }: { address: Address }) => {
                 Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
               </div>
               <div className="flex items-center justify-end gap-2">
-                <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => table.previousPage()}
+                  disabled={!table.getCanPreviousPage()}
+                >
                   Previous
                 </Button>
 
-                <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => table.nextPage()}
+                  disabled={!table.getCanNextPage()}
+                >
                   Next
                 </Button>
               </div>
@@ -222,6 +238,5 @@ export const AssetsCard = ({ address }: { address: Address }) => {
         )}
       </CardContent>
     </Card>
-
   );
-}
+};

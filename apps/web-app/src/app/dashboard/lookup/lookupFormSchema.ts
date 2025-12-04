@@ -13,4 +13,3 @@ export const lookupFormSchema = yup.object().shape({
 });
 
 export type LookupFormSchema = yup.InferType<typeof lookupFormSchema>;
-
