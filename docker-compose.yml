@@ -1,0 +1,188 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-livesey}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --requirepass
+      - "${REDIS_PASSWORD:-redis}"
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redis}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  db-migrate:
+    build:
+      context: .
+      dockerfile: apps/back-end/Dockerfile
+      target: migrator
+      args:
+        DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/livesey?schema=public}
+        REDIS_URL: ${REDIS_URL:-redis://:${REDIS_PASSWORD:-redis}@redis:6379}
+        CHAIN_RPC_URL: ${CHAIN_RPC_URL}
+        FACTORY_ADDRESS: ${FACTORY_ADDRESS}
+        CHAIN_ID: ${CHAIN_ID:-11155111}
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/livesey?schema=public}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  back-end:
+    build:
+      context: .
+      dockerfile: apps/back-end/Dockerfile
+      args:
+        DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/livesey?schema=public}
+        REDIS_URL: ${REDIS_URL:-redis://:${REDIS_PASSWORD:-redis}@redis:6379}
+        CHAIN_RPC_URL: ${CHAIN_RPC_URL}
+        FACTORY_ADDRESS: ${FACTORY_ADDRESS}
+        CHAIN_ID: ${CHAIN_ID:-11155111}
+    environment:
+      PORT: ${BACKEND_PORT:-3002}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/livesey?schema=public}
+      REDIS_URL: ${REDIS_URL:-redis://:${REDIS_PASSWORD:-redis}@redis:6379}
+      CHAIN_RPC_URL: ${CHAIN_RPC_URL}
+      FACTORY_ADDRESS: ${FACTORY_ADDRESS}
+      CHAIN_ID: ${CHAIN_ID:-11155111}
+    ports:
+      - "${BACKEND_PORT:-3002}:3002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      db-migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  chain-listener:
+    build:
+      context: .
+      dockerfile: apps/chain-listener/Dockerfile
+      args:
+        DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/livesey?schema=public}
+        REDIS_URL: ${REDIS_URL:-redis://:${REDIS_PASSWORD:-redis}@redis:6379}
+        CHAIN_RPC_URL: ${CHAIN_RPC_URL}
+        FACTORY_ADDRESS: ${FACTORY_ADDRESS}
+        BACKEND_URL: ${BACKEND_URL:-http://back-end:3002/api}
+        CHAIN_ID: ${CHAIN_ID:-11155111}
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/livesey?schema=public}
+      REDIS_URL: ${REDIS_URL:-redis://:${REDIS_PASSWORD:-redis}@redis:6379}
+      CHAIN_RPC_URL: ${CHAIN_RPC_URL}
+      FACTORY_ADDRESS: ${FACTORY_ADDRESS}
+      BACKEND_URL: ${BACKEND_URL:-http://back-end:3002/api}
+      CHAIN_ID: ${CHAIN_ID:-11155111}
+    depends_on:
+      back-end:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  verification-worker:
+    build:
+      context: .
+      dockerfile: apps/verification-worker/Dockerfile
+      args:
+        DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/livesey?schema=public}
+        REDIS_URL: ${REDIS_URL:-redis://:${REDIS_PASSWORD:-redis}@redis:6379}
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/livesey?schema=public}
+      REDIS_URL: ${REDIS_URL:-redis://:${REDIS_PASSWORD:-redis}@redis:6379}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  web-app:
+    build:
+      context: .
+      dockerfile: apps/web-app/Dockerfile
+      args:
+        NEXT_PUBLIC_ALCHEMY_API_KEY: ${NEXT_PUBLIC_ALCHEMY_API_KEY}
+        NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-http://back-end:3002/api}
+        NEXT_PUBLIC_FACTORY_ADDRESS: ${NEXT_PUBLIC_FACTORY_ADDRESS}
+        NEXT_PUBLIC_ERC20_IMPLEMENTATION_ADDRESS: ${NEXT_PUBLIC_ERC20_IMPLEMENTATION_ADDRESS}
+        NEXT_PUBLIC_OUR_ERC20_DECIMALS: ${NEXT_PUBLIC_OUR_ERC20_DECIMALS}
+        PORT: ${WEB_APP_PORT:-3000}
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_ALCHEMY_API_KEY: ${NEXT_PUBLIC_ALCHEMY_API_KEY}
+      NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-http://back-end:3002/api}
+      NEXT_PUBLIC_FACTORY_ADDRESS: ${NEXT_PUBLIC_FACTORY_ADDRESS}
+      NEXT_PUBLIC_ERC20_IMPLEMENTATION_ADDRESS: ${NEXT_PUBLIC_ERC20_IMPLEMENTATION_ADDRESS}
+      NEXT_PUBLIC_OUR_ERC20_DECIMALS: ${NEXT_PUBLIC_OUR_ERC20_DECIMALS}
+      PORT: ${WEB_APP_PORT:-3000}
+    ports:
+      - "${WEB_APP_PORT:-3000}:3000"
+    depends_on:
+      back-end:
+        condition: service_started
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  admin-app:
+    build:
+      context: .
+      dockerfile: apps/admin-app/Dockerfile
+      args:
+        NEXT_PUBLIC_ALCHEMY_API_KEY: ${NEXT_PUBLIC_ALCHEMY_API_KEY}
+        NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-http://back-end:3002/api}
+        NEXT_PUBLIC_FACTORY_ADDRESS: ${NEXT_PUBLIC_FACTORY_ADDRESS}
+        NEXT_PUBLIC_ERC20_IMPLEMENTATION_ADDRESS: ${NEXT_PUBLIC_ERC20_IMPLEMENTATION_ADDRESS}
+        NEXT_PUBLIC_OUR_ERC20_DECIMALS: ${NEXT_PUBLIC_OUR_ERC20_DECIMALS}
+        PORT: ${ADMIN_APP_PORT:-3006}
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_ALCHEMY_API_KEY: ${NEXT_PUBLIC_ALCHEMY_API_KEY}
+      NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-http://back-end:3002/api}
+      NEXT_PUBLIC_FACTORY_ADDRESS: ${NEXT_PUBLIC_FACTORY_ADDRESS}
+      NEXT_PUBLIC_ERC20_IMPLEMENTATION_ADDRESS: ${NEXT_PUBLIC_ERC20_IMPLEMENTATION_ADDRESS}
+      NEXT_PUBLIC_OUR_ERC20_DECIMALS: ${NEXT_PUBLIC_OUR_ERC20_DECIMALS}
+      PORT: ${ADMIN_APP_PORT:-3006}
+    ports:
+      - "${ADMIN_APP_PORT:-3006}:3006"
+    depends_on:
+      back-end:
+        condition: service_started
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
