@@ -9,11 +9,11 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
-  useReactTable
+  useReactTable,
 } from '@tanstack/react-table';
 import { useState } from 'react';
 import { LimitOrderType, type LimitOrder } from '~/services/limit-order/useCreateLimitOrder';
-import { useLimitOrderColimns } from '../../_hooks/useLimitOrderColimns';
+import { useLimitOrderColumns } from '../../_hooks/useLimitOrderColumns';
 import { LimitOrderExpandedRow } from './LimitOrderExpandedRow';
 
 interface LimitOrdersTableProps {
@@ -32,11 +32,12 @@ export function LimitOrdersTable({ orders }: LimitOrdersTableProps) {
     }));
   };
 
-  const columns = useLimitOrderColimns({
+  const columns = useLimitOrderColumns({
     expandable: {
-      expandedRows, toggleRowExpansion
-    }
-  })
+      expandedRows,
+      toggleRowExpansion,
+    },
+  });
 
   const table = useReactTable<LimitOrder>({
     data: orders || [],
@@ -80,11 +81,15 @@ export function LimitOrdersTable({ orders }: LimitOrdersTableProps) {
                 <>
                   <TableRow
                     key={row.id}
-                    data-state={row.getIsSelected() && 'selected'}
-                    className={cn(' border-0 bg-primary/5', order.type === LimitOrderType.SELL ? 'bg-red-500/5' : 'bg-green-500/5')}
+                    className={cn(
+                      ' border-0 bg-primary/5',
+                      order.type === LimitOrderType.SELL ? 'bg-red-500/5' : 'bg-green-500/5'
+                    )}
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                      <TableCell key={cell.id}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
                     ))}
                   </TableRow>
                   {seedData && (

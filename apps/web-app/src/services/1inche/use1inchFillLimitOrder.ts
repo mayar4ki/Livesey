@@ -22,14 +22,16 @@ export function use1inchFillLimitOrder() {
 
     const orderData = reconstructLimitOrder(order).build();
 
+    const _data = LimitOrderContract.getFillOrderCalldata(
+      orderData,
+      order.signature as `0x${string}`,
+      TakerTraits.default(),
+      BigInt(order.takeAmount)
+    );
+
     sendTransaction({
       to: get1inchLimitOrderProtocolAddress(chainId),
-      data: LimitOrderContract.getFillOrderCalldata(
-        orderData,
-        order.signature as `0x${string}`,
-        TakerTraits.default(),
-        BigInt(order.takeAmount)
-      ) as `0x${string}`,
+      data: _data as `0x${string}`,
     });
   };
 

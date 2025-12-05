@@ -6,10 +6,16 @@ import { cn } from '@acme/ui';
 import { DataTablePagination } from '@acme/ui/bootstrapped/data-table-pagination';
 import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@acme/ui/table';
-import { SortingState, flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
+import {
+  SortingState,
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
 import { Loader2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { useLimitOrderColimns } from '~/app/dashboard/_hooks/useLimitOrderColimns';
+import { useLimitOrderColumns } from '~/app/dashboard/_hooks/useLimitOrderColumns';
 
 import { LimitOrder } from '~/services/limit-order';
 import { LimitOrderType } from '~/services/limit-order/useCreateLimitOrder';
@@ -22,15 +28,15 @@ export interface OrderBookCardProps {
 
 export function OrderBookCard({ token }: OrderBookCardProps) {
   const { params, setParams } = useQueryParams({ take: 10, skip: 0 });
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'timestamp', desc: true }]);
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   const { data, isLoading, isError } = useLimitOrdersByToken(token.token, token.chainId, {
     skip: params.skip,
     take: params.take,
   });
 
-  const columns = useLimitOrderColimns({
-    filter: ['pair', 'type']
+  const columns = useLimitOrderColumns({
+    filter: ['pair', 'type'],
   });
 
   const table = useReactTable<LimitOrder>({
@@ -72,7 +78,9 @@ export function OrderBookCard({ token }: OrderBookCardProps) {
                       <TableRow key={headerGroup.id}>
                         {headerGroup.headers.map((header) => (
                           <TableHead key={header.id}>
-                            {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(header.column.columnDef.header, header.getContext())}
                           </TableHead>
                         ))}
                       </TableRow>
@@ -89,7 +97,9 @@ export function OrderBookCard({ token }: OrderBookCardProps) {
                             className={cn(order.type === LimitOrderType.SELL ? 'bg-red-500/5' : 'bg-green-500/5')}
                           >
                             {row.getVisibleCells().map((cell) => (
-                              <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                              <TableCell key={cell.id}>
+                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                              </TableCell>
                             ))}
                           </TableRow>
                         );

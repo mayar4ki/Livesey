@@ -13,7 +13,7 @@ import { getStatusBadgeVariant } from '~/_utils/getStatusBadgeVariant';
 import { LimitOrderType, type LimitOrder } from '~/services/limit-order/useCreateLimitOrder';
 import { LimitOrderActions } from '../_components/limit-order/LimitOrderActions';
 
-export interface UseLimitOrderColimnsProps {
+export interface UseLimitOrderColumnsProps {
   expandable?: {
     expandedRows: Record<string, boolean>;
     toggleRowExpansion: (rowId: string) => void;
@@ -21,7 +21,7 @@ export interface UseLimitOrderColimnsProps {
   filter?: Array<'pair' | 'type' | (string & {})>;
 }
 
-export const useLimitOrderColimns = (props: UseLimitOrderColimnsProps) => {
+export const useLimitOrderColumns = (props: UseLimitOrderColumnsProps) => {
   const getOrderTokensInfo = useGetOrderTokensInfo();
 
   const { expandable } = props;
