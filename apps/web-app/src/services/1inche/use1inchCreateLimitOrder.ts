@@ -1,6 +1,6 @@
 import { Address, LimitOrder, randBigInt } from '@1inch/limit-order-sdk';
 import { oneInchLimitOrderProtocolEip712 } from '@acme/shared';
-import { parseUnits } from 'viem';
+import { hashTypedData, parseUnits } from 'viem';
 import { useAccount, useChainId, useSignTypedData } from 'wagmi';
 import { makeTraits } from './utils/1inch-order';
 
@@ -64,7 +64,12 @@ export function use1inchCreateLimitOrder() {
 
     return {
       order,
-      orderHash: order.getOrderHash(chainId),
+      orderHash: hashTypedData({
+        domain: oneInchLimitOrderProtocolEip712.getDomain(chainId),
+        types: { Order: oneInchLimitOrderProtocolEip712.types.Order },
+        primaryType: oneInchLimitOrderProtocolEip712.primaryType,
+        message: order.build(),
+      }),
       signature,
       nonce,
       expiration: BigInt(expiration),

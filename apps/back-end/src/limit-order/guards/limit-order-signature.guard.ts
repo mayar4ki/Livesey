@@ -6,7 +6,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { OneInchService, OrderData } from 'src/lib/one-inche/one-inche.service';
-import { recoverTypedDataAddress } from 'viem';
+import { hashTypedData, recoverTypedDataAddress } from 'viem';
 import { CreateLimitOrderDto } from '../dto/create-limit-order.dto';
 
 /**
@@ -32,7 +32,12 @@ export class LimitOrderSignatureGuard implements CanActivate {
   ): boolean {
     try {
       const order = this.oneInchService.reconstructOrder(orderData);
-      const calculatedOrderHash = order.getOrderHash(chainId);
+      const calculatedOrderHash = hashTypedData({
+        domain: oneInchLimitOrderProtocolEip712.getDomain(chainId),
+        types: { Order: oneInchLimitOrderProtocolEip712.types.Order },
+        primaryType: oneInchLimitOrderProtocolEip712.primaryType,
+        message: order.build(),
+      });
 
       return (
         calculatedOrderHash.toLowerCase() === providedOrderHash.toLowerCase()

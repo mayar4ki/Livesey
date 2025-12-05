@@ -13,10 +13,15 @@ import {
 } from '@acme/ui/alert-dialog';
 import { Badge } from '@acme/ui/badge';
 import { Button } from '@acme/ui/button';
+import { toast } from '@acme/ui/sonner';
 import { AlertTriangle, ArrowRight, CheckCircle2, Loader2 } from 'lucide-react';
 import { useState } from 'react';
+import { Address } from 'viem';
+import { usePublicClient } from 'wagmi';
 import { useGetOrderTokensInfo } from '~/_hooks/useGetOrderTokensInfo';
 import { use1inchFillLimitOrder } from '~/services/1inche/use1inchFillLimitOrder';
+import { useLimitOrderProtocolAddress } from '~/services/1inche/useLimitOrderProtocolAddress';
+import { useTokenApproval } from '~/services/erc20/useTokenApproval';
 import { LimitOrderType, type LimitOrder } from '~/services/limit-order/useCreateLimitOrder';
 
 interface FillOrderActionProps {
@@ -24,17 +29,42 @@ interface FillOrderActionProps {
 }
 
 export function FillOrderAction({ order }: FillOrderActionProps) {
+  const publicClient = usePublicClient();
+  const { address: limitOrderProtocolAddress } = useLimitOrderProtocolAddress();
+  const { approveAsync, isPending: isTokenApproving, transactionReceipt: approvalTx } = useTokenApproval();
   const { fillOrder, isPending: isFilling, transactionReceipt } = use1inchFillLimitOrder();
   const [openDialog, setOpenDialog] = useState(false);
+
   const getOrderTokensInfo = useGetOrderTokensInfo();
 
-  const isPending = isFilling || transactionReceipt.isLoading;
+  const isPending = isFilling || transactionReceipt.isLoading || isTokenApproving || approvalTx.isLoading;
 
   const isOrderPending = order.status === 'pending';
   const isOrderExpired = new Date() > new Date(Number(order.expiration) * 1000);
 
-  const handleFillOrder = () => {
+  const handleFillOrder = async () => {
     setOpenDialog(false);
+
+    const hash = await approveAsync(
+      order.takeToken as Address,
+      limitOrderProtocolAddress!,
+      BigInt(order.takeAmount),
+      {
+        onSuccess: () => {
+          toast.success('Transaction submitted, confirming...', {
+            action: {
+              label: 'Close',
+              onClick: () => {},
+            },
+          });
+        },
+      }
+    );
+
+    await publicClient?.waitForTransactionReceipt({
+      hash,
+    });
+
     fillOrder({ order });
   };
 
@@ -53,7 +83,7 @@ export function FillOrderAction({ order }: FillOrderActionProps) {
         {isPending ? (
           <>
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            {isFilling ? 'Approving...' : 'Confirming...'}
+            {isFilling || isTokenApproving ? 'Approving...' : 'Confirming...'}
           </>
         ) : (
           <>
@@ -150,4 +180,3 @@ export function FillOrderAction({ order }: FillOrderActionProps) {
     </>
   );
 }
-

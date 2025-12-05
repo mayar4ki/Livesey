@@ -9,6 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useQueryClient } from '@tanstack/react-query';
 import { ArrowUpDown, HelpCircle, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { parseUnits } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { BaseCurrency } from '~/services/1inche/config';
 import { useLimitOrderProtocolAddress } from '~/services/1inche/useLimitOrderProtocolAddress';
@@ -61,16 +62,21 @@ export function LimitOrderCard({ token, className }: LimitOrderCardProps) {
   const queryClient = useQueryClient();
 
   const onSubmit = async (data: LimitOrderFormSchema) => {
-    const hash = await approveAsync(data.fromToken.address, limitOrderProtocolAddress!, BigInt(data.fromAmount), {
-      onSuccess: () => {
-        toast.success('Transaction submitted, confirming...', {
-          action: {
-            label: 'Close',
-            onClick: () => {},
-          },
-        });
-      },
-    });
+    const hash = await approveAsync(
+      data.fromToken.address,
+      limitOrderProtocolAddress!,
+      parseUnits(data.fromAmount, data.toToken.decimals),
+      {
+        onSuccess: () => {
+          toast.success('Transaction submitted, confirming...', {
+            action: {
+              label: 'Close',
+              onClick: () => {},
+            },
+          });
+        },
+      }
+    );
 
     await publicClient?.waitForTransactionReceipt({
       hash,
