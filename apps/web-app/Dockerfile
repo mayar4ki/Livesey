@@ -52,4 +52,4 @@ COPY --from=builder /app/apps/web-app/.next/standalone ./
 
 EXPOSE 3000
 
-CMD ["node", "apps/web-app/server.js"]
+CMD ["node", "server.js"]

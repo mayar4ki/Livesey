@@ -52,4 +52,4 @@ COPY --from=builder /app/apps/admin-app/.next/standalone ./
 
 EXPOSE 3006
 
-CMD ["node", "apps/admin-app/server.js"]
+CMD ["node", "server.js"]
