@@ -27,7 +27,11 @@ function makeQueryClient() {
               },
             });
           } else {
-            const errorMessage = (error as unknown as Record<string, string>).shortMessage ?? error.message ?? error.name ?? 'An error occurred';
+            const errorMessage =
+              (error as unknown as Record<string, string>).shortMessage ??
+              error.message ??
+              error.name ??
+              'An error occurred';
             const description = typeof error?.cause === 'string' ? error.cause : error.name || '';
 
             toast.error(errorMessage, {
@@ -41,6 +45,7 @@ function makeQueryClient() {
 
           return false;
         },
+        refetchOnWindowFocus: false,
       },
       mutations: {
         onError(error) {
@@ -61,7 +66,8 @@ function makeQueryClient() {
               },
             });
           } else {
-            const errorMessage = (error as unknown as Record<string, string>).shortMessage ?? error.message ?? 'An error occurred';
+            const errorMessage =
+              (error as unknown as Record<string, string>).shortMessage ?? error.message ?? 'An error occurred';
             const description = typeof error?.cause === 'string' ? error.cause : error.name || '';
 
             toast.error(errorMessage, {

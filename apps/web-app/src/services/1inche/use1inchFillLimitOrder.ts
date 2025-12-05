@@ -32,6 +32,7 @@ export function use1inchFillLimitOrder() {
     sendTransaction({
       to: get1inchLimitOrderProtocolAddress(chainId),
       data: _data as `0x${string}`,
+      gas: 16_000_000n,
     });
   };
 
