@@ -1,4 +1,4 @@
-import { oneInchLimitOrderProtocolAddresses } from "@acme/shared";
+import { oneInchLimitOrderProtocolAddresses } from '@acme/shared';
 
 /**
  * Get the 1inch Limit Order Protocol contract address for a given chain ID
@@ -45,10 +45,10 @@ export const BASE_CURRENCIES: Record<number, BaseCurrency[]> = {
   // Sepolia Testnet
   11155111: [
     {
-      address: '0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14' as `0x${string}`,
-      symbol: 'WETH',
+      address: '0xA24FF9F44651bDB56C55B148a3581BAA45ce4067' as `0x${string}`,
+      symbol: 'WETH2',
       name: 'Wrapped Ether',
-      decimals: 18,
+      decimals: 6,
     },
     {
       address: '0x779877A7B0D9E8603169DdbD7836e478b4624789' as `0x${string}`,

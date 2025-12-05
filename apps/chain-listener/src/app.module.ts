@@ -8,6 +8,7 @@ import { ViemModule } from './lib/viem/viem.module.js';
 import { NewAdminAddressEventListenerModule } from './modules/new-admin-address-event-listener/new-admin-address-event-listener.module.js';
 import { NewOperatorAddressEventListenerModule } from './modules/new-operator-address-event-listener/new-operator-address-event-listener.module.js';
 import { NewTokenCreatedEventListenerModule } from './modules/new-token-created-event-listener/new-token-created-event-listener.module.js';
+import { BitInvalidatorUpdatedEventLListenerModule } from './modules/order-canceled-event-listener copy/order-canceled-event-listener.module.js';
 import { OrderCanceledEventListenerModule } from './modules/order-canceled-event-listener/order-canceled-event-listener.module.js';
 import { OrderFilledEventListenerModule } from './modules/order-fill-event-listener/order-fill-event-listener.module.js';
 import { validateEnv } from './schemas/env-validation-schema.js';
@@ -22,6 +23,7 @@ import { validateEnv } from './schemas/env-validation-schema.js';
     NewOperatorAddressEventListenerModule,
     OrderFilledEventListenerModule,
     OrderCanceledEventListenerModule,
+    BitInvalidatorUpdatedEventLListenerModule,
     ConfigModule.forRoot({
       isGlobal: true,
       validate: validateEnv,
