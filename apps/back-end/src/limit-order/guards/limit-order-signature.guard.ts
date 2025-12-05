@@ -1,3 +1,4 @@
+import { oneInchLimitOrderProtocolEip712 } from '@acme/shared';
 import {
   BadRequestException,
   CanActivate,
@@ -53,13 +54,13 @@ export class LimitOrderSignatureGuard implements CanActivate {
   ): Promise<boolean> {
     try {
       const order = this.oneInchService.reconstructOrder(orderData);
-      const typedData = order.getTypedData(chainId);
+      // const typedData = order.getTypedData(chainId);
 
       const recoveredAddress = await recoverTypedDataAddress({
-        domain: typedData.domain,
-        types: typedData.types,
-        primaryType: 'Order',
-        message: typedData.message,
+        domain: oneInchLimitOrderProtocolEip712.getDomain(chainId),
+        types: { Order: oneInchLimitOrderProtocolEip712.types.Order },
+        primaryType: oneInchLimitOrderProtocolEip712.primaryType,
+        message: order.build(),
         signature: signature as `0x${string}`,
       });
 

@@ -1,4 +1,5 @@
 import { Address, LimitOrder, randBigInt } from '@1inch/limit-order-sdk';
+import { oneInchLimitOrderProtocolEip712 } from '@acme/shared';
 import { parseUnits } from 'viem';
 import { useAccount, useChainId, useSignTypedData } from 'wagmi';
 import { makeTraits } from './utils/1inch-order';
@@ -27,19 +28,21 @@ export function use1inchCreateLimitOrder() {
   const { signTypedDataAsync } = useSignTypedData();
 
   const signOrderTypedDataAsync = async (order: LimitOrder) => {
-    const typedData = order.getTypedData(chainId);
+    // const typedData = order.getTypedData(chainId);
+
     const signature = await signTypedDataAsync({
-      domain: typedData.domain,
-      types: { Order: typedData.types.Order },
-      primaryType: 'Order',
-      message: typedData.message,
+      domain: oneInchLimitOrderProtocolEip712.getDomain(chainId),
+      types: { Order: oneInchLimitOrderProtocolEip712.types.Order },
+      primaryType: oneInchLimitOrderProtocolEip712.primaryType,
+      message: order.build(),
     });
 
     return signature;
   };
 
   const createLimitOrder = async (params: Create1inchLimitOrderParams): Promise<Create1inchLimitOrderResult> => {
-    const { makeToken, takeToken, makeAmount, takeAmount, makeTokenDecimals, takeTokenDecimals, expiration } = params;
+    const { makeToken, takeToken, makeAmount, takeAmount, makeTokenDecimals, takeTokenDecimals, expiration } =
+      params;
 
     const makingAmount = parseUnits(makeAmount, makeTokenDecimals);
     const takingAmount = parseUnits(takeAmount, takeTokenDecimals);
