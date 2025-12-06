@@ -20,7 +20,7 @@ export const CreateProposalDrawer = ({ tokenId, onSuccess }: { tokenId: string; 
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>Limit Order</DrawerTitle>
+          <DrawerTitle>Proposal Creation</DrawerTitle>
         </DrawerHeader>
         <DrawerContent className="p-4 pb-12">
           <CreateProposalForm deployedTokenId={tokenId} onSuccess={onSuccess} />
