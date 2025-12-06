@@ -25,7 +25,7 @@ export interface Create1inchLimitOrderResult {
 export function use1inchCreateLimitOrder() {
   const { address } = useAccount();
   const chainId = useChainId();
-  const { signTypedDataAsync } = useSignTypedData();
+  const { signTypedDataAsync, isPending } = useSignTypedData();
 
   const signOrderTypedDataAsync = async (order: LimitOrder) => {
     // const typedData = order.getTypedData(chainId);
@@ -78,5 +78,6 @@ export function use1inchCreateLimitOrder() {
 
   return {
     createLimitOrder,
+    isPending,
   };
 }

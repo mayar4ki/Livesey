@@ -1,8 +1,10 @@
 'use client';
 
 import { formatTokenAmount } from '@acme/client/utils';
+import { Badge } from '@acme/ui/badge';
 import { ExplorerLink } from '@acme/ui/bootstrapped/explorer-address-link';
 import { TableCell, TableRow } from '@acme/ui/table';
+import { useAccount } from 'wagmi';
 import { LimitOrderType, type LimitOrder } from '~/services/limit-order/useCreateLimitOrder';
 import { TokenSeedData } from '~/services/token/useToken';
 import { getOurTokenDecimals } from '~/utils/token-decimals';
@@ -15,10 +17,14 @@ interface LimitOrderExpandedRowProps {
 }
 
 export function LimitOrderExpandedRow({ order, colSpan, seedData, isExpanded }: LimitOrderExpandedRowProps) {
+  const { address: userAddress } = useAccount();
+  const isMaker = userAddress?.toLowerCase() === order.maker.toLowerCase();
   const isSell = order.type === LimitOrderType.SELL;
   const decimals = getOurTokenDecimals();
   const totalSupply = order.token ? Number(order.token.totalSupply) : 0;
-  const transactedAmount = isSell ? Number(order.makeAmount) / 10 ** decimals : Number(order.takeAmount) / 10 ** decimals;
+  const transactedAmount = isSell
+    ? Number(order.makeAmount) / 10 ** decimals
+    : Number(order.takeAmount) / 10 ** decimals;
   const percentage = totalSupply > 0 ? ((transactedAmount / totalSupply) * 100).toFixed(2) : '0';
 
   return (
@@ -36,11 +42,16 @@ export function LimitOrderExpandedRow({ order, colSpan, seedData, isExpanded }: 
               <span className="text-xs text-muted-foreground">
                 {isSell ? 'Sell' : 'Buy'}{' '}
                 <span className="font-mono text-foreground">
-                  {isSell ? formatTokenAmount(order.makeAmount, decimals) : formatTokenAmount(order.takeAmount, decimals)}
+                  {isSell
+                    ? formatTokenAmount(order.makeAmount, decimals)
+                    : formatTokenAmount(order.takeAmount, decimals)}
                 </span>
               </span>
               <span className={`text-xs  text-muted-foreground `}>
-                <span className={`${isSell ? 'text-red-500' : 'text-emerald-500'} font-semibold`}>{percentage}% </span> of Supply
+                <span className={`${isSell ? 'text-red-500' : 'text-emerald-500'} font-semibold`}>
+                  {percentage}%{' '}
+                </span>{' '}
+                of Supply
               </span>
               <span className="w-px h-3 bg-border/60" />
               <span className="text-xs text-muted-foreground">
@@ -72,7 +83,8 @@ export function LimitOrderExpandedRow({ order, colSpan, seedData, isExpanded }: 
               Hash: <ExplorerLink hash={order.orderHash} chainId={order.chainId} className="font-mono" />
             </span>
             <span className="text-muted-foreground">
-              Maker: <ExplorerLink hash={order.maker} chainId={order.chainId} className="font-mono" />
+              Maker: <ExplorerLink hash={order.maker} chainId={order.chainId} className="font-mono" />{' '}
+              {isMaker && <Badge variant="outline">You</Badge>}
             </span>
             <span className="text-muted-foreground">
               Sell Token: <ExplorerLink hash={order.makeToken} chainId={order.chainId} className="font-mono" />

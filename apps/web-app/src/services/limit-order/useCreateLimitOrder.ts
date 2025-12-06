@@ -1,10 +1,16 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useChainId } from 'wagmi';
+import { useChainId, usePublicClient } from 'wagmi';
 
+import { toast } from '@acme/ui/sonner';
+import { Address, parseUnits } from 'viem';
 import { useEIP712 } from '~/_hooks/useEIP712';
 import { apiClient } from '~/services/apiClient';
 import { use1inchCreateLimitOrder } from '../1inche/use1inchCreateLimitOrder';
+import { useLimitOrderProtocolAddress } from '../1inche/useLimitOrderProtocolAddress';
+import { useTokenApproval } from '../erc20/useTokenApproval';
 import { Token } from '../token/useToken';
+import { LIMIT_ORDERS_QUERY_KEY } from './useLimitOrders';
+import { LIMIT_ORDERS_BY_TOKEN_QUERY_KEY } from './useLimitOrdersByToken';
 
 export enum LimitOrderType {
   BUY = 'BUY',
@@ -54,51 +60,78 @@ export function useCreateLimitOrder() {
   const queryClient = useQueryClient();
   const chainId = useChainId();
   const { makeSignatureRequest } = useEIP712();
-  const { createLimitOrder: create1inchCreateLimitOrder } = use1inchCreateLimitOrder();
+  const publicClient = usePublicClient();
+  const { address: limitOrderProtocolAddress } = useLimitOrderProtocolAddress();
+  const { createLimitOrder: create1inchCreateLimitOrder, isPending: isCreating } = use1inchCreateLimitOrder();
+  const { approveAsync, isPending: isTokenApproving, transactionReceipt: approvalTx } = useTokenApproval();
 
-  const mm = useMutation({
-    mutationFn: async (data: CreateLimitOrderRequest) => {
-      // Step 1: Create and sign the 1inch limit order
-      const { orderHash, signature, nonce, order, expiration } = await create1inchCreateLimitOrder({
-        makeToken: data.makeToken,
-        takeToken: data.takeToken,
-        makeAmount: data.makeAmount,
-        takeAmount: data.takeAmount,
-        makeTokenDecimals: data.makeTokenDecimals,
-        takeTokenDecimals: data.takeTokenDecimals,
-        expiration: data.expiration,
-      });
-
-      // Step 2: Prepare the payload for the backend
-      const backendPayload = {
-        orderHash,
-        makeToken: data.makeToken,
-        takeToken: data.takeToken,
-        makeAmount: order.makingAmount.toString(),
-        takeAmount: order.takingAmount.toString(),
-        signature,
-        nonce: nonce.toString(), // Convert BigInt to string for JSON serialization
-        salt: order.salt.toString(),
-        expiration: Number(expiration),
-        chainId,
-      };
-
-      // Step 3: Get EIP-712 signature headers for API authentication
-      const authHeaders = await makeSignatureRequest('POST', '/api/limit-order', backendPayload);
-
-      // Step 4: Send to backend
-      const response = await apiClient.post('limit-order', backendPayload, {
-        headers: authHeaders.headers,
-      });
-
-      return response.data;
+  const createLimitOrderMutation = useMutation({
+    mutationFn: async (payload: any) => {
+      const { headers } = await makeSignatureRequest('POST', '/api/limit-order', payload);
+      await apiClient.post('limit-order', payload, { headers });
     },
     onSuccess: () => {
+      toast.success('Limit order created successfully');
       // Invalidate limit orders queries to refetch the list
-      queryClient.invalidateQueries({ queryKey: ['limit-orders'] });
-      queryClient.invalidateQueries({ queryKey: ['limit-order'] });
+      queryClient.invalidateQueries({ queryKey: [LIMIT_ORDERS_QUERY_KEY] });
+      queryClient.invalidateQueries({ queryKey: [LIMIT_ORDERS_BY_TOKEN_QUERY_KEY] });
     },
   });
 
-  return mm;
+  const createLimitOrder = async (data: CreateLimitOrderRequest) => {
+    // Step 1: Approve the spend
+    const hash = await approveAsync(
+      data.makeToken as Address,
+      limitOrderProtocolAddress!,
+      parseUnits(data.makeAmount, data.makeTokenDecimals),
+      {
+        onSuccess: () => {
+          toast.success('Transaction submitted, confirming...', {
+            action: {
+              label: 'Close',
+              onClick: () => {},
+            },
+          });
+        },
+      }
+    );
+
+    await publicClient?.waitForTransactionReceipt({
+      hash,
+    });
+
+    // Step 2: Create and sign the 1inch limit order
+    const { orderHash, signature, nonce, order, expiration } = await create1inchCreateLimitOrder({
+      makeToken: data.makeToken,
+      takeToken: data.takeToken,
+      makeAmount: data.makeAmount,
+      takeAmount: data.takeAmount,
+      makeTokenDecimals: data.makeTokenDecimals,
+      takeTokenDecimals: data.takeTokenDecimals,
+      expiration: data.expiration,
+    });
+
+    // Step 3: Prepare the payload for the backend
+    const backendPayload = {
+      orderHash,
+      makeToken: data.makeToken,
+      takeToken: data.takeToken,
+      makeAmount: order.makingAmount.toString(),
+      takeAmount: order.takingAmount.toString(),
+      signature,
+      nonce: nonce.toString(), // Convert BigInt to string for JSON serialization
+      salt: order.salt.toString(),
+      expiration: Number(expiration),
+      chainId,
+    };
+
+    // Step 4: submit to backend
+    await createLimitOrderMutation.mutateAsync(backendPayload);
+  };
+
+  return {
+    createLimitOrder,
+    isPending: isCreating || createLimitOrderMutation.isPending || isTokenApproving || approvalTx.isLoading,
+    isConfirming: approvalTx.isLoading,
+  };
 }

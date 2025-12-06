@@ -11,8 +11,6 @@ interface LimitOrderActionsProps {
 
 export function LimitOrderActions({ order }: LimitOrderActionsProps) {
   const isOrderPending = order.status === 'pending';
-  const isOrderCancelled = order.status === 'cancelled';
-  const isOrderFilled = order.status === 'filled';
 
   const { address } = useAccount();
 

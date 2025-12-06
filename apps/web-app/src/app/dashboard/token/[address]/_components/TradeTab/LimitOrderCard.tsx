@@ -4,17 +4,11 @@ import { Button } from '@acme/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@acme/ui/form';
 import { Input } from '@acme/ui/input';
-import { toast } from '@acme/ui/sonner';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useQueryClient } from '@tanstack/react-query';
 import { ArrowUpDown, HelpCircle, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { parseUnits } from 'viem';
-import { usePublicClient } from 'wagmi';
 import { BaseCurrency } from '~/services/1inche/config';
-import { useLimitOrderProtocolAddress } from '~/services/1inche/useLimitOrderProtocolAddress';
 import { useLimitOrderTokens } from '~/services/1inche/useLimitOrderTokens';
-import { useTokenApproval } from '~/services/erc20/useTokenApproval';
 import { useCreateLimitOrder } from '~/services/limit-order/useCreateLimitOrder';
 import { Token } from '~/services/token/useToken';
 import { getOurTokenDecimals } from '~/utils/token-decimals';
@@ -28,7 +22,6 @@ export interface LimitOrderCardProps {
 }
 
 export function LimitOrderCard({ token, className }: LimitOrderCardProps) {
-  const { address: limitOrderProtocolAddress } = useLimitOrderProtocolAddress();
   const { tokens } = useLimitOrderTokens();
 
   const baseToken: BaseCurrency = {
@@ -50,62 +43,19 @@ export function LimitOrderCard({ token, className }: LimitOrderCardProps) {
     },
   });
 
-  // 1- approve the spend
-  const { approveAsync, isPending: isTokenApproving, transactionReceipt: approvalTx } = useTokenApproval();
-  // 2- create and send order (handles signing and backend submission)
-  const createOrderMutation = useCreateLimitOrder();
-
-  const isApproving = isTokenApproving || approvalTx.isLoading;
-  const isLoading = isApproving || createOrderMutation.isPending;
-
-  const publicClient = usePublicClient();
-  const queryClient = useQueryClient();
+  const { createLimitOrder, isConfirming, isPending } = useCreateLimitOrder();
 
   const onSubmit = async (data: LimitOrderFormSchema) => {
-    const hash = await approveAsync(
-      data.fromToken.address,
-      limitOrderProtocolAddress!,
-      parseUnits(data.fromAmount, data.toToken.decimals),
-      {
-        onSuccess: () => {
-          toast.success('Transaction submitted, confirming...', {
-            action: {
-              label: 'Close',
-              onClick: () => {},
-            },
-          });
-        },
-      }
-    );
-
-    await publicClient?.waitForTransactionReceipt({
-      hash,
-    });
-
     // Create and send the order (hook handles signing and backend submission)
-    await createOrderMutation.mutateAsync(
-      {
-        makeToken: data.fromToken.address,
-        takeToken: data.toToken.address,
-        makeAmount: data.fromAmount,
-        takeAmount: data.toAmount,
-        makeTokenDecimals: data.fromToken.decimals,
-        takeTokenDecimals: data.toToken.decimals,
-        expiration: Math.floor(new Date(data.expiredAt).getTime() / 1000),
-      },
-      {
-        onSuccess: () => {
-          toast.success('Limit order created successfully', {
-            action: {
-              label: 'Close',
-              onClick: () => {},
-            },
-          });
-
-          queryClient.invalidateQueries({ queryKey: ['limit-orders-by-token', token.token, token.chainId] });
-        },
-      }
-    );
+    await createLimitOrder({
+      makeToken: data.fromToken.address,
+      takeToken: data.toToken.address,
+      makeAmount: data.fromAmount,
+      takeAmount: data.toAmount,
+      makeTokenDecimals: data.fromToken.decimals,
+      takeTokenDecimals: data.toToken.decimals,
+      expiration: Math.floor(new Date(data.expiredAt).getTime() / 1000),
+    });
 
     form.reset({
       fromToken: data.fromToken,
@@ -151,7 +101,7 @@ export function LimitOrderCard({ token, className }: LimitOrderCardProps) {
               tokenAmountFieldName="fromAmount"
               tokenOptions={tokens}
               baseToken={baseToken}
-              disabled={isLoading}
+              disabled={isPending}
             />
 
             {/* Swap Button */}
@@ -162,7 +112,7 @@ export function LimitOrderCard({ token, className }: LimitOrderCardProps) {
                 size="icon"
                 className="rounded-full"
                 onClick={handleSwap}
-                disabled={isLoading}
+                disabled={isPending}
               >
                 <ArrowUpDown className="h-4 w-4" />
               </Button>
@@ -176,7 +126,7 @@ export function LimitOrderCard({ token, className }: LimitOrderCardProps) {
               tokenOptions={tokens}
               baseToken={baseToken}
               hidePercentageSelector
-              disabled={isLoading}
+              disabled={isPending}
             />
 
             {/* Limit Price Section */}
@@ -187,7 +137,7 @@ export function LimitOrderCard({ token, className }: LimitOrderCardProps) {
               toAmountFieldName="toAmount"
               fromTokenFieldName="fromToken"
               toTokenFieldName="toToken"
-              disabled={isLoading}
+              disabled={isPending}
               onReset={handleReset}
             />
 
@@ -209,7 +159,7 @@ export function LimitOrderCard({ token, className }: LimitOrderCardProps) {
                         type="datetime-local"
                         className="text-lg font-medium"
                         {...field}
-                        disabled={isLoading}
+                        disabled={isPending}
                         min={new Date().toISOString().slice(0, 16)}
                       />
                     </FormControl>
@@ -219,21 +169,15 @@ export function LimitOrderCard({ token, className }: LimitOrderCardProps) {
               />
             </div>
 
-            {/* {needsApproval && (
-              <div className="text-sm text-yellow-600 dark:text-yellow-400 bg-yellow-500/10 p-3 rounded-md">
-                Token approval required. This will be done automatically.
-              </div>
-            )} */}
-
             {form.formState.errors.root && (
               <p className="text-sm text-destructive">{form.formState.errors.root.message}</p>
             )}
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? (
+            <Button type="submit" className="w-full" disabled={isPending}>
+              {isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {isApproving ? 'Approving...' : 'Processing...'}
+                  {isConfirming ? 'Confirming...' : 'Loading...'}
                 </>
               ) : (
                 'Place Limit Order'

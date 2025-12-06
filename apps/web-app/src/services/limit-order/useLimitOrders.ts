@@ -14,6 +14,8 @@ export interface LimitOrderListQuery {
   maker?: Address;
 }
 
+export const LIMIT_ORDERS_QUERY_KEY = 'limit-orders';
+
 /**
  * Hook to fetch limit orders with filtering
  * @param query - Query parameters for filtering and pagination
@@ -23,7 +25,7 @@ export function useLimitOrders(query: LimitOrderListQuery = {}) {
   const { skip = 0, take = 10, status, makeToken, takeToken, chainId, maker } = query;
 
   return useQuery({
-    queryKey: ['limit-orders', skip, take, status, makeToken, takeToken, chainId, maker],
+    queryKey: [LIMIT_ORDERS_QUERY_KEY, skip, take, status, makeToken, takeToken, chainId, maker],
     queryFn: async ({ signal }) => {
       const response = await apiClient.get<ListBaseResponse<LimitOrder>>('limit-order', {
         params: {

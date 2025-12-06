@@ -15,7 +15,7 @@ export interface Fill1inchLimitOrderParams {
 export function use1inchFillLimitOrder() {
   const chainId = useChainId();
 
-  const { sendTransaction, data, ...rest } = useSendTransaction({});
+  const { sendTransaction, sendTransactionAsync, data, ...rest } = useSendTransaction({});
 
   const fillOrder = async (params: Fill1inchLimitOrderParams) => {
     const { order } = params;
@@ -29,11 +29,13 @@ export function use1inchFillLimitOrder() {
       BigInt(order.takeAmount)
     );
 
-    sendTransaction({
+    const hash = await sendTransactionAsync({
       to: get1inchLimitOrderProtocolAddress(chainId),
       data: _data as `0x${string}`,
       gas: 16_000_000n,
     });
+
+    return hash;
   };
 
   const transactionReceipt = useWaitForTransactionReceipt({
