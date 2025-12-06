@@ -2,6 +2,7 @@
 
 import { formatAddress, getExplorerUrl, type ExplorerHashType } from '@acme/client/utils';
 import { cn } from '@acme/ui';
+import type React from 'react';
 
 type ExplorerLinkProps = {
   hash: string;
@@ -9,6 +10,7 @@ type ExplorerLinkProps = {
   type?: ExplorerHashType;
   className?: string;
   showFull?: boolean;
+  style?: React.CSSProperties;
 };
 
 /**
@@ -19,16 +21,17 @@ type ExplorerLinkProps = {
  * @param className - The class name
  * @param showFull - Whether to show the full hash or a truncated version (default: false)
  */
-export function ExplorerLink({ hash, chainId, type, className, showFull = false }: ExplorerLinkProps) {
+export function ExplorerLink({ hash, chainId, type, className, showFull = false, style }: ExplorerLinkProps) {
   return (
     <a
       href={getExplorerUrl(hash as `0x${string}`, chainId, type)}
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        'text-xs font-mono bg-muted px-2 py-1 rounded hover:bg-muted/80 cursor-pointer transition-colors inline-block break-all',
+        'text-xs font-mono bg-muted px-2 py-1 rounded hover:bg-muted/80 cursor-pointer transition-colors break-all',
         className
       )}
+      style={style}
     >
       {showFull ? hash : formatAddress(hash)}
     </a>

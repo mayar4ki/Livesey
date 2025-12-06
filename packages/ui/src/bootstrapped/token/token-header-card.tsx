@@ -45,7 +45,7 @@ export function TokenHeaderCard({ token, isPaused, onAddToWallet }: TokenHeaderC
           </div>
 
           {/* Right: Actions */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex  gap-2 shrink-0">
             {onAddToWallet && (
               <Button onClick={onAddToWallet} size="sm" variant="default" className="gap-1.5">
                 <Plus className="h-3.5 w-3.5" />

@@ -1,14 +1,16 @@
 'use client';
 
-import { Button } from '@acme/ui/button';
 import { FormControl, FormDescription, FormField, FormItem, FormMessage } from '@acme/ui/form';
 import { Input } from '@acme/ui/input';
-import { HelpCircle, RefreshCw, RotateCcw } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { Control, ControllerProps, FieldPath, FieldValues, useController, useWatch } from 'react-hook-form';
 import { BaseCurrency } from '~/services/1inche/config';
 
-export interface LimitOrderPriceLimitInputProps<TFieldValues extends FieldValues = FieldValues, TContext = any, TTransformedValues = TFieldValues> {
+export interface LimitOrderPriceLimitInputProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TContext = any,
+  TTransformedValues = TFieldValues,
+> {
   control: Control<TFieldValues, TContext, TTransformedValues>;
   limitPriceFieldName: ControllerProps<TFieldValues, FieldPath<TFieldValues>, TTransformedValues>['name'];
   fromAmountFieldName: ControllerProps<TFieldValues, FieldPath<TFieldValues>, TTransformedValues>['name'];
@@ -26,7 +28,16 @@ export const LimitOrderPriceLimitInput = <
 >(
   props: LimitOrderPriceLimitInputProps<TFieldValues, TName, TTransformedValues>
 ) => {
-  const { control, limitPriceFieldName, fromAmountFieldName, toAmountFieldName, fromTokenFieldName, toTokenFieldName, disabled, onReset } = props;
+  const {
+    control,
+    limitPriceFieldName,
+    fromAmountFieldName,
+    toAmountFieldName,
+    fromTokenFieldName,
+    toTokenFieldName,
+    disabled,
+    onReset,
+  } = props;
 
   // Use controllers to get field onChange methods
   const limitPriceController = useController({ control, name: limitPriceFieldName });
@@ -58,7 +69,10 @@ export const LimitOrderPriceLimitInput = <
       const formattedPrice = calculatedPrice.toFixed(8).replace(/\.?0+$/, '');
 
       // Only update if the calculated price is different from what's displayed
-      if (formattedPrice !== lastCalculatedPriceRef.current && formattedPrice !== limitPriceController.field.value) {
+      if (
+        formattedPrice !== lastCalculatedPriceRef.current &&
+        formattedPrice !== limitPriceController.field.value
+      ) {
         lastCalculatedPriceRef.current = formattedPrice;
         limitPriceController.field.onChange(formattedPrice);
       }
@@ -109,27 +123,6 @@ export const LimitOrderPriceLimitInput = <
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium">Limit price </span>
-          <Button variant="ghost" size="icon" className="h-4 w-4">
-            <HelpCircle className="h-3 w-3" />
-          </Button>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button type="button" variant="ghost" size="sm" onClick={handleReset} disabled={disabled}>
-            <RotateCcw className="h-3 w-3 mr-1" />
-            Reset
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={() => {
-              // TODO: Fetch current market price and set it
-              // This would need to be passed as a prop or handled by parent
-            }}
-            disabled={disabled}
-          >
-            <RefreshCw className="h-3 w-3" />
-          </Button>
         </div>
       </div>
       <FormField
@@ -140,9 +133,12 @@ export const LimitOrderPriceLimitInput = <
             <FormControl>
               <Input
                 type="number"
-                step="any"
                 placeholder="0.0"
-                className="text-lg font-medium"
+                className="border-none bg-transparent!
+                 focus-visible:ring-0 focus-visible:ring-offset-0 
+                 [&::-webkit-inner-spin-button]:appearance-none 
+                 [&::-webkit-outer-spin-button]:appearance-none 
+                 [-moz-appearance:textfield]"
                 {...field}
                 value={field.value || ''}
                 onChange={(e) => {
@@ -152,7 +148,9 @@ export const LimitOrderPriceLimitInput = <
                 disabled={disabled}
               />
             </FormControl>
-            {priceDescription && <FormDescription className="text-xs text-muted-foreground">{priceDescription}</FormDescription>}
+            {priceDescription && (
+              <FormDescription className="text-xs text-muted-foreground">{priceDescription}</FormDescription>
+            )}
             <FormMessage />
           </FormItem>
         )}

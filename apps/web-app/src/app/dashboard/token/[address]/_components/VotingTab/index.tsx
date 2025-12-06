@@ -8,7 +8,7 @@ import { Proposal } from '~/services/proposal/useProposal';
 import { useProposals } from '~/services/proposal/useProposals';
 import { getProposalStatus, type ProposalStatus } from '~/services/proposal/utils';
 import { Token } from '~/services/token/useToken';
-import { CreateProposalForm } from './CreateProposalForm';
+import { CreateProposalCard } from './CreateProposalCard';
 import { ProposalItem } from './ProposalItem';
 
 interface ProposalDisplay {
@@ -71,8 +71,7 @@ export function VotingTab({ token }: VotingTabProps) {
 
   return (
     <div className="space-y-6">
-      <CreateProposalForm deployedTokenId={token.id} />
-
+      <CreateProposalCard deployedTokenId={token.id} />
       <Card>
         <CardHeader>
           <CardTitle>Proposals</CardTitle>
@@ -88,12 +87,16 @@ export function VotingTab({ token }: VotingTabProps) {
                 ))}
               </div>
 
-              {transformedProposals.length === 0 && <div className="text-center py-8 text-muted-foreground">No proposals available</div>}
+              {transformedProposals.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">No proposals available</div>
+              )}
 
               <DataTablePagination
                 currentPage={Math.floor(queryParams.skip / queryParams.take) + 1}
                 totalPages={
-                  proposalsResponse?.pagination?.total ? Math.ceil(proposalsResponse?.pagination?.total / proposalsResponse?.pagination?.take) : 0
+                  proposalsResponse?.pagination?.total
+                    ? Math.ceil(proposalsResponse?.pagination?.total / proposalsResponse?.pagination?.take)
+                    : 0
                 }
                 onPageChange={(page: number) => {
                   setParams({ skip: (page - 1) * queryParams.take, take: queryParams.take });

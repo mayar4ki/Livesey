@@ -1,13 +1,13 @@
 'use client';
 
-import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { PanelLeftIcon } from 'lucide-react';
+import * as React from 'react';
 
-import { useIsMobile } from '@acme/ui/hooks/use-mobile';
 import { cn } from '@acme/ui';
 import { Button } from '@acme/ui/button';
+import { useIsMobile } from '@acme/ui/hooks/use-mobile';
 import { Input } from '@acme/ui/input';
 import { Separator } from '@acme/ui/separator';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@acme/ui/sheet';
@@ -55,7 +55,7 @@ function SidebarProvider({
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }) {
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile({ breakpoint: 900 });
   const [openMobile, setOpenMobile] = React.useState(false);
 
   // This is the internal state of the sidebar.

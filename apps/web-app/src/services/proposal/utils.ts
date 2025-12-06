@@ -1,4 +1,4 @@
-import type { CreateProposalFormSchema } from '~/app/dashboard/token/[address]/_components/VotingTab/createProposalFormSchema';
+import type { CreateProposalFormSchema } from '~/app/dashboard/token/[address]/_components/VotingTab/CreateProposalForm/createProposalFormSchema';
 
 export type ProposalStatus = 'active' | 'closed' | 'pending';
 
@@ -9,7 +9,11 @@ export type ProposalStatus = 'active' | 'closed' | 'pending';
  * @param durationMinutes - Number of minutes
  * @returns Total duration in seconds
  */
-export function calculateDurationInSeconds(durationDays: number, durationHours: number, durationMinutes: number): number {
+export function calculateDurationInSeconds(
+  durationDays: number,
+  durationHours: number,
+  durationMinutes: number
+): number {
   return durationDays * 24 * 60 * 60 + durationHours * 60 * 60 + durationMinutes * 60;
 }
 

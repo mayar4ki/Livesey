@@ -110,25 +110,28 @@ export function TokenContractDetailsCard({ token, decimals }: TokenContractDetai
         <Separator />
 
         {/* Asset Reference */}
-        <div className="space-y-4">
-          <div>
-            <h4 className="text-sm font-semibold mb-3">Transaction Hash</h4>
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Hash</label>
-                <CopyButton
-                  textToCopy={token.transactionHash}
-                  successMessage="Hash copied"
-                  errorMessage="Failed to copy"
-                  title="Copy hash"
-                  className="h-7 w-7 p-0"
-                />
-              </div>
-              <div className="mt-1">
-                <code className="text-xs font-mono bg-muted px-3 py-2.5 rounded-md break-all block border border-border">
-                  {token.transactionHash}
-                </code>
-              </div>
+
+        <div>
+          <h4 className="text-sm font-semibold mb-3">Transaction Hash</h4>
+          <div className="min-w-0">
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Hash</label>
+              <CopyButton
+                textToCopy={token.transactionHash}
+                successMessage="Hash copied"
+                errorMessage="Failed to copy"
+                title="Copy hash"
+                className="h-7 w-7 p-0 flex-shrink-0"
+              />
+            </div>
+            <div className="min-w-0 mt-1 max-w-full">
+              <ExplorerLink
+                hash={token.transactionHash}
+                chainId={token.chainId}
+                showFull
+                className="block text-xs font-mono bg-muted px-2 py-1 rounded hover:bg-muted/80 cursor-pointer transition-colors break-all w-full min-w-0 max-w-full"
+                style={{ wordBreak: 'break-all', overflowWrap: 'anywhere' }}
+              />
             </div>
           </div>
         </div>

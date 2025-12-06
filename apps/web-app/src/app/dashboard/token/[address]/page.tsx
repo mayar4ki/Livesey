@@ -62,11 +62,10 @@ export default function TokenPage() {
         />
 
         <Tabs defaultValue="trade" className="w-full ">
-          <TabsList className="grid w-full grid-cols-6 lg:flex lg:w-fit mb-4">
+          <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="metadata">Metadata</TabsTrigger>
             <TabsTrigger value="trade">Sell / Buy</TabsTrigger>
-
             <TabsTrigger value="voting">Voting</TabsTrigger>
           </TabsList>
 

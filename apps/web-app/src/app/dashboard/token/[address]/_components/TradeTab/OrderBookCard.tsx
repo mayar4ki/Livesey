@@ -21,6 +21,7 @@ import { LimitOrder } from '~/services/limit-order';
 import { LimitOrderType } from '~/services/limit-order/useCreateLimitOrder';
 import { useLimitOrdersByToken } from '~/services/limit-order/useLimitOrdersByToken';
 import { Token } from '~/services/token/useToken';
+import { LimitOrderDrawer } from './LimitOrderDrawer';
 
 export interface OrderBookCardProps {
   token: Token;
@@ -59,7 +60,12 @@ export function OrderBookCard({ token }: OrderBookCardProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Order Book</CardTitle>
+        <div className=" flex items-center justify-between">
+          <CardTitle>Order Book</CardTitle>
+          <div className="block xl:hidden">
+            <LimitOrderDrawer token={token} />
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">

@@ -1,20 +1,8 @@
 'use client';
 
-import { Button } from '@acme/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@acme/ui/form';
-import { Input } from '@acme/ui/input';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { ArrowUpDown, HelpCircle, Loader2 } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { BaseCurrency } from '~/services/1inche/config';
-import { useLimitOrderTokens } from '~/services/1inche/useLimitOrderTokens';
-import { useCreateLimitOrder } from '~/services/limit-order/useCreateLimitOrder';
 import { Token } from '~/services/token/useToken';
-import { getOurTokenDecimals } from '~/utils/token-decimals';
-import { LimitOrderInput } from './LimitOrderInput';
-import { LimitOrderPriceLimitInput } from './LimitOrderPriceLimitInput';
-import { limitOrderFormSchema, type LimitOrderFormSchema } from './limitOrderFormSchema';
+import { LimitOrderForm } from './LimitOrderForm/LimitOrderForm';
 
 export interface LimitOrderCardProps {
   token: Token;
@@ -22,68 +10,6 @@ export interface LimitOrderCardProps {
 }
 
 export function LimitOrderCard({ token, className }: LimitOrderCardProps) {
-  const { tokens } = useLimitOrderTokens();
-
-  const baseToken: BaseCurrency = {
-    address: token.token,
-    symbol: token.symbol,
-    name: token.name,
-    decimals: getOurTokenDecimals(),
-  };
-
-  const nowWithExtraHour = new Date(Date.now() + 3600 * 1000).toISOString().slice(0, 16);
-
-  const form = useForm<LimitOrderFormSchema>({
-    resolver: yupResolver(limitOrderFormSchema),
-    defaultValues: {
-      fromToken: tokens[0],
-      toToken: baseToken,
-      limitPrice: '',
-      expiredAt: nowWithExtraHour,
-    },
-  });
-
-  const { createLimitOrder, isConfirming, isPending } = useCreateLimitOrder();
-
-  const onSubmit = async (data: LimitOrderFormSchema) => {
-    // Create and send the order (hook handles signing and backend submission)
-    await createLimitOrder({
-      makeToken: data.fromToken.address,
-      takeToken: data.toToken.address,
-      makeAmount: data.fromAmount,
-      takeAmount: data.toAmount,
-      makeTokenDecimals: data.fromToken.decimals,
-      takeTokenDecimals: data.toToken.decimals,
-      expiration: Math.floor(new Date(data.expiredAt).getTime() / 1000),
-    });
-
-    form.reset({
-      fromToken: data.fromToken,
-      toToken: data.toToken,
-      fromAmount: '',
-      toAmount: '',
-      limitPrice: '',
-      expiredAt: nowWithExtraHour,
-    });
-  };
-
-  const handleSwap = () => {
-    const currentFrom = form.getValues('fromToken');
-    const currentTo = form.getValues('toToken');
-    form.setValue('fromToken', currentTo);
-    form.setValue('toToken', currentFrom);
-    form.setValue('fromAmount', '');
-    form.setValue('toAmount', '');
-    form.setValue('limitPrice', '');
-  };
-
-  const handleReset = () => {
-    form.setValue('fromAmount', '');
-    form.setValue('toAmount', '');
-    form.setValue('limitPrice', '');
-    form.setValue('expiredAt', new Date(Date.now() + 3600 * 1000).toISOString().slice(0, 16));
-  };
-
   return (
     <Card className={className}>
       <CardHeader>
@@ -91,100 +17,7 @@ export function LimitOrderCard({ token, className }: LimitOrderCardProps) {
         <CardDescription>Buy or sell tokens at a specific price.</CardDescription>
       </CardHeader>
       <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {/* From Token Section */}
-
-            <LimitOrderInput
-              control={form.control}
-              tokenFieldName="fromToken"
-              tokenAmountFieldName="fromAmount"
-              tokenOptions={tokens}
-              baseToken={baseToken}
-              disabled={isPending}
-            />
-
-            {/* Swap Button */}
-            <div className="flex justify-center -my-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                className="rounded-full"
-                onClick={handleSwap}
-                disabled={isPending}
-              >
-                <ArrowUpDown className="h-4 w-4" />
-              </Button>
-            </div>
-
-            {/* To Token Section */}
-            <LimitOrderInput
-              control={form.control}
-              tokenFieldName="toToken"
-              tokenAmountFieldName="toAmount"
-              tokenOptions={tokens}
-              baseToken={baseToken}
-              hidePercentageSelector
-              disabled={isPending}
-            />
-
-            {/* Limit Price Section */}
-            <LimitOrderPriceLimitInput
-              control={form.control}
-              limitPriceFieldName="limitPrice"
-              fromAmountFieldName="fromAmount"
-              toAmountFieldName="toAmount"
-              fromTokenFieldName="fromToken"
-              toTokenFieldName="toToken"
-              disabled={isPending}
-              onReset={handleReset}
-            />
-
-            {/* Expired At Section */}
-            <div className="space-y-2 pt-4 border-t">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">Expired at</span>
-                <Button variant="ghost" size="icon" className="h-4 w-4">
-                  <HelpCircle className="h-3 w-3" />
-                </Button>
-              </div>
-              <FormField
-                control={form.control}
-                name="expiredAt"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        type="datetime-local"
-                        className="text-lg font-medium"
-                        {...field}
-                        disabled={isPending}
-                        min={new Date().toISOString().slice(0, 16)}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            {form.formState.errors.root && (
-              <p className="text-sm text-destructive">{form.formState.errors.root.message}</p>
-            )}
-
-            <Button type="submit" className="w-full" disabled={isPending}>
-              {isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {isConfirming ? 'Confirming...' : 'Loading...'}
-                </>
-              ) : (
-                'Place Limit Order'
-              )}
-            </Button>
-          </form>
-        </Form>
+        <LimitOrderForm token={token} />
       </CardContent>
     </Card>
   );

@@ -9,7 +9,7 @@ import { Control, ControllerProps, FieldPath, FieldValues, useController } from 
 import { formatUnits } from 'viem';
 import { BaseCurrency } from '~/services/1inche/config';
 import { useTokenBalance } from '~/services/erc20/useTokenBalance';
-import { SelectTokenDialog } from '../SelectTokenDialog';
+import { SelectTokenDialog } from '../../SelectTokenDialog';
 
 export interface LimitOrderInputProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -63,7 +63,6 @@ export const LimitOrderInput = <
 
   const handlePercentageClick = (percentage: number) => {
     const amount = parseFloat(balance) * (percentage / 100);
-
     tokenAmountField.field.onChange(amount);
   };
   return (
