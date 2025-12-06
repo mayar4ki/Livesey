@@ -5,15 +5,14 @@ pragma solidity ^0.8.28;
 import {ERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import {ERC20PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20PausableUpgradeable.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {OperableUpgradeable} from "../_libs/OperableUpgradeable.sol";
 
 /**
  * @title ERC20Implementation
  * @notice ERC20Implementation contract to create a new token with ERC20 standard
  */
-contract ERC20Implementation is ERC20Upgradeable, ERC20PausableUpgradeable, OwnableUpgradeable {
+contract ERC20Implementation is ERC20Upgradeable, ERC20PausableUpgradeable, OwnableUpgradeable, OperableUpgradeable {
     bytes32 public assetRefHash;
-    address public operator;
-
     // Storage gap
     uint256[50] private __gap;
 
@@ -50,20 +49,25 @@ contract ERC20Implementation is ERC20Upgradeable, ERC20PausableUpgradeable, Owna
 
         // Owner will be the Factory Contract
         __Ownable_init(msg.sender);
+        __Operable_init(_operator);
         __ERC20Pausable_init();
 
         assetRefHash = _assetRefHash;
-        operator = _operator;
+    }
+
+    function decimals() public pure override returns (uint8) {
+        return 6;
     }
 
     /**
-     * @notice Set operator address
-     * @param _operator: operator address
-     * @dev called by owner
+     * @dev Transfers operability of the contract to a new account (`newOperator`).
+     * Can only be called by the current owner.
      */
-    function setOperator(address _operator) external onlyOwner {
-        operator = _operator;
-        emit NewOperatorAddress(_operator);
+    function transferOperability(address newOperator) public override onlyOwner {
+        if (newOperator == address(0)) {
+            revert OperableInvalidOperator(address(0));
+        }
+        _transferOperability(newOperator);
     }
 
     /**
@@ -88,9 +92,5 @@ contract ERC20Implementation is ERC20Upgradeable, ERC20PausableUpgradeable, Owna
         uint256 value
     ) internal virtual override(ERC20Upgradeable, ERC20PausableUpgradeable) whenNotPaused {
         super._update(from, to, value);
-    }
-
-    function decimals() public pure override returns (uint8) {
-        return 6;
     }
 }

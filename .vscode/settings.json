@@ -1,5 +1,5 @@
 {
-  "cSpell.words": ["Sourcify", "unwatchers", "viem", "Wagmi"],
+  "cSpell.words": ["Initializable", "Sourcify", "unwatchers", "viem", "Wagmi"],
   "editor.codeActionsOnSave": {
     "source.organizeImports": "explicit"
   },

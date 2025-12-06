@@ -220,7 +220,7 @@ contract Factory is AccessControlled, MockOperator {
 
         tokensLedger[_token].operator = _operator;
 
-        IERC20Implementation(_token).setOperator(_operator);
+        IERC20Implementation(_token).transferOperability(_operator);
         emit TokenNewOperatorAddress(_token, _operator);
     }
 
