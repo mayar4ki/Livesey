@@ -76,6 +76,7 @@ contract MockOperator {
  */
 contract Factory is AccessControlled, MockOperator {
     address public immutable beaconAddress; // upgradeable beacon address
+    address public immutable rewardToken;
 
     struct TokenInfo {
         address token;
@@ -153,7 +154,8 @@ contract Factory is AccessControlled, MockOperator {
             _totalSupply,
             _assetRefHash,
             _operator,
-            _initialRecipient
+            _initialRecipient,
+            rewardToken
         );
 
         address tokenProxy = address(new BeaconProxy(beaconAddress, initData));

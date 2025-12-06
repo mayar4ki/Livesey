@@ -2,16 +2,25 @@
 
 pragma solidity ^0.8.28;
 
-import {ERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import {ERC20PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20PausableUpgradeable.sol";
+import {PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {OperableUpgradeable} from "../_libs/OperableUpgradeable.sol";
+import {ProfitableERC20Upgradeable} from "../_libs/ProfitableERC20Upgradeable.sol";
+import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import {AntiContractGuard} from "../_libs/AntiContractGuard.sol";
 
 /**
  * @title ERC20Implementation
  * @notice ERC20Implementation contract to create a new token with ERC20 standard
  */
-contract ERC20Implementation is ERC20Upgradeable, ERC20PausableUpgradeable, OwnableUpgradeable, OperableUpgradeable {
+contract ERC20Implementation is
+    ProfitableERC20Upgradeable,
+    PausableUpgradeable,
+    OwnableUpgradeable,
+    OperableUpgradeable,
+    ReentrancyGuardUpgradeable,
+    AntiContractGuard
+{
     bytes32 public assetRefHash;
     // Storage gap
     uint256[50] private __gap;
@@ -42,15 +51,18 @@ contract ERC20Implementation is ERC20Upgradeable, ERC20PausableUpgradeable, Owna
         uint256 _totalSupply,
         bytes32 _assetRefHash,
         address _operator,
-        address _initialRecipient
+        address _initialRecipient,
+        address _rewardToken
     ) public initializer {
         __ERC20_init(_name, _symbol);
+        __ProfitableERC20_init(_rewardToken);
         _mint(_initialRecipient, _totalSupply * (10 ** uint256(decimals())));
 
         // Owner will be the Factory Contract
         __Ownable_init(msg.sender);
         __Operable_init(_operator);
-        __ERC20Pausable_init();
+        __Pausable_init();
+        __ReentrancyGuard_init();
 
         assetRefHash = _assetRefHash;
     }
@@ -86,11 +98,15 @@ contract ERC20Implementation is ERC20Upgradeable, ERC20PausableUpgradeable, Owna
         _pause();
     }
 
-    function _update(
-        address from,
-        address to,
-        uint256 value
-    ) internal virtual override(ERC20Upgradeable, ERC20PausableUpgradeable) whenNotPaused {
+    function _update(address from, address to, uint256 value) internal virtual override whenNotPaused {
         super._update(from, to, value);
+    }
+
+    function withdrawDividend() external whenNotPaused nonReentrant notContract {
+        _withdrawDividend();
+    }
+
+    function distributeDividends(uint256 amount) external whenNotPaused nonReentrant onlyOperator {
+        _distributeDividends(amount);
     }
 }

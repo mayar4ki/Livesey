@@ -13,7 +13,8 @@ interface IERC20Implementation {
         uint256 _totalSupply,
         bytes32 _assetRefHash,
         address _operator,
-        address _initialRecipient
+        address _initialRecipient,
+        address _rewardToken
     ) external;
 
     function pause() external;
