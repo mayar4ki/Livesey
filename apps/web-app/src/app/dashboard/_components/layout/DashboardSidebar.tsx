@@ -1,6 +1,17 @@
 'use client';
 
-import { ArrowRightLeft, BookOpen, ChartArea, Coins, Compass, HelpCircle, Search, Settings, User } from 'lucide-react';
+import {
+  ArrowRightLeft,
+  BookOpen,
+  Calendar,
+  ChartArea,
+  Coins,
+  Compass,
+  HelpCircle,
+  Search,
+  Settings,
+  User,
+} from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@acme/ui';
@@ -23,7 +34,6 @@ import { useAccount } from 'wagmi';
 import { AppLogo } from '~/_components/common/AppBrand';
 
 const useNavGroups = () => {
-
   const { address } = useAccount();
   const navGroups = [
     {
@@ -34,11 +44,11 @@ const useNavGroups = () => {
           url: '/dashboard',
           icon: Compass,
         },
-        // {
-        //   title: 'Fund Campaign',
-        //   url: '/dashboard/fund',
-        //   icon: Calendar,
-        // },
+        {
+          title: 'Fund Campaign',
+          url: '/dashboard/fund',
+          icon: Calendar,
+        },
       ],
     },
     {
@@ -65,22 +75,15 @@ const useNavGroups = () => {
           icon: Coins,
         },
         {
+          title: 'Token Lookup',
+          url: '/dashboard/token/lookup',
+          icon: Search,
+        },
+        {
           title: 'My Assets',
           url: `/dashboard/lookup/${address}?tab=assets`,
           icon: ChartArea,
         },
-
-        // {
-        //   title: 'Governance',
-        //   url: '/dashboard/governance',
-        //   icon: Landmark,
-        // },
-
-        // {
-        //   title: 'Limit Orders',
-        //   url: '/dashboard/orders/public',
-        //   icon: ArrowRightLeft,
-        // },
       ],
     },
     {
@@ -121,9 +124,9 @@ const useNavGroups = () => {
   ];
 
   return { navGroups };
-}
+};
 
-type NavGroups = ReturnType<typeof useNavGroups>['navGroups']
+type NavGroups = ReturnType<typeof useNavGroups>['navGroups'];
 
 export const SidebarMenuItem2 = ({ item }: { item: NavGroups[number]['items'][number] }) => {
   return (
@@ -148,7 +151,10 @@ export function DashboardSidebar({ ...props }: React.ComponentProps<typeof Sideb
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuButton size="lg" asChild>
-            <Link href="/dashboard" className="min-w-0 overflow-hidden relative transition-all duration-300 shadow-xs">
+            <Link
+              href="/dashboard"
+              className="min-w-0 overflow-hidden relative transition-all duration-300 shadow-xs"
+            >
               <span
                 className="absolute  opacity-3  hover:opacity-5 transition-all duration-300  scale-[13] rotate-5 
                 -translate-x-3 z-1 
