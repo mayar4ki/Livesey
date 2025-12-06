@@ -5,6 +5,7 @@ import {
   BookOpen,
   Calendar,
   ChartArea,
+  ChevronRight,
   Coins,
   Compass,
   HelpCircle,
@@ -30,8 +31,10 @@ import {
 } from '@acme/ui/sidebar';
 import { siteName } from '@acme/white-label/web-app';
 import Link from 'next/link';
+import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import { AppLogo } from '~/_components/common/AppBrand';
+import { Collapsible } from '../common/collapsible';
 
 const useNavGroups = () => {
   const { address } = useAccount();
@@ -53,6 +56,8 @@ const useNavGroups = () => {
     },
     {
       label: 'Orders',
+      collapsible: true,
+      collapsed: false,
       items: [
         {
           title: 'Limit Orders List',
@@ -68,6 +73,8 @@ const useNavGroups = () => {
     },
     {
       label: 'Tokens',
+      collapsible: true,
+      collapsed: false,
       items: [
         {
           title: 'Tokens List',
@@ -75,14 +82,14 @@ const useNavGroups = () => {
           icon: Coins,
         },
         {
+          title: 'My Tokens',
+          url: `/dashboard/lookup/${address}?tab=assets`,
+          icon: ChartArea,
+        },
+        {
           title: 'Token Lookup',
           url: '/dashboard/token/lookup',
           icon: Search,
-        },
-        {
-          title: 'My Assets',
-          url: `/dashboard/lookup/${address}?tab=assets`,
-          icon: ChartArea,
         },
       ],
     },
@@ -128,16 +135,58 @@ const useNavGroups = () => {
 
 type NavGroups = ReturnType<typeof useNavGroups>['navGroups'];
 
-export const SidebarMenuItem2 = ({ item }: { item: NavGroups[number]['items'][number] }) => {
+const CollapsibleSidebarGroup = ({
+  group,
+  separator = true,
+}: {
+  group: NavGroups[number];
+  separator?: boolean;
+}) => {
+  const [isOpen, setIsOpen] = useState(!!group.collapsed);
+
+  const toggleCollapse = () => {
+    setIsOpen((prev) => !prev);
+  };
+
+  const isCollapsible = !!group.collapsible;
+
   return (
-    <SidebarMenuItem>
-      <Link href={item.url}>
-        <SidebarMenuButton tooltip={item.title}>
-          {item.icon && <item.icon />}
-          <span>{item.title}</span>
+    <SidebarGroup className=" py-1 ">
+      {isCollapsible ? (
+        <SidebarMenuButton tooltip={group.label} onClick={toggleCollapse} className="justify-between">
+          <span>{group.label}</span>
+          <ChevronRight className={cn('transition-all duration-150', { '  rotate-90 ': !isOpen })} />
         </SidebarMenuButton>
-      </Link>
-    </SidebarMenuItem>
+      ) : group.label ? (
+        <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+      ) : null}
+
+      <Collapsible open={!isOpen}>
+        <SidebarMenu>
+          {group.items.map((item) => (
+            <SidebarMenuItem
+              key={item.title}
+              className={cn({
+                'ml-4': isCollapsible,
+              })}
+            >
+              <Link href={item.url}>
+                <SidebarMenuButton
+                  tooltip={item.title}
+                  className={cn({
+                    'font-normal': isCollapsible,
+                  })}
+                >
+                  {item.icon && <item.icon />}
+                  <span>{item.title}</span>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+          ))}
+          {separator && <SidebarSeparator />}
+        </SidebarMenu>
+      </Collapsible>
+    </SidebarGroup>
   );
 };
 
@@ -173,15 +222,7 @@ export function DashboardSidebar({ ...props }: React.ComponentProps<typeof Sideb
 
       <SidebarContent>
         {navGroups.map((group, index) => (
-          <SidebarGroup key={index}>
-            {group.label && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}
-            <SidebarMenu>
-              {group.items.map((item) => (
-                <SidebarMenuItem2 key={item.title} item={item} />
-              ))}
-            </SidebarMenu>
-            {index < navGroups.length - 1 && <SidebarSeparator />}
-          </SidebarGroup>
+          <CollapsibleSidebarGroup key={index} group={group} separator={index < navGroups.length - 1} />
         ))}
       </SidebarContent>
 
