@@ -1,15 +1,12 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // Ethereum address validation
 const ethAddress = z
   .string()
-  .regex(/^0x[a-fA-F0-9]{40}$/, "Invalid Ethereum address format")
-  .refine(
-    (addr: string) => addr !== "0x0000000000000000000000000000000000000000",
-    {
-      message: "Address cannot be the zero address",
-    }
-  );
+  .regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid Ethereum address format')
+  .refine((addr: string) => addr !== '0x0000000000000000000000000000000000000000', {
+    message: 'Address cannot be the zero address',
+  });
 
 // Chain ID validation (must be a positive integer)
 // Defaults to Sepolia (11155111) if not provided
@@ -25,7 +22,7 @@ const redisUrl = z.url().optional();
 
 export const envValidationSchema = z.object({
   // Blockchain Configuration
-  CHAIN_RPC_URL: z.url("Invalid RPC URL format"),
+  CHAIN_RPC_URL: z.url('Invalid RPC URL format'),
   FACTORY_ADDRESS: ethAddress,
   CHAIN_ID: chainId,
 
@@ -33,7 +30,7 @@ export const envValidationSchema = z.object({
   REDIS_URL: redisUrl,
 
   // Backend API URL (required for Snapshot space creation)
-  BACKEND_URL: z.url("Invalid backend URL format"),
+  BACKEND_URL: z.url('Invalid backend URL format'),
 });
 
 export type Env = z.infer<typeof envValidationSchema>;
@@ -50,9 +47,8 @@ export function validateEnv(env: any): Env {
   }
 
   const details =
-    result.error.issues
-      .map((issue) => `  - ${issue.path.join(".")}: ${issue.message}`)
-      .join("\n") || "Unknown validation error";
+    result.error.issues.map((issue) => `  - ${issue.path.join('.')}: ${issue.message}`).join('\n') ||
+    'Unknown validation error';
 
   throw new Error(`Environment validation failed:\n${details}`);
 }

@@ -15,9 +15,9 @@ type EventsLog = WatchContractEventOnLogsParameter<
 >[number];
 
 @Injectable()
-export class BitInvalidatorUpdatedEventLListenerService implements OnModuleInit, OnModuleDestroy {
+export class BitInvalidatorUpdatedEventListenerService implements OnModuleInit, OnModuleDestroy {
   private unwatch?: Unwatch;
-  private readonly logger = new Logger(BitInvalidatorUpdatedEventLListenerService.name);
+  private readonly logger = new Logger(BitInvalidatorUpdatedEventListenerService.name);
 
   constructor(
     private readonly configService: ConfigService<Env>,
@@ -33,8 +33,6 @@ export class BitInvalidatorUpdatedEventLListenerService implements OnModuleInit,
     });
 
     const lopAddress: Address = oneInchLimitOrderProtocolAddresses[chainId!];
-
-    console.log(lopAddress);
 
     this.unwatch = this.viemPublicClient.client.watchContractEvent({
       address: lopAddress,

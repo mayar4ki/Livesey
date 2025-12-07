@@ -43,6 +43,7 @@ contract ERC20Implementation is
      * @param _assetRefHash: asset reference hash
      * @param _operator: operator address
      * @param _initialRecipient: initial owner of the token supply (tokens go here)
+     * @param _rewardToken: reward token address
      * @dev Callable by admin
      */
     function initialize(

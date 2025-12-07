@@ -43,6 +43,7 @@ export const validationSchema = z.object({
     .regex(/^0x[a-fA-F0-9]{64}$/, 'Invalid asset reference hash format') as z.ZodType<Address>,
   operator: ethAddress,
   initialRecipient: ethAddress,
+  rewardToken: ethAddress,
 });
 
 export type ValidationSchema = z.infer<typeof validationSchema>;

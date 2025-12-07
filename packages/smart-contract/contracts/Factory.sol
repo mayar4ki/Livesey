@@ -97,8 +97,9 @@ contract Factory is AccessControlled, MockOperator {
         bytes32 assetRefHash,
         address operator,
         address initialRecipient,
-        address indexed token,
-        address indexed createdBy
+        address token,
+        address createdBy,
+        address rewardToken
     );
 
     event TokenPaused(address indexed pausedToken);
@@ -181,7 +182,8 @@ contract Factory is AccessControlled, MockOperator {
             _operator,
             _initialRecipient,
             tokenProxy,
-            msg.sender
+            msg.sender,
+            rewardToken
         );
     }
 
