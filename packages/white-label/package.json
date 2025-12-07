@@ -5,6 +5,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./admin-app": "./src/admin-app/index.ts",
+    "./operator-app": "./src/operator-app/index.ts",
     "./web-app": "./src/web-app/index.ts"
   },
   "scripts": {
