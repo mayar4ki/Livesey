@@ -13,7 +13,7 @@ import { AssetsCard } from './_components/AssetsCard';
 
 type TabValue = 'assets' | 'orders';
 
-export default function LookupAddressPage() {
+export default function Page() {
   const params = useParams();
   const address = params.address as Address;
 

@@ -10,6 +10,7 @@ export const lookupFormSchema = yup.object().shape({
       return isAddress(value);
     })
     .label('Address'),
+  type: yup.string().required('Type is required').oneOf(['wallet', 'token', 'operator']).label('Type'),
 });
 
 export type LookupFormSchema = yup.InferType<typeof lookupFormSchema>;

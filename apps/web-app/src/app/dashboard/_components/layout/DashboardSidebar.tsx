@@ -4,7 +4,6 @@ import {
   ArrowRightLeft,
   BookOpen,
   Calendar,
-  ChartArea,
   ChevronRight,
   Coins,
   Compass,
@@ -56,58 +55,22 @@ const useNavGroups = () => {
       ],
     },
     {
-      label: 'Orders',
-      collapsible: true,
-      collapsed: false,
+      label: 'Dashboard',
       items: [
         {
-          title: 'Limit Orders List',
-          url: '/dashboard/limit-order',
-          icon: ArrowRightLeft,
-        },
-        {
-          title: 'My Limit Orders',
-          url: `/dashboard/lookup/${address}?tab=orders`,
-          icon: ChartArea,
-        },
-      ],
-    },
-    {
-      label: 'Tokens',
-      collapsible: true,
-      collapsed: false,
-      items: [
-        {
-          title: 'Tokens List',
+          title: 'Tokens',
           url: '/dashboard/token',
           icon: Coins,
         },
         {
-          title: 'My Tokens',
-          url: `/dashboard/lookup/${address}?tab=assets`,
-          icon: ChartArea,
+          title: 'Limit Orders',
+          url: '/dashboard/limit-order',
+          icon: ArrowRightLeft,
         },
         {
-          title: 'Token Lookup',
-          url: '/dashboard/token/lookup',
-          icon: Search,
-        },
-      ],
-    },
-    {
-      label: 'Operators',
-      collapsible: true,
-      collapsed: false,
-      items: [
-        {
-          title: 'Operators List',
+          title: 'Operators',
           url: `/dashboard/operator`,
           icon: Users,
-        },
-        {
-          title: 'Operator Lookup',
-          url: '/dashboard/operator/lookup',
-          icon: Search,
         },
       ],
     },
@@ -116,18 +79,25 @@ const useNavGroups = () => {
       items: [
         {
           title: 'My Profile',
-          url: `/dashboard/lookup/${address}`,
+          url: `/dashboard/profile/${address}`,
           icon: User,
         },
+      ],
+    },
+    {
+      label: 'Lookup',
+      items: [
         {
-          title: 'Lookup Profile',
-          url: '/dashboard/lookup',
+          title: 'Address Lookup ',
+          url: `/dashboard/lookup`,
           icon: Search,
         },
       ],
     },
     {
       label: '',
+      collapsed: false,
+      collapsible: false,
       items: [
         {
           title: 'Settings',
