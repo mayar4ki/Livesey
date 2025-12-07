@@ -7,21 +7,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme
 import { Skeleton } from '@acme/ui/skeleton';
 import { toast } from '@acme/ui/sonner';
 import { Spinner } from '@acme/ui/spinner';
-import { Banknote, CircleDollarSign, TrendingUp, Wallet } from 'lucide-react';
+import { Banknote, CircleDollarSign, TrendingUp } from 'lucide-react';
 import { useEffect } from 'react';
 import { Address } from 'viem';
-import { useAccount } from 'wagmi';
 import { useWithdrawableDividend } from '~/services/erc20/useWithdrawableDividend';
 import { useWithdrawDividend } from '~/services/erc20/useWithdrawDividend';
 import { useRewardTokenInfo } from '~/services/factory/useRewardTokenInfo';
 import { Token } from '~/services/token/useToken';
+import { HoldingsCard } from './HoldingsCard';
 
 export interface ProfitsTabProps {
   token: Token;
 }
 
 export const ProfitsTab = ({ token }: ProfitsTabProps) => {
-  const { isConnected } = useAccount();
   const tokenAddress = token.token as Address;
 
   const {
@@ -29,11 +28,13 @@ export const ProfitsTab = ({ token }: ProfitsTabProps) => {
     decimals: rewardTokenDecimals,
     isLoading: isLoadingRewardToken,
   } = useRewardTokenInfo();
+
   const {
     withdrawableAmount,
     isLoading: isLoadingWithdrawable,
     refetch: refetchWithdrawable,
   } = useWithdrawableDividend(tokenAddress);
+
   const { withdraw, isPending, isConfirming, isConfirmed } = useWithdrawDividend(tokenAddress);
 
   // Refetch withdrawable amount after successful withdrawal
@@ -46,27 +47,12 @@ export const ProfitsTab = ({ token }: ProfitsTabProps) => {
 
   const isLoading = isLoadingWithdrawable || isLoadingRewardToken;
   const hasWithdrawableAmount = withdrawableAmount !== undefined && withdrawableAmount > 0n;
-  const statusLabel = hasWithdrawableAmount ? 'Ready to withdraw' : 'Building up profits';
 
   // Format the withdrawable amount using the reward token decimals
   const formattedAmount =
     withdrawableAmount !== undefined
       ? formatTokenAmount(withdrawableAmount.toString(), rewardTokenDecimals ?? 6)
       : '0';
-
-  if (!isConnected) {
-    return (
-      <Card>
-        <CardContent className="flex flex-col items-center justify-center py-12">
-          <Wallet className="h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">Connect Your Wallet</h3>
-          <p className="text-sm text-muted-foreground text-center">
-            Connect your wallet to view and withdraw your available profits
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
     <div className="space-y-6">
@@ -86,12 +72,13 @@ export const ProfitsTab = ({ token }: ProfitsTabProps) => {
               variant={hasWithdrawableAmount ? 'default' : 'secondary'}
               className="rounded-full px-3 py-1 text-xs font-medium"
             >
-              {statusLabel}
+              {hasWithdrawableAmount ? 'Ready to withdraw' : 'Building up profits'}
             </Badge>
           </div>
         </CardHeader>
         <CardContent className="space-y-6 ">
           <div className="grid gap-4 sm:grid-cols-3">
+            {/* Available to withdraw */}
             <div className="sm:col-span-2 rounded-xl border bg-linear-to-br from-primary/10 via-primary/5 to-transparent p-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
@@ -116,14 +103,7 @@ export const ProfitsTab = ({ token }: ProfitsTabProps) => {
               </p>
             </div>
 
-            <div className="rounded-xl border bg-muted/30 p-5 space-y-3">
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <span>Reward token</span>
-                <TrendingUp className="h-4 w-4" />
-              </div>
-              <p className="text-xl font-semibold">{rewardTokenSymbol ?? '—'}</p>
-              <p className="text-xs text-muted-foreground">Withdrawals go straight to the connected wallet.</p>
-            </div>
+            <HoldingsCard token={token} />
           </div>
 
           <Button
