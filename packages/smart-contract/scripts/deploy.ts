@@ -22,6 +22,7 @@ async function main() {
         m.getParameter("_ownerAddress", env.OWNER_ADDRESS),
         m.getParameter("_adminAddress", env.ADMIN_ADDRESS),
         beacon,
+        m.getParameter("_rewardToken", env.ERC20_REWARD_PAY_TOKEN),
       ]);
 
       return {

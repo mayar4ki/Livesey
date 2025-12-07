@@ -106,7 +106,7 @@ contract ERC20Implementation is
         _withdrawDividend();
     }
 
-    function distributeDividends(uint256 amount) external whenNotPaused nonReentrant onlyOperator {
+    function distributeDividends(uint256 amount) external whenNotPaused onlyOperator {
         _distributeDividends(amount);
     }
 }

@@ -8,21 +8,6 @@ const ethAddress = z
     message: "Address cannot be the zero address",
   });
 
-const donID = z
-  .string()
-  .regex(/^0x[a-fA-F0-9]{64}$/, "Invalid don address")
-  .refine((addr) => addr !== ZeroAddress, {
-    message: "Address cannot be the zero address",
-  });
-
-const endpoints = z.string().refine(
-  (val) => {
-    return val.split(",").every((url) => /^https:\/\/.+/.test(url));
-  },
-  { message: "Invalid endpoint list" },
-);
-
-const functionDonId = z.string().min(1);
 const url = z.url();
 const privateKey = z
   .string()
@@ -37,4 +22,5 @@ export const envValidationSchema = z.object({
 
   OWNER_ADDRESS: ethAddress,
   ADMIN_ADDRESS: ethAddress,
+  ERC20_REWARD_PAY_TOKEN: ethAddress,
 });

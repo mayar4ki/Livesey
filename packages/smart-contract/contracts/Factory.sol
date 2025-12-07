@@ -112,13 +112,16 @@ contract Factory is AccessControlled, MockOperator {
      * @param _ownerAddress: owner address
      * @param _adminAddress: admin address
      * @param _beaconAddress: upgradeable beacon address
+     * @param _rewardToken: reward token address
      */
     constructor(
         address _ownerAddress,
         address _adminAddress,
-        address _beaconAddress
+        address _beaconAddress,
+        address _rewardToken
     ) AccessControlled(_ownerAddress, _adminAddress) {
         beaconAddress = _beaconAddress;
+        rewardToken = _rewardToken;
     }
 
     /**
