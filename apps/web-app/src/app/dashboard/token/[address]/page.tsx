@@ -7,7 +7,7 @@ import { TokenContractDetailsCard } from '@acme/ui/bootstrapped/token/token-cont
 import { TokenHeaderCard } from '@acme/ui/bootstrapped/token/token-header-card';
 import { TokenMetadataCard } from '@acme/ui/bootstrapped/token/token-metadata-card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@acme/ui/tabs';
-import { Wallet } from 'lucide-react';
+import { Coins, Wallet } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { Address } from 'viem';
 import { useTokensLedger } from '~/services/factory/useTokensLedger';
@@ -15,6 +15,7 @@ import { useToken } from '~/services/token/useToken';
 
 import { addTokenToWallet } from '~/_helpers/addTokenToWallet';
 import { useTokenDecimals } from '~/services/erc20/useTokenDecimals';
+import { ProfitsTab } from './_components/ProfitsTab';
 import { TradeTab } from './_components/TradeTab';
 import { VotingTab } from './_components/VotingTab';
 
@@ -62,26 +63,32 @@ export default function TokenPage() {
         />
 
         <Tabs defaultValue="trade" className="w-full ">
-          <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="metadata">Metadata</TabsTrigger>
+          <TabsList className="mb-4">
+            <TabsTrigger value="overview">Contract Details</TabsTrigger>
             <TabsTrigger value="trade">Sell / Buy</TabsTrigger>
             <TabsTrigger value="voting">Voting</TabsTrigger>
+            <TabsTrigger value="profits">
+              <Coins className="h-3.5 w-3.5" />
+              Profits
+            </TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
           <TabsContent value="overview">
-            <TokenContractDetailsCard token={token.data} decimals={decimals} />
-          </TabsContent>
-
-          {/* Metadata Tab */}
-          <TabsContent value="metadata">
-            <TokenMetadataCard token={token.data} />
+            <div className="md:space-y-6 grid grid-cols-1 md:grid-cols-2 gap-4 items-start ">
+              <TokenMetadataCard token={token.data} />
+              <TokenContractDetailsCard token={token.data} decimals={decimals} />
+            </div>
           </TabsContent>
 
           {/* Voting Tab */}
           <TabsContent value="voting">
             <VotingTab token={token.data} />
+          </TabsContent>
+
+          {/* Profits Tab */}
+          <TabsContent value="profits">
+            <ProfitsTab token={token.data} />
           </TabsContent>
 
           {/* Trade Tab */}

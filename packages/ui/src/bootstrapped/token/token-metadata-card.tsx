@@ -41,6 +41,7 @@ export function TokenMetadataCard({ token, className }: TokenMetadataCardProps) 
           <label className="text-sm font-medium text-muted-foreground">Token ID</label>
           <p className="text-base font-mono mt-1 break-all">{token?.id}</p>
         </div>
+
         <div>
           <div className="flex items-center justify-between mb-1">
             <label className="text-sm font-medium text-muted-foreground">Asset Reference Hash</label>
@@ -52,8 +53,13 @@ export function TokenMetadataCard({ token, className }: TokenMetadataCardProps) 
               className="h-8 w-8 p-0 shrink-0"
             />
           </div>
-          <div className="mt-1 flex items-center gap-2 flex-wrap">
-            <code className="text-xs font-mono bg-muted px-3 py-2 rounded break-all flex-1 min-w-0">{token.assetRefHash}</code>
+          <div className="min-w-0 mt-1 max-w-full">
+            <code
+              className="block text-xs font-mono bg-muted px-2 py-1 rounded hover:bg-muted/80 cursor-pointer transition-colors break-all w-full min-w-0 max-w-full"
+              style={{ wordBreak: 'break-all', overflowWrap: 'anywhere' }}
+            >
+              {token.assetRefHash}
+            </code>
           </div>
         </div>
 
@@ -70,7 +76,6 @@ export function TokenMetadataCard({ token, className }: TokenMetadataCardProps) 
             ))}
           </div>
         )}
-
         {seedDataObj && (
           <div>
             <div className="flex items-center justify-between mb-1">

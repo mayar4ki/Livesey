@@ -56,26 +56,36 @@ export class TokenService {
   }
 
   async list(query: ListQueryDto): Promise<BaseResponse<TokenEntity[]>> {
-    const { skip = 0, take = 10, search } = query;
+    const { skip = 0, take = 10, search, operator } = query;
 
-    const where = search
-      ? {
-          OR: [
-            {
-              token: {
-                contains: search,
-                mode: 'insensitive' as const,
+    const where = {
+      ...(search
+        ? {
+            OR: [
+              {
+                token: {
+                  contains: search,
+                  mode: 'insensitive' as const,
+                },
               },
-            },
-            {
-              createdBy: {
-                contains: search,
-                mode: 'insensitive' as const,
+              {
+                createdBy: {
+                  contains: search,
+                  mode: 'insensitive' as const,
+                },
               },
+            ],
+          }
+        : {}),
+      ...(operator
+        ? {
+            operator: {
+              equals: operator,
+              mode: 'insensitive' as const,
             },
-          ],
-        }
-      : {};
+          }
+        : {}),
+    };
 
     const [tokens, total] = await Promise.all([
       this.prisma.client.token.findMany({

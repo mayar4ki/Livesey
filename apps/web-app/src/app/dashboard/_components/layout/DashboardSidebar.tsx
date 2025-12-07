@@ -12,6 +12,7 @@ import {
   Search,
   Settings,
   User,
+  Users,
 } from 'lucide-react';
 import * as React from 'react';
 
@@ -89,6 +90,23 @@ const useNavGroups = () => {
         {
           title: 'Token Lookup',
           url: '/dashboard/token/lookup',
+          icon: Search,
+        },
+      ],
+    },
+    {
+      label: 'Operators',
+      collapsible: true,
+      collapsed: false,
+      items: [
+        {
+          title: 'Operators List',
+          url: `/dashboard/operator`,
+          icon: Users,
+        },
+        {
+          title: 'Operator Lookup',
+          url: '/dashboard/operator/lookup',
           icon: Search,
         },
       ],

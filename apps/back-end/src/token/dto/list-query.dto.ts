@@ -18,4 +18,8 @@ export class ListQueryDto {
   @IsOptional()
   @IsString()
   search?: string;
+
+  @IsOptional()
+  @IsString()
+  operator?: string;
 }

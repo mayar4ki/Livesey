@@ -15,7 +15,7 @@ export default function AppLayout({
     <RequireWallet message="Please connect your wallet to access the application.">
       <SidebarProvider>
         <AppSidebar />
-        <SidebarInset className="border overflow-x-auto">
+        <SidebarInset>
           <AppHeader />
           {children}
           <AppFooter />
