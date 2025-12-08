@@ -15,6 +15,7 @@ import {
 } from '@acme/ui/alert-dialog';
 import { Badge } from '@acme/ui/badge';
 import { Button } from '@acme/ui/button';
+import { toast } from '@acme/ui/sonner';
 import { AlertTriangle, ArrowRight, CheckCircle2, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { useGetOrderTokensInfo } from '~/_hooks/useGetOrderTokensInfo';
@@ -30,7 +31,16 @@ export function FillOrderAction({ order }: FillOrderActionProps) {
 
   const handleFillOrder = async () => {
     setOpenDialog(false);
-    fillOrder(order);
+    fillOrder(order, {
+      approveOptions: {
+        onSuccess: () => {
+          toast.success('Transaction submitted, confirming...');
+        },
+      },
+      onFillTxSuccess: () => {
+        toast.success('Order filled successfully');
+      },
+    });
   };
 
   const getOrderTokensInfo = useGetOrderTokensInfo();

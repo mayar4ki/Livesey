@@ -1,5 +1,8 @@
-import { toast } from "@acme/ui/sonner";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  MutateOptions,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { Address, parseUnits } from "viem";
 import { useChainId, usePublicClient } from "wagmi";
 import { useUserEIP712 } from "../../hooks/useUserEIP712";
@@ -81,7 +84,6 @@ export function useCreateLimitOrder() {
       await apiClient.post("limit-order", payload, { headers });
     },
     onSuccess: () => {
-      toast.success("Limit order created successfully");
       // Invalidate limit orders queries to refetch the list
       queryClient.invalidateQueries({ queryKey: [LIMIT_ORDERS_QUERY_KEY] });
       queryClient.invalidateQueries({
@@ -90,22 +92,19 @@ export function useCreateLimitOrder() {
     },
   });
 
-  const createLimitOrder = async (data: CreateLimitOrderRequest) => {
+  const createLimitOrder = async (
+    data: CreateLimitOrderRequest,
+    options: {
+      approveOptions?: MutateOptions;
+      createLimitOrderOptions?: MutateOptions;
+    }
+  ) => {
     // Step 1: Approve the spend
     const hash = await approveAsync(
       data.makeToken as Address,
       limitOrderProtocolAddress!,
       parseUnits(data.makeAmount, data.makeTokenDecimals),
-      {
-        onSuccess: () => {
-          toast.success("Transaction submitted, confirming...", {
-            action: {
-              label: "Close",
-              onClick: () => {},
-            },
-          });
-        },
-      }
+      options.approveOptions as never
     );
 
     await publicClient?.waitForTransactionReceipt({
@@ -139,7 +138,10 @@ export function useCreateLimitOrder() {
     };
 
     // Step 4: submit to backend
-    await createLimitOrderMutation.mutateAsync(backendPayload);
+    await createLimitOrderMutation.mutateAsync(
+      backendPayload,
+      options.createLimitOrderOptions as never
+    );
   };
 
   return {

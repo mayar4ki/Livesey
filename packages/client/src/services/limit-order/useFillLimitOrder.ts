@@ -4,8 +4,7 @@ import { use1inchFillLimitOrder } from "@acme/client/services/1inche/use1inchFil
 import { useLimitOrderProtocolAddress } from "@acme/client/services/1inche/useLimitOrderProtocolAddress";
 import { useTokenApproval } from "@acme/client/services/erc20/useTokenApproval";
 import { type LimitOrder } from "@acme/client/services/limit-order/useCreateLimitOrder";
-import { toast } from "@acme/ui/sonner";
-import { useQueryClient } from "@tanstack/react-query";
+import { MutateOptions, useQueryClient } from "@tanstack/react-query";
 import { Address } from "viem";
 import { usePublicClient } from "wagmi";
 import { LIMIT_ORDERS_QUERY_KEY } from "./useLimitOrders";
@@ -26,22 +25,19 @@ export const useFillLimitOrder = () => {
   const publicClient = usePublicClient();
   const queryClient = useQueryClient();
 
-  const _fillOrder = async (order: LimitOrder) => {
+  const _fillOrder = async (
+    order: LimitOrder,
+    options: {
+      approveOptions?: MutateOptions;
+      onFillTxSuccess?: () => void;
+    }
+  ) => {
     // 1- approve the spend
     const hash = await approveAsync(
       order.takeToken as Address,
       limitOrderProtocolAddress!,
       BigInt(order.takeAmount),
-      {
-        onSuccess: () => {
-          toast.success("Transaction submitted, confirming...", {
-            action: {
-              label: "Close",
-              onClick: () => {},
-            },
-          });
-        },
-      }
+      options.approveOptions as never
     );
 
     await publicClient?.waitForTransactionReceipt({
@@ -55,7 +51,7 @@ export const useFillLimitOrder = () => {
       hash: hash2,
     });
 
-    toast.success("Order filled successfully");
+    options.onFillTxSuccess?.();
     queryClient.invalidateQueries({ queryKey: [LIMIT_ORDERS_QUERY_KEY] });
     queryClient.invalidateQueries({
       queryKey: [LIMIT_ORDERS_BY_TOKEN_QUERY_KEY],

@@ -107,7 +107,16 @@ export const ProfitsTab = ({ token }: ProfitsTabProps) => {
           </div>
 
           <Button
-            onClick={withdraw}
+            onClick={() =>
+              withdraw({
+                onSuccess: () => {
+                  toast.success('Withdrawal transaction submitted');
+                },
+                onError: (error) => {
+                  toast.error(error.message || 'Failed to withdraw dividends');
+                },
+              })
+            }
             disabled={!hasWithdrawableAmount || isPending || isConfirming}
             className="w-full sm:w-auto"
             size="lg"

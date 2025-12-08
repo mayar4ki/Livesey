@@ -7,6 +7,7 @@ import { Token } from '@acme/client/services/token/types';
 import { Button } from '@acme/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@acme/ui/form';
 import { Input } from '@acme/ui/input';
+import { toast } from '@acme/ui/sonner';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ArrowUpDown, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -46,15 +47,29 @@ export function LimitOrderForm({ token, onClose }: LimitOrderFormProps) {
 
   const onSubmit = async (data: LimitOrderFormSchema) => {
     // Create and send the order (hook handles signing and backend submission)
-    await createLimitOrder({
-      makeToken: data.fromToken.address,
-      takeToken: data.toToken.address,
-      makeAmount: data.fromAmount,
-      takeAmount: data.toAmount,
-      makeTokenDecimals: data.fromToken.decimals,
-      takeTokenDecimals: data.toToken.decimals,
-      expiration: Math.floor(new Date(data.expiredAt).getTime() / 1000),
-    });
+    await createLimitOrder(
+      {
+        makeToken: data.fromToken.address,
+        takeToken: data.toToken.address,
+        makeAmount: data.fromAmount,
+        takeAmount: data.toAmount,
+        makeTokenDecimals: data.fromToken.decimals,
+        takeTokenDecimals: data.toToken.decimals,
+        expiration: Math.floor(new Date(data.expiredAt).getTime() / 1000),
+      },
+      {
+        approveOptions: {
+          onSuccess: () => {
+            toast.success('Transaction submitted, confirming...');
+          },
+        },
+        createLimitOrderOptions: {
+          onSuccess: () => {
+            toast.success('Limit order created successfully');
+          },
+        },
+      }
+    );
 
     form.reset({
       fromToken: data.fromToken,

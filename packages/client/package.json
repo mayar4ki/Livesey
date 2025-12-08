@@ -13,12 +13,9 @@
     "clean": "git clean -xdf .cache .turbo dist node_modules"
   },
   "dependencies": {
-    "viem": "catalog:",
     "@1inch/limit-order-sdk": "^5.2.3",
     "@acme/smart-contract": "workspace:*",
     "@acme/shared": "workspace:*",
-    "wagmi": "^2.17.5",
-    "@tanstack/react-query": "^5.90.2",
     "axios": "^1.13.1"
   },
   "devDependencies": {
@@ -27,11 +24,17 @@
     "typescript": "catalog:",
     "@types/react": "catalog:react19",
     "react": "catalog:react19",
-    "next": "catalog:react19"
+    "next": "catalog:react19",
+    "wagmi": "^2.17.5",
+    "viem": "catalog:",
+    "@tanstack/react-query": "^5.90.2"
   },
   "peerDependencies": {
     "next": "catalog:react19",
-    "react": "catalog:react19"
+    "react": "catalog:react19",
+    "wagmi": "^2.17.5",
+    "viem": "catalog:",
+    "@tanstack/react-query": "^5.90.2"
   },
   "license": "MIT"
 }

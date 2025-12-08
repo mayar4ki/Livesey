@@ -1,7 +1,7 @@
-import { toast } from '@acme/ui/sonner';
-import { Address } from 'viem';
-import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
-import { ABI } from '~/_config/smart-contracts/ERC20Implementation/abi';
+import { ERC20ImplementationAbi } from "@acme/smart-contract";
+import { MutateOptions } from "@tanstack/react-query";
+import { Address } from "viem";
+import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 
 /**
  * Hook to withdraw dividends from an ERC20 token with dividend functionality
@@ -9,31 +9,30 @@ import { ABI } from '~/_config/smart-contracts/ERC20Implementation/abi';
  * @returns Functions and state for withdrawing dividends
  */
 export function useWithdrawDividend(tokenAddress: Address | undefined) {
-  const { writeContract, writeContractAsync, data: hash, isPending, ...rest } = useWriteContract();
+  const {
+    writeContract,
+    writeContractAsync,
+    data: hash,
+    isPending,
+    ...rest
+  } = useWriteContract();
 
-  const withdraw = () => {
+  const withdraw = (options: MutateOptions) => {
     writeContract(
       {
         address: tokenAddress!,
-        abi: ABI,
-        functionName: 'withdrawDividend',
+        abi: ERC20ImplementationAbi,
+        functionName: "withdrawDividend",
       },
-      {
-        onSuccess: () => {
-          toast.success('Withdrawal transaction submitted');
-        },
-        onError: (error) => {
-          toast.error(error.message || 'Failed to withdraw dividends');
-        },
-      }
+      options as never
     );
   };
 
   const withdrawAsync = async () => {
     return writeContractAsync({
       address: tokenAddress!,
-      abi: ABI,
-      functionName: 'withdrawDividend',
+      abi: ERC20ImplementationAbi,
+      functionName: "withdrawDividend",
     });
   };
 
