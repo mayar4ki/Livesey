@@ -4,7 +4,7 @@
 
 **On-chain token lifecycle platform**
 
-_Watch factory deployments • Queue verification tasks • Limit orders via 1inch • Public + admin frontend_
+_Watch factory deployments • Queue verification tasks • Limit orders via 1inch • Public + admin + operator frontends_
 
 [![pnpm](https://img.shields.io/badge/pnpm-workspace-F69220?logo=pnpm&logoColor=white)](https://pnpm.io/)
 [![1inch](https://img.shields.io/badge/1inch-Limit%20Orders-1B314F?logo=1inch&logoColor=white)](https://1inch.io/)
@@ -25,7 +25,8 @@ livesey/
 │   ├── chain-listener/      # Watches factory contract, enqueues verification jobs
 │   ├── verification-worker/ # Consumes queue jobs, verifies deployments
 │   ├── web-app/             # Public Next.js interface for token launches
-│   └── admin-app/           # Admin Next.js dashboard for operations
+│   ├── admin-app/           # Admin Next.js dashboard for operations
+│   └── operator-app/        # Operator Next.js dashboard for token management
 │
 ├── packages/
 │   ├── db/                  # Prisma schema, migrations, generated client
@@ -82,7 +83,7 @@ DOCKER_BUILDKIT=1 docker compose up --build
 docker compose run --rm db-migrate
 ```
 
-> **PostgreSQL** `5432` · **Redis** `6379` · **API** `3002` · **Web** `3000` · **Admin** `3006`
+> **PostgreSQL** `5432` · **Redis** `6379` · **API** `3002` · **Web** `3000` · **Admin** `3006` · **Operator** `3007`
 
 ---
 
@@ -127,6 +128,7 @@ docker compose run --rm db-migrate
 | `NEXT_PUBLIC_OUR_ERC20_DECIMALS`           | Our Tokens decimals for UI | `6`                                          |
 | `WEB_APP_PORT`                             | Host port for web app      | `3000`                                       |
 | `ADMIN_APP_PORT`                           | Host port for admin app    | `3006`                                       |
+| `OPERATOR_APP_PORT`                        | Host port for operator app | `3007`                                       |
 
 ---
 
