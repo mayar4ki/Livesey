@@ -12,6 +12,7 @@ import { Address } from 'viem';
 
 import { TokenHeaderCard } from '@acme/ui/bootstrapped/token/token-header-card';
 
+import { useTokenDecimals } from '@acme/client/services/erc20/useTokenDecimals';
 import { useTokensLedger } from '@acme/client/services/factory/useTokensLedger';
 import { TokenContractDetailsCard } from '@acme/ui/bootstrapped/token/token-contract-details-card';
 import { TokenMetadataCard } from '@acme/ui/bootstrapped/token/token-metadata-card';
@@ -23,7 +24,7 @@ export default function Page() {
   const address = params.address as string;
   const { data: token, isLoading, error } = useToken({ address });
   const { tokenInfo } = useTokensLedger(address as Address | undefined);
-
+  const { data: decimals } = useTokenDecimals(token?.data.token);
   if (isLoading) {
     return (
       <div className="flex flex-1 flex-col gap-4 p-4">
@@ -65,17 +66,17 @@ export default function Page() {
         <Tabs defaultValue="contract" className="w-full">
           <TabsList>
             <TabsTrigger value="contract">Contract Details</TabsTrigger>
-            <TabsTrigger value="metadata">Metadata</TabsTrigger>
             <TabsTrigger value="manage" disabled={!tokenInfo}>
               Management
             </TabsTrigger>
           </TabsList>
           <TabsContent value="contract" className="mt-5">
-            <TokenContractDetailsCard token={token.data} />
+            <div className="md:space-y-6 grid grid-cols-1 md:grid-cols-2 gap-4 items-start ">
+              <TokenMetadataCard token={token.data} />
+              <TokenContractDetailsCard token={token.data} decimals={decimals} />
+            </div>
           </TabsContent>
-          <TabsContent value="metadata" className="mt-5">
-            <TokenMetadataCard token={token.data} />
-          </TabsContent>
+
           <TabsContent value="manage" className="mt-5">
             {tokenInfo && <TokenPauseSection tokenAddress={token.data.token as Address} isPaused={tokenInfo.isPaused} />}
             {tokenInfo && (
