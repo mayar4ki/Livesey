@@ -1,5 +1,6 @@
 'use client';
 
+import { Token } from '@acme/client/services/token/types';
 import { getChainUIName } from '@acme/client/utils';
 import { Badge } from '@acme/ui/badge';
 import { ExplorerLink } from '@acme/ui/bootstrapped/explorer-address-link';
@@ -19,7 +20,6 @@ import {
 import { ArrowDown, ArrowUp, ArrowUpDown, Star } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
-import { Token } from '~/services/token/useToken';
 
 interface TokensTableProps {
   tokens: Token[];
@@ -269,7 +269,9 @@ export function TokensTable({ tokens }: TokensTableProps) {
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id}>
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   );
                 })}
@@ -281,7 +283,9 @@ export function TokensTable({ tokens }: TokensTableProps) {
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                    <TableCell key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
                   ))}
                 </TableRow>
               ))

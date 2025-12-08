@@ -1,13 +1,13 @@
 'use client';
 
+import { useCreateVote } from '@acme/client/services/proposal/useCreateVote';
+import { type Vote } from '@acme/client/services/proposal/useProposal';
 import { Button } from '@acme/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
 import { CheckCircle2, XCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import { ConnectWallet } from '~/app/dashboard/_components/common/ConnectWallet';
-import { useCreateVote } from '~/services/proposal/useCreateVote';
-import { type Vote } from '~/services/proposal/useProposal';
 
 interface VotingResultsCardProps {
   proposalId: string;
@@ -67,7 +67,10 @@ export function VotingResultsCard({ proposalId, votes, isActive, userVote }: Vot
               </span>
             </div>
             <div className="w-full bg-muted rounded-full h-3">
-              <div className="bg-green-500 h-3 rounded-full transition-all" style={{ width: `${forPercentage}%` }}></div>
+              <div
+                className="bg-green-500 h-3 rounded-full transition-all"
+                style={{ width: `${forPercentage}%` }}
+              ></div>
             </div>
           </div>
 
@@ -79,7 +82,10 @@ export function VotingResultsCard({ proposalId, votes, isActive, userVote }: Vot
               </span>
             </div>
             <div className="w-full bg-muted rounded-full h-3">
-              <div className="bg-red-500 h-3 rounded-full transition-all" style={{ width: `${againstPercentage}%` }}></div>
+              <div
+                className="bg-red-500 h-3 rounded-full transition-all"
+                style={{ width: `${againstPercentage}%` }}
+              ></div>
             </div>
           </div>
         </div>
@@ -95,12 +101,19 @@ export function VotingResultsCard({ proposalId, votes, isActive, userVote }: Vot
         {userVote && (
           <div className="pt-4 border-t">
             <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-md">
-              {userVote.choice ? <CheckCircle2 className="h-5 w-5 text-green-500" /> : <XCircle className="h-5 w-5 text-red-500" />}
+              {userVote.choice ? (
+                <CheckCircle2 className="h-5 w-5 text-green-500" />
+              ) : (
+                <XCircle className="h-5 w-5 text-red-500" />
+              )}
               <div className="flex-1">
                 <p className="text-sm font-medium">You voted {userVote.choice ? 'For' : 'Against'}</p>
                 <p className="text-xs text-muted-foreground">
                   Voting Power:{' '}
-                  {typeof userVote.votingPower === 'string' ? BigInt(userVote.votingPower).toString() : userVote.votingPower.toString()} VP
+                  {typeof userVote.votingPower === 'string'
+                    ? BigInt(userVote.votingPower).toString()
+                    : userVote.votingPower.toString()}{' '}
+                  VP
                 </p>
               </div>
             </div>
@@ -152,7 +165,9 @@ export function VotingResultsCard({ proposalId, votes, isActive, userVote }: Vot
                 </div>
               ) : (
                 <div className="flex flex-col items-center gap-3 p-4 bg-muted/30 rounded-lg">
-                  <p className="text-sm text-muted-foreground text-center">Connect your wallet to vote on this proposal</p>
+                  <p className="text-sm text-muted-foreground text-center">
+                    Connect your wallet to vote on this proposal
+                  </p>
                   <ConnectWallet />
                 </div>
               )}
@@ -163,4 +178,3 @@ export function VotingResultsCard({ proposalId, votes, isActive, userVote }: Vot
     </Card>
   );
 }
-

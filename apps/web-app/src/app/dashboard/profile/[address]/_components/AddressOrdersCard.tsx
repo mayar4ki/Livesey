@@ -1,6 +1,7 @@
 'use client';
 
 import { useQueryParams } from '@acme/client/hooks';
+import { useLimitOrders } from '@acme/client/services/limit-order/useLimitOrders';
 import { DataTablePagination } from '@acme/ui/bootstrapped/data-table-pagination';
 import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
 import { LoadingCard } from '@acme/ui/bootstrapped/loading-card';
@@ -11,7 +12,6 @@ import { useState } from 'react';
 import { Address } from 'viem';
 import { useChainId } from 'wagmi';
 import { LimitOrdersTable } from '~/app/dashboard/_components/limit-order/LimitOrdersTable';
-import { useLimitOrders } from '~/services/limit-order/useLimitOrders';
 
 export const AddressOrdersCard = ({ address }: { address: Address }) => {
   const chainId = useChainId();

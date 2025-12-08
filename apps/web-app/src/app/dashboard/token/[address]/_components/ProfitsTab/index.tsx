@@ -1,5 +1,9 @@
 'use client';
 
+import { useWithdrawableDividend } from '@acme/client/services/erc20/useWithdrawableDividend';
+import { useWithdrawDividend } from '@acme/client/services/erc20/useWithdrawDividend';
+import { useRewardTokenInfo } from '@acme/client/services/factory/useRewardTokenInfo';
+import { Token } from '@acme/client/services/token/types';
 import { formatTokenAmount } from '@acme/client/utils';
 import { Badge } from '@acme/ui/badge';
 import { Button } from '@acme/ui/button';
@@ -10,10 +14,6 @@ import { Spinner } from '@acme/ui/spinner';
 import { Banknote, CircleDollarSign, TrendingUp } from 'lucide-react';
 import { useEffect } from 'react';
 import { Address } from 'viem';
-import { useWithdrawableDividend } from '~/services/erc20/useWithdrawableDividend';
-import { useWithdrawDividend } from '~/services/erc20/useWithdrawDividend';
-import { useRewardTokenInfo } from '~/services/factory/useRewardTokenInfo';
-import { Token } from '~/services/token/useToken';
 import { HoldingsCard } from './HoldingsCard';
 
 export interface ProfitsTabProps {

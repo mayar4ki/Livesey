@@ -1,5 +1,7 @@
 'use client';
 
+import { useTokenInfo } from '@acme/client/services/factory/useTokenInfo';
+import { useToken } from '@acme/client/services/token/useToken';
 import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
 import { LoadingCard } from '@acme/ui/bootstrapped/loading-card';
 import { Button } from '@acme/ui/button';
@@ -8,14 +10,12 @@ import { ArrowLeft, Coins } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Address } from 'viem';
-import { useTokenInfo } from '~/services/factory/useTokenInfo';
-import { useToken } from '~/services/token/useToken';
 
 import { TokenHeaderCard } from '@acme/ui/bootstrapped/token/token-header-card';
 
+import { useTokenDecimals } from '@acme/client/services/erc20/useTokenDecimals';
 import { TokenContractDetailsCard } from '@acme/ui/bootstrapped/token/token-contract-details-card';
 import { TokenMetadataCard } from '@acme/ui/bootstrapped/token/token-metadata-card';
-import { useTokenDecimals } from '~/services/erc20/useTokenDecimals';
 
 export default function Page() {
   const params = useParams();

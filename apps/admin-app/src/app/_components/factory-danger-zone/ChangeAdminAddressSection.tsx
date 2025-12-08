@@ -1,5 +1,6 @@
 'use client';
 
+import { useSetAdmin } from '@acme/client/services/factory/useSetAdmin';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,7 +20,6 @@ import { AlertTriangle, Loader2, Settings } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Address } from 'viem';
-import { useSetAdmin } from '~/services/factory/useSetAdmin';
 import { setAdminSchema, type SetAdminFormSchema } from './_libs/validationSchemas';
 
 type ChangeAdminAddressSectionProps = {

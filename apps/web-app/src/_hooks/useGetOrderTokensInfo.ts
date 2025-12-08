@@ -1,7 +1,6 @@
+import { useLimitOrderTokens } from '@acme/client/services/1inche/useLimitOrderTokens';
+import { LimitOrder, LimitOrderType } from '@acme/client/services/limit-order/useCreateLimitOrder';
 import { formatUnits } from 'viem';
-import { useLimitOrderTokens } from '~/services/1inche/useLimitOrderTokens';
-import { LimitOrder } from '~/services/limit-order';
-import { LimitOrderType } from '~/services/limit-order/useCreateLimitOrder';
 import { getOurTokenDecimals } from '~/utils/token-decimals';
 
 export const useGetOrderTokensInfo = () => {
@@ -11,8 +10,12 @@ export const useGetOrderTokensInfo = () => {
     const isSell = order?.type === LimitOrderType.SELL;
 
     // Get token info for both tokens
-    const makeTokenInfo = isSell ? { ...order.token, decimals: getOurTokenDecimals() } : tokenMap.get(order.makeToken);
-    const takeTokenInfo = !isSell ? { ...order.token, decimals: getOurTokenDecimals() } : tokenMap.get(order.takeToken);
+    const makeTokenInfo = isSell
+      ? { ...order.token, decimals: getOurTokenDecimals() }
+      : tokenMap.get(order.makeToken);
+    const takeTokenInfo = !isSell
+      ? { ...order.token, decimals: getOurTokenDecimals() }
+      : tokenMap.get(order.takeToken);
 
     const make = Number(formatUnits(BigInt(order.makeAmount), makeTokenInfo?.decimals ?? 18));
     const take = Number(formatUnits(BigInt(order.takeAmount), takeTokenInfo?.decimals ?? 18));

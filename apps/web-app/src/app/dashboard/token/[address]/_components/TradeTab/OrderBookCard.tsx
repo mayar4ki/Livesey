@@ -17,10 +17,9 @@ import { Loader2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useLimitOrderColumns } from '~/app/dashboard/_hooks/useLimitOrderColumns';
 
-import { LimitOrder } from '~/services/limit-order';
-import { LimitOrderType } from '~/services/limit-order/useCreateLimitOrder';
-import { useLimitOrdersByToken } from '~/services/limit-order/useLimitOrdersByToken';
-import { Token } from '~/services/token/useToken';
+import { LimitOrder, LimitOrderType } from '@acme/client/services/limit-order/useCreateLimitOrder';
+import { useLimitOrdersByToken } from '@acme/client/services/limit-order/useLimitOrdersByToken';
+import { Token } from '@acme/client/services/token/types';
 import { LimitOrderDrawer } from './LimitOrderDrawer';
 
 export interface OrderBookCardProps {

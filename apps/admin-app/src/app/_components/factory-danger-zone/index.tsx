@@ -1,10 +1,10 @@
 'use client';
 
+import { useFactoryInfo } from '@acme/client/services/factory/useFactoryInfo';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@acme/ui/accordion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
 import { AlertTriangle } from 'lucide-react';
 import { useAccount } from 'wagmi';
-import { useFactoryInfo } from '~/services/factory/useFactoryInfo';
 import { ChangeAdminAddressSection } from './ChangeAdminAddressSection';
 import { PauseUnpauseFactorySection } from './PauseUnpauseFactorySection';
 import { UpgradeBeaconSection } from './UpgradeBeaconSection';

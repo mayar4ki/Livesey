@@ -1,12 +1,12 @@
 'use client';
 
+import { useFactoryInfo } from '@acme/client/services/factory/useFactoryInfo';
 import { getChainUIName } from '@acme/client/utils';
 import { Badge } from '@acme/ui/badge';
 import { ExplorerLink } from '@acme/ui/bootstrapped/explorer-address-link';
 import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
 import { useAccount, useChainId } from 'wagmi';
 import { ADDRESS } from '~/_config/smart-contracts/Factory/address';
-import { useFactoryInfo } from '~/services/factory/useFactoryInfo';
 
 export function FactoryDetailsGrid() {
   const chainId = useChainId();

@@ -1,5 +1,6 @@
 'use client';
 
+import { usePauseOperator, useUnpauseOperator } from '@acme/client/services/factory/usePauseOperator';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,7 +17,6 @@ import { toast } from '@acme/ui/sonner';
 import { AlertTriangle, Loader2, Pause, Play } from 'lucide-react';
 import { useState } from 'react';
 import { Address } from 'viem';
-import { usePauseOperator, useUnpauseOperator } from '~/services/factory/usePauseOperator';
 
 type OperatorPauseSectionProps = {
   operatorAddress: Address;

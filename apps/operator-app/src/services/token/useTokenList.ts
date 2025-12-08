@@ -1,5 +1,5 @@
+import { apiClient } from '@acme/client/services/apiClient';
 import { useQuery } from '@tanstack/react-query';
-import { apiClient } from '~/services/apiClient';
 import { ListBaseResponse } from '../interfaces';
 import { Token } from './types';
 

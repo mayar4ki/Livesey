@@ -1,7 +1,7 @@
+import { apiClient } from '@acme/client/services/apiClient';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosHeaders } from 'axios';
 import { useEIP712 } from '~/_hooks/useEIP712';
-import { apiClient } from '~/services/apiClient';
 
 type StorePendingSeedPayload = {
   assetRefHash: string;

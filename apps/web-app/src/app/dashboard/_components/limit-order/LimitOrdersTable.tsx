@@ -1,5 +1,6 @@
 'use client';
 
+import { LimitOrderType, type LimitOrder } from '@acme/client/services/limit-order/useCreateLimitOrder';
 import { cn } from '@acme/ui';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@acme/ui/table';
 import {
@@ -12,7 +13,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { useState } from 'react';
-import { LimitOrderType, type LimitOrder } from '~/services/limit-order/useCreateLimitOrder';
 import { useLimitOrderColumns } from '../../_hooks/useLimitOrderColumns';
 import { LimitOrderExpandedRow } from './LimitOrderExpandedRow';
 

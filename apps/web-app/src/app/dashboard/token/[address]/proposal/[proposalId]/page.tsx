@@ -1,13 +1,13 @@
 'use client';
 
+import { useProposal } from '@acme/client/services/proposal/useProposal';
+import { getProposalStatus } from '@acme/client/services/proposal/utils';
 import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
 import { LoadingCard } from '@acme/ui/bootstrapped/loading-card';
 import { ArrowLeft, XCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useAccount } from 'wagmi';
-import { useProposal } from '~/services/proposal/useProposal';
-import { getProposalStatus } from '~/services/proposal/utils';
 import { AllVotesCard } from './_components/AllVotesCard';
 import { ProposalHeaderCard } from './_components/ProposalHeaderCard';
 import { VotingResultsCard } from './_components/VotingResultsCard';
@@ -43,7 +43,9 @@ export default function ProposalPage() {
 
   const votes = proposal.votes || [];
   const status = getProposalStatus(proposal.expiresAt);
-  const userVote = walletAddress ? (votes.find((v) => v.createdBy.toLowerCase() === walletAddress.toLowerCase()) ?? null) : null;
+  const userVote = walletAddress
+    ? (votes.find((v) => v.createdBy.toLowerCase() === walletAddress.toLowerCase()) ?? null)
+    : null;
   const isActive = status === 'active';
 
   const backUrl = `/dashboard/token/${tokenAddress}`;
@@ -52,7 +54,10 @@ export default function ProposalPage() {
     <div className="p-4 md:p-6 flex-1 max-w-4xl mx-auto">
       <div className="space-y-6">
         {/* Back Button */}
-        <Link href={backUrl} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+        <Link
+          href={backUrl}
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
           <ArrowLeft className="h-4 w-4" />
           Back to Proposals
         </Link>

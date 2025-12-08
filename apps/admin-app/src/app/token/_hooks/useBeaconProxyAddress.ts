@@ -1,6 +1,6 @@
+import { useWatchTokenCreatedEvent } from '@acme/client/services/factory/useWatchTokenCreatedEvent';
 import { toast } from '@acme/ui/sonner';
 import { useState } from 'react';
-import { useWatchTokenCreatedEvent } from '~/services/factory/useWatchTokenCreatedEvent';
 
 export function useBeaconProxyAddress(transactionHash: string | undefined) {
   const [beaconProxyAddress, setBeaconProxyAddress] = useState<string | null>(null);

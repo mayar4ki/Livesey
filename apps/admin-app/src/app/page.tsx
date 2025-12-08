@@ -1,7 +1,7 @@
 'use client';
 
+import { useFactoryInfo } from '@acme/client/services/factory/useFactoryInfo';
 import { LoadingCard } from '@acme/ui/bootstrapped/loading-card';
-import { useFactoryInfo } from '~/services/factory/useFactoryInfo';
 import { FactoryAboutCard } from './_components/FactoryAboutCard';
 import { FactoryDetailsGrid } from './_components/FactoryDetailsGrid';
 import { FactoryHeaderCard } from './_components/FactoryHeaderCard';

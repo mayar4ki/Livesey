@@ -1,5 +1,6 @@
 'use client';
 
+import { useOperator } from '@acme/client/services/factory/useOperator';
 import { getChainUIName, getExplorerUrl } from '@acme/client/utils';
 import { Badge } from '@acme/ui/badge';
 import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
@@ -12,7 +13,6 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Address } from 'viem';
 import { useChainId } from 'wagmi';
-import { useOperator } from '~/services/factory/useOperator';
 
 import { OperatorPauseSection } from './_components/OperatorPauseSection';
 

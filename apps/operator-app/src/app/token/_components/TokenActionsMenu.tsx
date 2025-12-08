@@ -1,12 +1,12 @@
 'use client';
 
+import { Token } from '@acme/client/services/token/types';
 import { getExplorerUrl } from '@acme/client/utils';
 import { Button } from '@acme/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@acme/ui/dropdown-menu';
 import { toast } from '@acme/ui/sonner';
 import { Copy, ExternalLink, Eye, MoreVertical } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { Token } from '~/services/token/types';
 
 type TokenActionsMenuProps = {
   token: Token;

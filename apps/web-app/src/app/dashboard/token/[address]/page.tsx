@@ -1,5 +1,8 @@
 'use client';
 
+import { useTokenDecimals } from '@acme/client/services/erc20/useTokenDecimals';
+import { useTokensLedger } from '@acme/client/services/factory/useTokensLedger';
+import { useToken } from '@acme/client/services/token/useToken';
 import { cn } from '@acme/ui';
 import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
 import { LoadingCard } from '@acme/ui/bootstrapped/loading-card';
@@ -10,11 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@acme/ui/tabs';
 import { Coins, Wallet } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { Address } from 'viem';
-import { useTokensLedger } from '~/services/factory/useTokensLedger';
-import { useToken } from '~/services/token/useToken';
-
 import { addTokenToWallet } from '~/_helpers/addTokenToWallet';
-import { useTokenDecimals } from '~/services/erc20/useTokenDecimals';
 import { ProfitsTab } from './_components/ProfitsTab';
 import { TradeTab } from './_components/TradeTab';
 import { VotingTab } from './_components/VotingTab';

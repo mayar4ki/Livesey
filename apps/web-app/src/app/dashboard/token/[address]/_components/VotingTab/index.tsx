@@ -1,13 +1,13 @@
 'use client';
 
 import { useQueryParams } from '@acme/client/hooks';
+import { Proposal } from '@acme/client/services/proposal/useProposal';
+import { useProposals } from '@acme/client/services/proposal/useProposals';
+import { getProposalStatus, type ProposalStatus } from '@acme/client/services/proposal/utils';
+import { Token } from '@acme/client/services/token/types';
 import { DataTablePagination } from '@acme/ui/bootstrapped/data-table-pagination';
 import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
 import { useMemo } from 'react';
-import { Proposal } from '~/services/proposal/useProposal';
-import { useProposals } from '~/services/proposal/useProposals';
-import { getProposalStatus, type ProposalStatus } from '~/services/proposal/utils';
-import { Token } from '~/services/token/useToken';
 import { CreateProposalCard } from './CreateProposalCard';
 import { ProposalItem } from './ProposalItem';
 

@@ -1,9 +1,9 @@
 'use client';
 
+import { type Vote } from '@acme/client/services/proposal/useProposal';
 import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
 import { CheckCircle2, XCircle } from 'lucide-react';
 import { useAccount } from 'wagmi';
-import { type Vote } from '~/services/proposal/useProposal';
 import { formatRelativeTime } from './utils';
 
 interface AllVotesCardProps {
@@ -23,7 +23,8 @@ export function AllVotesCard({ votes }: AllVotesCardProps) {
           <div className="space-y-2">
             {votes.map((vote) => {
               const isUserVote = walletAddress && vote.createdBy.toLowerCase() === walletAddress.toLowerCase();
-              const votingPower = typeof vote.votingPower === 'string' ? BigInt(vote.votingPower) : vote.votingPower;
+              const votingPower =
+                typeof vote.votingPower === 'string' ? BigInt(vote.votingPower) : vote.votingPower;
               const choiceText = vote.choice ? 'For' : 'Against';
 
               return (
@@ -34,7 +35,11 @@ export function AllVotesCard({ votes }: AllVotesCardProps) {
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    {vote.choice ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <XCircle className="h-4 w-4 text-red-500" />}
+                    {vote.choice ? (
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                    ) : (
+                      <XCircle className="h-4 w-4 text-red-500" />
+                    )}
                     <div>
                       <p className={`text-sm ${isUserVote ? 'font-medium' : ''}`}>
                         {vote.createdBy.slice(0, 6)}...{vote.createdBy.slice(-4)}
@@ -58,4 +63,3 @@ export function AllVotesCard({ votes }: AllVotesCardProps) {
     </Card>
   );
 }
-

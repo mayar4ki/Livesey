@@ -1,12 +1,12 @@
 'use client';
 
+import { useCreateProposal } from '@acme/client/services/proposal/useCreateProposal';
+import { proposalDurationToSeconds } from '@acme/client/services/proposal/utils';
 import { Button } from '@acme/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@acme/ui/form';
 import { Input } from '@acme/ui/input';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { useCreateProposal } from '~/services/proposal/useCreateProposal';
-import { proposalDurationToSeconds } from '~/services/proposal/utils';
 import { createProposalFormSchema, type CreateProposalFormSchema } from './createProposalFormSchema';
 
 interface CreateProposalFormProps {

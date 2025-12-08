@@ -1,5 +1,8 @@
 'use client';
 
+import { LimitOrderType, type LimitOrder } from '@acme/client/services/limit-order/useCreateLimitOrder';
+import { useLimitOrders } from '@acme/client/services/limit-order/useLimitOrders';
+import { useTrendingTokens } from '@acme/client/services/token/useTrendingTokens';
 import { formatDateTime, getChainUIName } from '@acme/client/utils';
 import { Badge } from '@acme/ui/badge';
 import { Button } from '@acme/ui/button';
@@ -9,10 +12,7 @@ import { ArrowRight, ArrowRightLeft, Flame, LineChart, Sparkles, TrendingUp, Zap
 import Link from 'next/link';
 import type { ComponentType } from 'react';
 import { useMemo } from 'react';
-import { useGetOrderTokensInfo } from '~/_hooks/useGetOrderTokensInfo';
-import { LimitOrderType, type LimitOrder } from '~/services/limit-order/useCreateLimitOrder';
-import { useLimitOrders } from '~/services/limit-order/useLimitOrders';
-import { useTrendingTokens } from '~/services/token/useTrendingTokens';
+import { useGetOrderTokensInfo } from '../../_hooks/useGetOrderTokensInfo';
 
 /**
  *

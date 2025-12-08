@@ -1,4 +1,4 @@
-import { Token } from '~/services/token/useToken';
+import { Token } from '@acme/client/services/token/types';
 import { LimitOrderCard } from './LimitOrderCard';
 
 import { OrderBookCard } from './OrderBookCard';

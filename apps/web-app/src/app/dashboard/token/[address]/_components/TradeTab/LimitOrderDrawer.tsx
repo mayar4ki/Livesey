@@ -1,8 +1,8 @@
+import { Token } from '@acme/client/services/token/types';
 import { Button } from '@acme/ui/button';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@acme/ui/drawer';
 import { useIsMobile } from '@acme/ui/hooks/use-mobile';
 import { useState } from 'react';
-import { Token } from '~/services/token/useToken';
 import { LimitOrderForm } from './LimitOrderForm/LimitOrderForm';
 
 export const LimitOrderDrawer = ({ token }: { token: Token }) => {

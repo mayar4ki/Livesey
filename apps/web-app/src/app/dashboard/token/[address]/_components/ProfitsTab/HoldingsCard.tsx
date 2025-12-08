@@ -1,11 +1,11 @@
 'use client';
 
+import { useTokenBalance } from '@acme/client/services/erc20/useTokenBalance';
+import { Token } from '@acme/client/services/token/types';
 import { Skeleton } from '@acme/ui/skeleton';
 import { PieChart, Wallet } from 'lucide-react';
 import { useMemo } from 'react';
 import { Address, formatUnits } from 'viem';
-import { useTokenBalance } from '~/services/erc20/useTokenBalance';
-import { Token } from '~/services/token/useToken';
 
 export interface HoldingsCardProps {
   token: Token;

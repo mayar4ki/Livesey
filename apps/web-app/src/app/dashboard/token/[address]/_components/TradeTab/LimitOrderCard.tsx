@@ -1,7 +1,7 @@
 'use client';
 
+import { Token } from '@acme/client/services/token/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
-import { Token } from '~/services/token/useToken';
 import { LimitOrderForm } from './LimitOrderForm/LimitOrderForm';
 
 export interface LimitOrderCardProps {

@@ -1,6 +1,7 @@
 'use client';
 
 import { useQueryParams } from '@acme/client/hooks';
+import { useLimitOrders } from '@acme/client/services/limit-order/useLimitOrders';
 import { DataTablePagination } from '@acme/ui/bootstrapped/data-table-pagination';
 import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
 import { LoadingCard } from '@acme/ui/bootstrapped/loading-card';
@@ -9,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ArrowRightLeft, Filter } from 'lucide-react';
 import { useState } from 'react';
 import { useChainId } from 'wagmi';
-import { useLimitOrders } from '~/services/limit-order/useLimitOrders';
 import { LimitOrdersTable } from '../_components/limit-order/LimitOrdersTable';
 
 export default function LimitOrderPage() {
@@ -88,7 +88,9 @@ export default function LimitOrderPage() {
               <ArrowRightLeft className="h-12 w-12 text-muted-foreground mb-4" />
               <h3 className="text-lg font-semibold mb-2">No Orders Found</h3>
               <p className="text-sm text-muted-foreground text-center">
-                {statusFilter === 'all' ? 'No limit orders available at the moment.' : `No ${statusFilter} orders found.`}
+                {statusFilter === 'all'
+                  ? 'No limit orders available at the moment.'
+                  : `No ${statusFilter} orders found.`}
               </p>
             </div>
           ) : (
@@ -96,7 +98,9 @@ export default function LimitOrderPage() {
               <LimitOrdersTable orders={orders} />
               <DataTablePagination
                 currentPage={Math.floor(params.skip / params.take) + 1}
-                totalPages={data?.pagination?.total ? Math.ceil(data?.pagination?.total / data?.pagination?.take) : 0}
+                totalPages={
+                  data?.pagination?.total ? Math.ceil(data?.pagination?.total / data?.pagination?.take) : 0
+                }
                 onPageChange={(page: number) => {
                   setParams({ skip: (page - 1) * params.take, take: params.take });
                 }}

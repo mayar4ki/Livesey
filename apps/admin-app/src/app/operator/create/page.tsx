@@ -1,5 +1,6 @@
 'use client';
 
+import { useAddOperator } from '@acme/client/services/factory/useAddOperator';
 import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
 import { Button } from '@acme/ui/button';
 import { toast } from '@acme/ui/sonner';
@@ -8,7 +9,6 @@ import { AnimatePresence } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { useAddOperator } from '~/services/factory/useAddOperator';
 import { TransactionStatusCard } from '../../token/_components/create/TransactionStatusCard';
 import { OperatorCreateForm } from '../_components/create/OperatorCreateForm';
 import { OperatorCreateFormSchema, operatorCreateFormSchema } from '../_libs/operatorCreateFormSchema';

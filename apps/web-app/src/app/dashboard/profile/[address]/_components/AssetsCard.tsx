@@ -22,10 +22,10 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useChainId } from 'wagmi';
 
+import { useWalletAssets, type Token } from '@acme/client/services/alchemy/useWalletAssets';
 import { Button } from '@acme/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@acme/ui/table';
 import { Address } from 'viem';
-import { useWalletAssets, type Token } from '~/services/alchemy/useWalletAssets';
 
 export const AssetsCard = ({ address }: { address: Address }) => {
   const chainId = useChainId();

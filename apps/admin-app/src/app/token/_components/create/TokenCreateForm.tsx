@@ -1,6 +1,7 @@
 'use client';
 
 import { computeHashFromPairs } from '@acme/client/helpers';
+import { useOperators } from '@acme/client/services/factory/useOperators';
 import { Button } from '@acme/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@acme/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@acme/ui/form';
@@ -10,7 +11,6 @@ import { Spinner } from '@acme/ui/spinner';
 import { Plus, Trash2 } from 'lucide-react';
 import { useEffect } from 'react';
 import { SubmitHandler, UseFormReturn, useFieldArray, useWatch } from 'react-hook-form';
-import { useOperators } from '~/services/factory/useOperators';
 import { TokenCreateFormSchema } from '../../_libs/tokenCreateFormSchema';
 
 type TokenCreateFormProps = {

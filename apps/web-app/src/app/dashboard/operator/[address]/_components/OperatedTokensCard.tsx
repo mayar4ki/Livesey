@@ -1,7 +1,8 @@
 'use client';
 
-import { formatAddress } from '@acme/client/utils';
 import { useQueryParams } from '@acme/client/hooks';
+import { useTokenList } from '@acme/client/services/token/useTokenList';
+import { formatAddress } from '@acme/client/utils';
 import { DataTablePagination } from '@acme/ui/bootstrapped/data-table-pagination';
 import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
 import { LoadingCard } from '@acme/ui/bootstrapped/loading-card';
@@ -9,12 +10,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme
 import { Shield } from 'lucide-react';
 import { Address } from 'viem';
 import { TokensTable } from '~/app/dashboard/token/_components/TokensTable';
-import { useTokensList } from '~/services/token/useTokensList';
 
 export const OperatedTokensCard = ({ address }: { address: Address }) => {
   const { params, setParams } = useQueryParams({ operatedTake: 10, operatedSkip: 0 });
 
-  const { data, isLoading, error } = useTokensList({
+  const { data, isLoading, error } = useTokenList({
     skip: params.operatedSkip,
     take: params.operatedTake,
     operator: address,
@@ -60,9 +60,7 @@ export const OperatedTokensCard = ({ address }: { address: Address }) => {
             <DataTablePagination
               currentPage={Math.floor(params.operatedSkip / params.operatedTake) + 1}
               totalPages={
-                data?.pagination?.total
-                  ? Math.ceil(data?.pagination?.total / data?.pagination?.take)
-                  : 0
+                data?.pagination?.total ? Math.ceil(data?.pagination?.total / data?.pagination?.take) : 0
               }
               onPageChange={(page: number) => {
                 setParams({

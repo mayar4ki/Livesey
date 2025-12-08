@@ -1,5 +1,6 @@
 'use client';
 
+import { usePauseFactory, useUnpauseFactory } from '@acme/client/services/factory/usePauseFactory';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,7 +15,6 @@ import { Button } from '@acme/ui/button';
 import { toast } from '@acme/ui/sonner';
 import { AlertTriangle, Loader2, Pause, Play } from 'lucide-react';
 import { useState } from 'react';
-import { usePauseFactory, useUnpauseFactory } from '~/services/factory/usePauseFactory';
 
 type PauseUnpauseFactorySectionProps = {
   paused: boolean;

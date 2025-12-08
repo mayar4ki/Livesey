@@ -1,10 +1,10 @@
 'use client';
 
+import { BaseCurrency } from '@acme/client/services/1inche/config/index';
 import { FormControl, FormDescription, FormField, FormItem, FormMessage } from '@acme/ui/form';
 import { Input } from '@acme/ui/input';
 import { useEffect, useRef } from 'react';
 import { Control, ControllerProps, FieldPath, FieldValues, useController, useWatch } from 'react-hook-form';
-import { BaseCurrency } from '~/services/1inche/config';
 
 export interface LimitOrderPriceLimitInputProps<
   TFieldValues extends FieldValues = FieldValues,

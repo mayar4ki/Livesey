@@ -1,5 +1,5 @@
-import { useCreateToken } from '~/services/factory/useCreateBeaconProxy';
-import { useStorePendingSeed } from '~/services/token/useStoreSeed';
+import { useCreateToken } from '@acme/client/services/factory/useCreateBeaconProxy';
+import { useStorePendingSeed } from '@acme/client/services/token/useStoreSeed';
 import { TokenCreateFormSchema } from '../_libs/tokenCreateFormSchema';
 
 export function useTokenCreation() {

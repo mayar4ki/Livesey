@@ -1,9 +1,9 @@
 'use client';
 
+import { type Proposal } from '@acme/client/services/proposal/useProposal';
+import { type ProposalStatus } from '@acme/client/services/proposal/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
 import { Calendar, Clock } from 'lucide-react';
-import { type Proposal } from '~/services/proposal/useProposal';
-import { type ProposalStatus } from '~/services/proposal/utils';
 import { formatDate, formatRelativeTime, formatTimeRemaining } from './utils';
 
 interface ProposalHeaderCardProps {
@@ -30,12 +30,13 @@ export function ProposalHeaderCard({ proposal, status }: ProposalHeaderCardProps
             </div>
           </div>
           <span
-            className={`text-xs px-3 py-1 rounded-full font-medium ${status === 'active'
+            className={`text-xs px-3 py-1 rounded-full font-medium ${
+              status === 'active'
                 ? 'bg-blue-500/10 text-blue-500'
                 : status === 'closed'
                   ? 'bg-gray-500/10 text-gray-500'
                   : 'bg-yellow-500/10 text-yellow-500'
-              }`}
+            }`}
           >
             {status === 'active' ? 'Active' : status === 'closed' ? 'Closed' : 'Pending'}
           </span>
@@ -73,4 +74,3 @@ export function ProposalHeaderCard({ proposal, status }: ProposalHeaderCardProps
     </Card>
   );
 }
-

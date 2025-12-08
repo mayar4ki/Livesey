@@ -1,4 +1,4 @@
-import { type LimitOrder } from '~/services/limit-order/useCreateLimitOrder';
+import { type LimitOrder } from '@acme/client/services/limit-order/useCreateLimitOrder';
 
 export function getStatusBadgeVariant(status: LimitOrder['status']) {
   switch (status) {

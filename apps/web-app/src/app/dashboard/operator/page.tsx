@@ -1,5 +1,6 @@
 'use client';
 
+import { useOperators } from '@acme/client/services/factory/useOperators';
 import { formatAddress, getChainUIName } from '@acme/client/utils';
 import { Badge } from '@acme/ui/badge';
 import { ExplorerLink } from '@acme/ui/bootstrapped/explorer-address-link';
@@ -10,7 +11,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Plus, Users } from 'lucide-react';
 import Link from 'next/link';
 import { useChainId } from 'wagmi';
-import { useOperators } from '~/services/factory/useOperators';
 
 export default function Page() {
   const chainId = useChainId();

@@ -1,5 +1,6 @@
 'use client';
 
+import { useUpgradeBeacon } from '@acme/client/services/factory/useUpgradeBeacon';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,7 +20,6 @@ import { AlertTriangle, Loader2, Upload } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Address } from 'viem';
-import { useUpgradeBeacon } from '~/services/factory/useUpgradeBeacon';
 import { upgradeBeaconSchema, type UpgradeBeaconFormSchema } from './_libs/validationSchemas';
 
 type UpgradeBeaconSectionProps = {

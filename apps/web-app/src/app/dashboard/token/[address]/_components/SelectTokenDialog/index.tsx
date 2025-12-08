@@ -3,12 +3,10 @@
 import { ChevronDownIcon, Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
+import { BaseCurrency } from '@acme/client/services/1inche/config/index';
 import { Button } from '@acme/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@acme/ui/dialog';
 import { Input } from '@acme/ui/input';
-import { BaseCurrency } from '~/services/1inche/config';
-
-
 
 interface SelectTokenDialogProps {
   options: BaseCurrency[];
@@ -28,7 +26,10 @@ export const SelectTokenDialog = ({ options, value, onChange, disabled }: Select
 
     const query = searchQuery.toLowerCase();
     return options.filter(
-      (token) => token.name.toLowerCase().includes(query) || token.symbol.toLowerCase().includes(query) || token.address.toLowerCase().includes(query)
+      (token) =>
+        token.name.toLowerCase().includes(query) ||
+        token.symbol.toLowerCase().includes(query) ||
+        token.address.toLowerCase().includes(query)
     );
   }, [searchQuery, options]);
 

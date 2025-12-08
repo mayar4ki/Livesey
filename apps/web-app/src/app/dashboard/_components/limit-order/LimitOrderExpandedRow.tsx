@@ -1,12 +1,12 @@
 'use client';
 
+import { LimitOrderType, type LimitOrder } from '@acme/client/services/limit-order/useCreateLimitOrder';
+import { TokenSeedData } from '@acme/client/services/token/types';
 import { formatTokenAmount } from '@acme/client/utils';
 import { Badge } from '@acme/ui/badge';
 import { ExplorerLink } from '@acme/ui/bootstrapped/explorer-address-link';
 import { TableCell, TableRow } from '@acme/ui/table';
 import { useAccount } from 'wagmi';
-import { LimitOrderType, type LimitOrder } from '~/services/limit-order/useCreateLimitOrder';
-import { TokenSeedData } from '~/services/token/useToken';
 import { getOurTokenDecimals } from '~/utils/token-decimals';
 
 interface LimitOrderExpandedRowProps {

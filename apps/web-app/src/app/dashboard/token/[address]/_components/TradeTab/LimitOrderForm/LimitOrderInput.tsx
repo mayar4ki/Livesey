@@ -1,5 +1,7 @@
 'use client';
 
+import { BaseCurrency } from '@acme/client/services/1inche/config/index';
+import { useTokenBalance } from '@acme/client/services/erc20/useTokenBalance';
 import { Avatar, AvatarFallback, AvatarImage } from '@acme/ui/avatar';
 import { Button } from '@acme/ui/button';
 import { FormControl, FormField, FormItem, FormMessage } from '@acme/ui/form';
@@ -7,8 +9,6 @@ import { Input } from '@acme/ui/input';
 import { useMemo } from 'react';
 import { Control, ControllerProps, FieldPath, FieldValues, useController } from 'react-hook-form';
 import { formatUnits } from 'viem';
-import { BaseCurrency } from '~/services/1inche/config';
-import { useTokenBalance } from '~/services/erc20/useTokenBalance';
 import { SelectTokenDialog } from '../../SelectTokenDialog';
 
 export interface LimitOrderInputProps<

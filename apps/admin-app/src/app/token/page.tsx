@@ -1,6 +1,7 @@
 'use client';
 
 import { useQueryParams } from '@acme/client/hooks';
+import { useTokenList } from '@acme/client/services/token/useTokenList';
 import { formatDateTime, getChainUIName } from '@acme/client/utils';
 import { Badge } from '@acme/ui/badge';
 import { DataTablePagination } from '@acme/ui/bootstrapped/data-table-pagination';
@@ -12,7 +13,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@acme/ui/table';
 import { Coins, Plus } from 'lucide-react';
 import Link from 'next/link';
-import { useTokenList } from '~/services/token/useTokenList';
 import { TokenActionsMenu } from './_components/TokenActionsMenu';
 
 export default function Page() {
@@ -77,7 +77,7 @@ export default function Page() {
                 {data?.data.map((token) => (
                   <TableRow key={token.id}>
                     <TableCell>
-                      <Link href={`/token/${token.id}`} className="font-medium hover:underline cursor-pointer">
+                      <Link href={`/token/${token.token}`} className="font-medium hover:underline cursor-pointer">
                         {token.name}
                       </Link>
                     </TableCell>

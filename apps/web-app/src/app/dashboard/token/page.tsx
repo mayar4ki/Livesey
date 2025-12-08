@@ -1,13 +1,13 @@
 'use client';
 
 import { useQueryParams } from '@acme/client/hooks';
+import { useTrendingTokens } from '@acme/client/services/token/useTrendingTokens';
 import { DataTablePagination } from '@acme/ui/bootstrapped/data-table-pagination';
 import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
 import { LoadingCard } from '@acme/ui/bootstrapped/loading-card';
 import { Card, CardContent } from '@acme/ui/card';
 import { Coins } from 'lucide-react';
 import { useMemo } from 'react';
-import { useTrendingTokens } from '~/services/token/useTrendingTokens';
 import { TokenViewToggle } from './_components/TokenViewToggle';
 import { TokensTable } from './_components/TokensTable';
 
@@ -72,7 +72,9 @@ export default function Page() {
               <TokensTable tokens={tokens} />
               <DataTablePagination
                 currentPage={Math.floor(params.skip / params.take) + 1}
-                totalPages={data?.pagination?.total ? Math.ceil(data?.pagination?.total / data?.pagination?.take) : 0}
+                totalPages={
+                  data?.pagination?.total ? Math.ceil(data?.pagination?.total / data?.pagination?.take) : 0
+                }
                 onPageChange={(page: number) => {
                   setParams({ skip: (page - 1) * params.take, take: params.take });
                 }}

@@ -1,7 +1,7 @@
 'use client';
 
+import { type LimitOrder } from '@acme/client/services/limit-order/useCreateLimitOrder';
 import { useAccount } from 'wagmi';
-import { type LimitOrder } from '~/services/limit-order/useCreateLimitOrder';
 import { CancelOrderAction } from './CancelOrderAction';
 import { FillOrderAction } from './FillOrderAction';
 
