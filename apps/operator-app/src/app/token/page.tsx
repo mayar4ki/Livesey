@@ -13,11 +13,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@acme/ui/table';
 import { Coins, Plus } from 'lucide-react';
 import Link from 'next/link';
+import { useAccount } from 'wagmi';
 import { TokenActionsMenu } from './_components/TokenActionsMenu';
 
 export default function Page() {
   const { params, setParams } = useQueryParams({ take: 10, skip: 0 });
-  const { data, isLoading, error } = useTokenList({ skip: params.skip, take: params.take });
+
+  const { address } = useAccount();
+  const { data, isLoading, error } = useTokenList({ skip: params.skip, take: params.take, operator: address });
 
   if (isLoading) {
     return <LoadingCard message="Loading token list..." />;
@@ -35,7 +38,7 @@ export default function Page() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Token List</CardTitle>
+              <CardTitle>Operated Tokens</CardTitle>
             </div>
           </div>
         </CardHeader>

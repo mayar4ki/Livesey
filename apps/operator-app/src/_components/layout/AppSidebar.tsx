@@ -37,7 +37,7 @@ const navGroups = [
     label: 'Tokens',
     items: [
       {
-        title: 'Tokens List',
+        title: 'Operated Tokens',
         url: '/token',
         icon: Coins,
       },
