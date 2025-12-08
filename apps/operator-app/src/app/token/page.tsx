@@ -71,7 +71,7 @@ export default function Page() {
                 {data?.data.map((token) => (
                   <TableRow key={token.id}>
                     <TableCell>
-                      <Link href={`/token/${token.id}`} className="font-medium hover:underline cursor-pointer">
+                      <Link href={`/token/${token.token}`} className="font-medium hover:underline cursor-pointer">
                         {token.name}
                       </Link>
                     </TableCell>

@@ -624,9 +624,6 @@ importers:
       '@acme/smart-contract':
         specifier: workspace:*
         version: link:../smart-contract
-      '@acme/ui':
-        specifier: workspace:*
-        version: link:../ui
       '@tanstack/react-query':
         specifier: ^5.90.2
         version: 5.90.7(react@19.1.1)
