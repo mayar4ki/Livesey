@@ -22,7 +22,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@snapshot-labs/snapshot.js": "^0.14.15",
     "@t3-oss/env-nextjs": "^0.13.8",
-    "@tanstack/react-query": "^5.90.2",
+    "@tanstack/react-query": "catalog:",
     "@tanstack/react-table": "^8.21.3",
     "axios": "^1.13.1",
     "clsx": "^2.1.1",
@@ -34,7 +34,7 @@
     "react-dom": "catalog:react19",
     "react-hook-form": "^7.65.0",
     "viem": "catalog:",
-    "wagmi": "^2.17.5",
+    "wagmi": "catalog:",
     "yup": "^1.7.1",
     "zod": "catalog:"
   },
