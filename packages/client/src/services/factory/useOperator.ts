@@ -1,8 +1,9 @@
-import { Address } from 'viem';
-import { useReadContract } from 'wagmi';
-import { ABI } from '~/_config/smart-contracts/Factory/abi';
-import { ADDRESS } from '~/_config/smart-contracts/Factory/address';
-import { OperatorInfo } from './useOperators';
+import { FactoryAbi } from "@acme/smart-contract";
+import { Address } from "viem";
+import { useReadContract } from "wagmi";
+import { OperatorInfo } from "./useOperators";
+
+const ADDRESS = process.env.NEXT_PUBLIC_FACTORY_ADDRESS as Address;
 
 /**
  * Hook to fetch a single operator's information from the Factory contract
@@ -12,8 +13,8 @@ import { OperatorInfo } from './useOperators';
 export function useOperator(operatorAddress: Address | undefined) {
   const { data, isLoading } = useReadContract({
     address: ADDRESS,
-    abi: ABI,
-    functionName: 'operatorsLedger',
+    abi: FactoryAbi,
+    functionName: "operatorsLedger",
     args: operatorAddress ? [operatorAddress] : undefined,
     query: {
       enabled: !!operatorAddress,

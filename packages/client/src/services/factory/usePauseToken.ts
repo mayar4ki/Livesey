@@ -1,9 +1,10 @@
-import { MutateOptions, useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
-import { Address } from 'viem';
-import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
-import { ABI } from '~/_config/smart-contracts/Factory/abi';
-import { ADDRESS } from '~/_config/smart-contracts/Factory/address';
+import { FactoryAbi } from "@acme/smart-contract";
+import { MutateOptions, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { Address } from "viem";
+import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+
+const ADDRESS = process.env.NEXT_PUBLIC_FACTORY_ADDRESS as Address;
 
 export const usePauseToken = () => {
   const queryClient = useQueryClient();
@@ -13,8 +14,8 @@ export const usePauseToken = () => {
     writeContract(
       {
         address: ADDRESS,
-        abi: ABI,
-        functionName: 'pauseToken',
+        abi: FactoryAbi,
+        functionName: "pauseToken",
         args: [tokenAddress],
       },
       options as never
@@ -31,7 +32,7 @@ export const usePauseToken = () => {
   useEffect(() => {
     if (transactionReceipt.isSuccess) {
       queryClient.invalidateQueries({
-        queryKey: ['readContract', { address: ADDRESS }],
+        queryKey: ["readContract", { address: ADDRESS }],
       });
     }
   }, [transactionReceipt.isSuccess, queryClient]);
@@ -52,8 +53,8 @@ export const useUnpauseToken = () => {
     writeContract(
       {
         address: ADDRESS,
-        abi: ABI,
-        functionName: 'unpauseToken',
+        abi: FactoryAbi,
+        functionName: "unpauseToken",
         args: [tokenAddress],
       },
       options as never
@@ -70,7 +71,7 @@ export const useUnpauseToken = () => {
   useEffect(() => {
     if (transactionReceipt.isSuccess) {
       queryClient.invalidateQueries({
-        queryKey: ['readContract', { address: ADDRESS }],
+        queryKey: ["readContract", { address: ADDRESS }],
       });
     }
   }, [transactionReceipt.isSuccess, queryClient]);

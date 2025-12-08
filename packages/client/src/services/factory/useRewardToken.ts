@@ -1,6 +1,7 @@
-import { useReadContract } from 'wagmi';
-import { ABI } from '~/_config/smart-contracts/Factory/abi';
-import { ADDRESS } from '~/_config/smart-contracts/Factory/address';
+import { FactoryAbi as ABI } from "@acme/smart-contract";
+import { Address } from "viem";
+import { useReadContract } from "wagmi";
+const ADDRESS = process.env.NEXT_PUBLIC_FACTORY_ADDRESS as Address;
 
 /**
  * Hook to fetch the reward token address from the Factory contract
@@ -10,7 +11,7 @@ export function useRewardToken() {
   const query = useReadContract({
     address: ADDRESS,
     abi: ABI,
-    functionName: 'rewardToken',
+    functionName: "rewardToken",
   });
 
   return {

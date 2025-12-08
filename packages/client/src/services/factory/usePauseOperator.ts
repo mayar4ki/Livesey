@@ -1,9 +1,9 @@
-import { MutateOptions, useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
-import { Address } from 'viem';
-import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
-import { ABI } from '~/_config/smart-contracts/Factory/abi';
-import { ADDRESS } from '~/_config/smart-contracts/Factory/address';
+import { FactoryAbi as ABI } from "@acme/smart-contract";
+import { MutateOptions, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { Address } from "viem";
+import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+const ADDRESS = process.env.NEXT_PUBLIC_FACTORY_ADDRESS as Address;
 
 export const usePauseOperator = () => {
   const queryClient = useQueryClient();
@@ -14,7 +14,7 @@ export const usePauseOperator = () => {
       {
         address: ADDRESS,
         abi: ABI,
-        functionName: 'pauseOperator',
+        functionName: "pauseOperator",
         args: [operatorAddress],
       },
       options as never
@@ -31,7 +31,7 @@ export const usePauseOperator = () => {
   useEffect(() => {
     if (transactionReceipt.isSuccess) {
       queryClient.invalidateQueries({
-        queryKey: ['readContract', { address: ADDRESS }],
+        queryKey: ["readContract", { address: ADDRESS }],
       });
     }
   }, [transactionReceipt.isSuccess, queryClient]);
@@ -53,7 +53,7 @@ export const useUnpauseOperator = () => {
       {
         address: ADDRESS,
         abi: ABI,
-        functionName: 'unpauseOperator',
+        functionName: "unpauseOperator",
         args: [operatorAddress],
       },
       options as never
@@ -70,7 +70,7 @@ export const useUnpauseOperator = () => {
   useEffect(() => {
     if (transactionReceipt.isSuccess) {
       queryClient.invalidateQueries({
-        queryKey: ['readContract', { address: ADDRESS }],
+        queryKey: ["readContract", { address: ADDRESS }],
       });
     }
   }, [transactionReceipt.isSuccess, queryClient]);

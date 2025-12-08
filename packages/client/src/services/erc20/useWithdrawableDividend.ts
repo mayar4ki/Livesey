@@ -1,6 +1,6 @@
-import { Address } from 'viem';
-import { useAccount, useReadContract } from 'wagmi';
-import { ABI } from '~/_config/smart-contracts/ERC20Implementation/abi';
+import { ERC20ImplementationAbi as ABI } from "@acme/smart-contract";
+import { Address } from "viem";
+import { useAccount, useReadContract } from "wagmi";
 
 /**
  * Hook to fetch the withdrawable dividend amount for the connected user
@@ -13,7 +13,7 @@ export function useWithdrawableDividend(tokenAddress: Address | undefined) {
   const query = useReadContract({
     address: tokenAddress,
     abi: ABI,
-    functionName: 'withdrawableDividendOf',
+    functionName: "withdrawableDividendOf",
     args: userAddress ? [userAddress] : undefined,
     query: {
       enabled: !!tokenAddress && !!userAddress,

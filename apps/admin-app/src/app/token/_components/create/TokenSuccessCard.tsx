@@ -1,6 +1,7 @@
 'use client';
 
 import { getExplorerUrl } from '@acme/client/utils';
+import { ERC20ImplementationAbi as ABI } from '@acme/smart-contract';
 import { ExplorerLink } from '@acme/ui/bootstrapped/explorer-address-link';
 import { Button } from '@acme/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
@@ -9,7 +10,6 @@ import { motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { Address } from 'viem';
 import { useChainId, useReadContract } from 'wagmi';
-import { ABI } from '~/_config/smart-contracts/ERC20Implementation/abi';
 import { addTokenToWallet } from '~/_helpers/addTokenToWallet';
 
 type TokenSuccessCardProps = {

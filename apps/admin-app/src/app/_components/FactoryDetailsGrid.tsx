@@ -6,7 +6,7 @@ import { Badge } from '@acme/ui/badge';
 import { ExplorerLink } from '@acme/ui/bootstrapped/explorer-address-link';
 import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
 import { useAccount, useChainId } from 'wagmi';
-import { ADDRESS } from '~/_config/smart-contracts/Factory/address';
+import { env } from '~/env';
 
 export function FactoryDetailsGrid() {
   const chainId = useChainId();
@@ -24,7 +24,7 @@ export function FactoryDetailsGrid() {
           <div>
             <label className="text-sm font-medium text-muted-foreground">Factory Address</label>
             <div className="mt-1">
-              <ExplorerLink hash={ADDRESS} chainId={chainId} showFull />
+              <ExplorerLink hash={env.NEXT_PUBLIC_FACTORY_ADDRESS} chainId={chainId} showFull />
             </div>
           </div>
           <div>

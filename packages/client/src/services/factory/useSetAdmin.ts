@@ -1,12 +1,12 @@
-import { MutateOptions } from '@tanstack/react-query';
-import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
-import type { WriteContractParameters } from 'wagmi/actions';
-import { Address } from 'viem';
-import { ABI } from '~/_config/smart-contracts/Factory/abi';
-import { ADDRESS } from '~/_config/smart-contracts/Factory/address';
+import { FactoryAbi as ABI } from "@acme/smart-contract";
+import { MutateOptions } from "@tanstack/react-query";
+import { Address } from "viem";
+import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import type { WriteContractParameters } from "wagmi/actions";
+const ADDRESS = process.env.NEXT_PUBLIC_FACTORY_ADDRESS as Address;
 
-type SetAdminWriteParams = WriteContractParameters<typeof ABI, 'setAdmin'>;
-type SetAdminArgs = NonNullable<SetAdminWriteParams['args']>;
+type SetAdminWriteParams = WriteContractParameters<typeof ABI, "setAdmin">;
+type SetAdminArgs = NonNullable<SetAdminWriteParams["args"]>;
 
 export const useSetAdmin = () => {
   const { writeContract, data, ...rest } = useWriteContract();
@@ -16,7 +16,7 @@ export const useSetAdmin = () => {
       {
         address: ADDRESS,
         abi: ABI,
-        functionName: 'setAdmin',
+        functionName: "setAdmin",
         args: [newAdminAddress],
       },
       options as never
@@ -37,4 +37,3 @@ export const useSetAdmin = () => {
     transactionReceipt,
   };
 };
-

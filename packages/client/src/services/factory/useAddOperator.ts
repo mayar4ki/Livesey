@@ -1,8 +1,8 @@
-import { MutateOptions } from '@tanstack/react-query';
-import { Address } from 'viem';
-import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
-import { ABI } from '~/_config/smart-contracts/Factory/abi';
-import { ADDRESS } from '~/_config/smart-contracts/Factory/address';
+import { FactoryAbi as ABI } from "@acme/smart-contract";
+import { MutateOptions } from "@tanstack/react-query";
+import { Address } from "viem";
+import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+const ADDRESS = process.env.NEXT_PUBLIC_FACTORY_ADDRESS as Address;
 
 export const useAddOperator = () => {
   const { writeContract, data, ...rest } = useWriteContract();
@@ -12,7 +12,7 @@ export const useAddOperator = () => {
       {
         address: ADDRESS,
         abi: ABI,
-        functionName: 'addOperator',
+        functionName: "addOperator",
         args: [operatorAddress],
       },
       options as never

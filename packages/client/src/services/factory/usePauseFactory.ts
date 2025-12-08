@@ -1,7 +1,8 @@
-import { MutateOptions } from '@tanstack/react-query';
-import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
-import { ABI } from '~/_config/smart-contracts/Factory/abi';
-import { ADDRESS } from '~/_config/smart-contracts/Factory/address';
+import { FactoryAbi as ABI } from "@acme/smart-contract";
+import { MutateOptions } from "@tanstack/react-query";
+import { Address } from "viem";
+import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+const ADDRESS = process.env.NEXT_PUBLIC_FACTORY_ADDRESS as Address;
 
 export const usePauseFactory = () => {
   const { writeContract, data, ...rest } = useWriteContract();
@@ -11,7 +12,7 @@ export const usePauseFactory = () => {
       {
         address: ADDRESS,
         abi: ABI,
-        functionName: 'pause',
+        functionName: "pause",
       },
       options as never
     );
@@ -40,7 +41,7 @@ export const useUnpauseFactory = () => {
       {
         address: ADDRESS,
         abi: ABI,
-        functionName: 'unpause',
+        functionName: "unpause",
       },
       options as never
     );

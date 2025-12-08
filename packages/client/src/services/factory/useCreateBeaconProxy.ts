@@ -1,11 +1,15 @@
-import { MutateOptions } from '@tanstack/react-query';
-import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
-import type { WriteContractParameters } from 'wagmi/actions';
-import { ABI } from '~/_config/smart-contracts/Factory/abi';
-import { ADDRESS } from '~/_config/smart-contracts/Factory/address';
+import { FactoryAbi as ABI } from "@acme/smart-contract";
+import { MutateOptions } from "@tanstack/react-query";
+import { Address } from "viem";
+import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import type { WriteContractParameters } from "wagmi/actions";
+const ADDRESS = process.env.NEXT_PUBLIC_FACTORY_ADDRESS as Address;
 
-type CreateBeaconProxyWriteParams = WriteContractParameters<typeof ABI, 'createToken'>;
-type CreateBeaconProxyArgs = NonNullable<CreateBeaconProxyWriteParams['args']>;
+type CreateBeaconProxyWriteParams = WriteContractParameters<
+  typeof ABI,
+  "createToken"
+>;
+type CreateBeaconProxyArgs = NonNullable<CreateBeaconProxyWriteParams["args"]>;
 
 export const useCreateToken = () => {
   const { writeContract, data, ...rest } = useWriteContract();
@@ -15,7 +19,7 @@ export const useCreateToken = () => {
       {
         address: ADDRESS,
         abi: ABI,
-        functionName: 'createToken',
+        functionName: "createToken",
         args,
       },
       options as never

@@ -5,7 +5,7 @@ import { Button } from '@acme/ui/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
 import { ExternalLink, Factory } from 'lucide-react';
 import { useChainId } from 'wagmi';
-import { ADDRESS } from '~/_config/smart-contracts/Factory/address';
+import { env } from '~/env';
 
 export function FactoryHeaderCard() {
   const chainId = useChainId();
@@ -22,7 +22,12 @@ export function FactoryHeaderCard() {
             <CardDescription>General information about the Factory contract</CardDescription>
           </div>
           <Button asChild variant="outline">
-            <a href={getExplorerUrl(ADDRESS, chainId)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2">
+            <a
+              href={getExplorerUrl(env.NEXT_PUBLIC_FACTORY_ADDRESS as `0x${string}`, chainId)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2"
+            >
               View on Explorer
               <ExternalLink className="h-4 w-4" />
             </a>
