@@ -16,9 +16,9 @@
     "clean:workspaces": "turbo run clean"
   },
   "devDependencies": {
+    "dotenv-cli": "catalog:",
     "prettier": "catalog:",
-    "turbo": "^2.5.8",
-    "typescript": "catalog:",
-    "dotenv-cli": "catalog:"
+    "turbo": "^2.6.3",
+    "typescript": "catalog:"
   }
 }
