@@ -1,29 +1,30 @@
-import { StoreKeys } from '@acme/queue';
 import { FactoryAbi } from '@acme/smart-contract';
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Address, WatchContractEventOnLogsParameter } from 'viem';
-import { RedisService } from '../../lib/redis/redis.service.js';
+
+import { getOperatorStoreKey } from 'node_modules/@acme/queue/src/keys.js';
+import { RedisService } from 'src/lib/redis/redis.service.js';
 import { ViemPublicClientService } from '../../lib/viem/viem.service.js';
-import { Env } from '../../schemas/env-validation-schema.js';
+import type { Env } from '../../schemas/env-validation-schema.js';
+
+type EventsLog = WatchContractEventOnLogsParameter<typeof FactoryAbi, 'OperatorPaused'>[number];
 
 type Unwatch = () => void;
 
-type NewAdminAddressEventsLog = WatchContractEventOnLogsParameter<typeof FactoryAbi, 'NewAdminAddress'>[number];
-
 @Injectable()
-export class NewAdminAddressEventListenerService implements OnModuleInit, OnModuleDestroy {
+export class OperatorPausedEventListenerService implements OnModuleInit, OnModuleDestroy {
   private unwatch?: Unwatch;
-  private readonly logger = new Logger(NewAdminAddressEventListenerService.name);
+  private readonly logger = new Logger(OperatorPausedEventListenerService.name);
 
   constructor(
-    private readonly configService: ConfigService<Env>,
     private readonly viemPublicClient: ViemPublicClientService,
+    private readonly configService: ConfigService<Env>,
     private readonly redisService: RedisService,
   ) {}
 
   onModuleInit() {
-    this.logger.log('Starting NewAdminAddress listener');
+    this.logger.log('Starting OperatorPaused listener');
 
     const factoryAddress = this.configService.get<string>('FACTORY_ADDRESS', {
       infer: true,
@@ -32,9 +33,9 @@ export class NewAdminAddressEventListenerService implements OnModuleInit, OnModu
     this.unwatch = this.viemPublicClient.client.watchContractEvent({
       address: factoryAddress as Address,
       abi: FactoryAbi,
-      eventName: 'NewAdminAddress',
+      eventName: 'OperatorPaused',
       onError: (error) => {
-        this.logger.error('NewAdminAddress watcher error', error instanceof Error ? error.stack : String(error));
+        this.logger.error('OperatorPaused watcher error', error instanceof Error ? error.stack : String(error));
       },
       onLogs: async (logs) => {
         for (const log of logs) {
@@ -42,7 +43,7 @@ export class NewAdminAddressEventListenerService implements OnModuleInit, OnModu
             await this.handle(log);
           } catch (error) {
             this.logger.error(
-              'NewAdminAddress handler failed',
+              'OperatorPaused handler failed',
               error instanceof Error ? error.stack : String(error),
             );
           }
@@ -50,35 +51,34 @@ export class NewAdminAddressEventListenerService implements OnModuleInit, OnModu
       },
     });
 
-    this.logger.log('NewAdminAddress listener ready');
+    this.logger.log('OperatorPaused listener ready');
   }
 
   /**
-   * Handle NewAdminAddress events
-   * Updates the cached admin address in Redis when the admin address changes
+   * Handle OperatorPaused events
+   * Updates the cached operator address in Redis when the operator address changes
    */
-  private async handle(log: NewAdminAddressEventsLog) {
-    const newAdminAddress = log?.args?.admin;
-
+  private async handle(log: EventsLog) {
+    const operatorAddress = log.args.operator;
     console.log(
-      `📢 NewAdminAddress event detected:\n` +
-        `  New Admin Address: ${newAdminAddress}\n` +
+      `📢 OperatorPaused event detected:\n` +
+        `  Operator Address: ${operatorAddress}\n` +
         `  Transaction: ${log?.transactionHash}\n` +
         `  Block: ${log?.blockNumber}`,
     );
 
     try {
-      // Delete the cached admin address in Redis
-      if (newAdminAddress) {
+      // Delete the cached operator address in Redis
+      if (operatorAddress) {
         await this.redisService.ensureConnected();
-        await this.redisService.client.del(StoreKeys.FACTORY_ADMIN_ADDRESS);
+        await this.redisService.client.del(getOperatorStoreKey(operatorAddress));
       } else {
-        throw Error('admin address not found');
+        throw Error('operator address not found');
       }
     } catch (error) {
       // Don't throw - continue listening to other events
       console.error(
-        `❌ Error deleting admin address cache in Redis:`,
+        `❌ Error deleting operator address cache in Redis:`,
         error instanceof Error ? error.message : error,
       );
     }

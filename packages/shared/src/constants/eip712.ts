@@ -39,3 +39,24 @@ export const SIGNATURE_REQUEST_TYPES = {
     { name: "nonce", type: "uint256" },
   ],
 } as const;
+
+/**
+ * EIP-712 domain for operator requests
+ */
+export const OPERATOR_REQUEST_DOMAIN = {
+  name: "https://operator.livesey.com",
+  version: "1",
+} as const;
+
+/**
+ * EIP-712 types for operator requests
+ */
+export const OPERATOR_REQUEST_TYPES = {
+  OperatorRequest: [
+    { name: "method", type: "string" },
+    { name: "path", type: "string" },
+    { name: "bodyHash", type: "bytes32" },
+    { name: "timestamp", type: "uint256" },
+    { name: "nonce", type: "uint256" },
+  ],
+} as const;

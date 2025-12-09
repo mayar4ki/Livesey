@@ -12,9 +12,9 @@ type EventsLog = WatchContractEventOnLogsParameter<typeof FactoryAbi, 'TokenNewO
 type Unwatch = () => void;
 
 @Injectable()
-export class NewOperatorAddressEventListenerService implements OnModuleInit, OnModuleDestroy {
+export class TokenOperatorChangedEventListenerService implements OnModuleInit, OnModuleDestroy {
   private unwatch?: Unwatch;
-  private readonly logger = new Logger(NewOperatorAddressEventListenerService.name);
+  private readonly logger = new Logger(TokenOperatorChangedEventListenerService.name);
 
   constructor(
     private readonly viemPublicClient: ViemPublicClientService,

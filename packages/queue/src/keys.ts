@@ -2,7 +2,10 @@ import { Address } from "viem";
 
 export enum StoreKeys {
   FACTORY_ADMIN_ADDRESS = "factory:admin:address",
-  ADMIN_NONCE_PREFIX = "admin:nonce",
+}
+
+export function getOperatorStoreKey(address: string) {
+  return `factory:operator:${address.toLowerCase()}`;
 }
 
 export function getVerificationTaskKey(chainId: number, token: Address) {

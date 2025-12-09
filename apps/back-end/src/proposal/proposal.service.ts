@@ -23,7 +23,7 @@ export class ProposalService {
 
   private readonly REQUIRED_VOTING_POWER_PERCENTAGE = 20;
 
-  async create(dto: CreateProposalDto, creatorAddress: string) {
+  async createWithVotingPower(dto: CreateProposalDto, creatorAddress: string) {
     const blockNumber = await this.viemPublicClient.client.getBlockNumber();
 
     const token = await this.prisma.client.token.findUnique({
@@ -68,15 +68,29 @@ export class ProposalService {
       );
     }
 
-    await this.prisma.client.proposal.create({
+    await this.create(dto, creatorAddress);
+
+    return {};
+  }
+
+  async create(dto: CreateProposalDto, creatorAddress: string) {
+    const blockNumber = await this.viemPublicClient.client.getBlockNumber();
+
+    await this.prisma.client.token.update({
+      where: {
+        id: dto.tokenId,
+      },
       data: {
-        title: dto.title,
-        description: dto.description,
-        duration: dto.duration,
-        blockNumber: BigInt(blockNumber),
-        expiresAt: new Date(Date.now() + dto.duration * 1000),
-        tokenId: token.id,
-        createdBy: creatorAddress,
+        proposals: {
+          create: {
+            title: dto.title,
+            description: dto.description,
+            duration: dto.duration,
+            blockNumber: BigInt(blockNumber),
+            expiresAt: new Date(Date.now() + dto.duration * 1000),
+            createdBy: creatorAddress,
+          },
+        },
       },
     });
 

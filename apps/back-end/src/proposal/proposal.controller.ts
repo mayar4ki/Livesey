@@ -11,6 +11,7 @@ import {
   SerializeOptions,
   UseGuards,
 } from '@nestjs/common';
+import { OperatorSignatureGuard } from 'src/guards/operator-signature.guard';
 import { SignatureGuard } from 'src/guards/signature.guard';
 import { BaseResponse, BaseResponseDTO } from 'src/lib/base.dto';
 import { CreateProposalDto } from './dto/create-proposal.dto';
@@ -23,9 +24,19 @@ import { ProposalService } from './proposal.service';
 export class ProposalController {
   constructor(private readonly proposalService: ProposalService) {}
 
-  @Post()
+  @Post('with-voting-power')
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(SignatureGuard)
+  async createWithVotingPower(
+    @Headers('x-signer') signer: string,
+    @Body() dto: CreateProposalDto,
+  ) {
+    return this.proposalService.createWithVotingPower(dto, signer);
+  }
+
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  @UseGuards(OperatorSignatureGuard)
   async create(
     @Headers('x-signer') signer: string,
     @Body() dto: CreateProposalDto,

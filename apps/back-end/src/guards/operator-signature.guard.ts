@@ -1,29 +1,30 @@
-import { StoreKeys } from '@acme/queue';
+import { getOperatorStoreKey } from '@acme/queue';
 import {
-  ADMIN_REQUEST_DOMAIN,
-  ADMIN_REQUEST_TYPES,
-  createAdminRequestMessage,
-  getAdminNonceKey,
+  createOperatorRequestMessage,
+  getOperatorNonceKey,
+  OPERATOR_REQUEST_DOMAIN,
+  OPERATOR_REQUEST_TYPES,
 } from '@acme/shared';
 import { FactoryAbi } from '@acme/smart-contract';
 import {
   CanActivate,
   ExecutionContext,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Address, recoverTypedDataAddress } from 'viem';
+import { Address, recoverTypedDataAddress, zeroAddress } from 'viem';
 import { Env } from '../config/env-validation.schema';
 import { RedisService } from '../lib/redis/redis.service';
 import { ViemPublicClientService } from '../lib/viem/viem.service';
 
 /**
- * Guard that verifies admin signature using EIP-712 typed data signing
+ * Guard that verifies operator signature using EIP-712 typed data signing
  *
  * Expected headers:
  * - Authorization: EIP-712 signature (0x...)
- * - X-Signer: Admin wallet address
+ * - X-Signer: Operator wallet address
  * - X-Nonce: Unique nonce (uint256)
  * - X-Timestamp: Request timestamp (uint256, milliseconds)
  *
@@ -31,10 +32,10 @@ import { ViemPublicClientService } from '../lib/viem/viem.service';
  * 1. Verifies nonce hasn't been used (prevents replay attacks)
  * 2. Verifies timestamp is fresh (within 5 minutes)
  * 3. Verifies EIP-712 signature matches the signer
- * 4. Verifies signer is the admin address from the Factory contract
+ * 4. Verifies signer is the operator address from the Factory contract
  */
 @Injectable()
-export class AdminSignatureGuard implements CanActivate {
+export class OperatorSignatureGuard implements CanActivate {
   private readonly NONCE_TTL = 300; // 5 minutes in seconds
   private readonly MAX_TIMESTAMP_AGE = 5 * 60 * 1000; // 5 minutes in milliseconds
 
@@ -88,7 +89,7 @@ export class AdminSignatureGuard implements CanActivate {
 
     // Verify nonce hasn't been used
     await this.redis.ensureConnected();
-    const nonceKey = getAdminNonceKey(signer, nonceNum.toString());
+    const nonceKey = getOperatorNonceKey(signer, nonceNum.toString());
     const nonceUsed = await this.redis.client.get(nonceKey);
 
     if (nonceUsed) {
@@ -96,7 +97,7 @@ export class AdminSignatureGuard implements CanActivate {
     }
 
     // Create the message that should have been signed
-    const message = createAdminRequestMessage({
+    const message = createOperatorRequestMessage({
       method: req.method,
       path: req.path,
       body: req.body,
@@ -126,7 +127,7 @@ export class AdminSignatureGuard implements CanActivate {
   private async verifyTypedDataSignature(
     signature: string,
     signer: string,
-    message: ReturnType<typeof createAdminRequestMessage>,
+    message: ReturnType<typeof createOperatorRequestMessage>,
   ): Promise<boolean> {
     try {
       const chainId = this.viemPublicClient.getChainId();
@@ -134,11 +135,11 @@ export class AdminSignatureGuard implements CanActivate {
       // Recover the address from the typed data signature
       const recoveredAddress = await recoverTypedDataAddress({
         domain: {
-          ...ADMIN_REQUEST_DOMAIN,
+          ...OPERATOR_REQUEST_DOMAIN,
           chainId,
         },
-        types: ADMIN_REQUEST_TYPES,
-        primaryType: 'AdminRequest',
+        types: OPERATOR_REQUEST_TYPES,
+        primaryType: 'OperatorRequest',
         message,
         signature: signature as `0x${string}`,
       });
@@ -151,44 +152,54 @@ export class AdminSignatureGuard implements CanActivate {
         return false;
       }
 
-      // Get admin address
-      const adminAddress = await this.getAdminAddress();
-      // Verify signer is admin
-      const adminLower = adminAddress.toLowerCase();
+      // Get operator address
+      const operatorInfo = await this.getOperatorInfo(signer);
+      // Verify signer is operator
+      const operatorLower = operatorInfo.address.toLowerCase();
 
-      return recoveredLower === adminLower;
+      return recoveredLower === operatorLower && !operatorInfo.isPaused;
     } catch (error) {
       console.error('EIP-712 signature verification error:', error);
       return false;
     }
   }
 
-  private async getAdminAddress(): Promise<string> {
+  private async getOperatorInfo(
+    address: string,
+  ): Promise<{ address: string; isPaused: boolean }> {
     await this.redis.ensureConnected();
 
     // Try to get from cache first
-    const cachedAdminAddress = await this.redis.client.get(
-      StoreKeys.FACTORY_ADMIN_ADDRESS,
+    const cachedOperatorAddress = await this.redis.client.get(
+      getOperatorStoreKey(address),
     );
 
-    if (cachedAdminAddress) {
-      return cachedAdminAddress;
+    if (cachedOperatorAddress) {
+      return JSON.parse(cachedOperatorAddress) as {
+        address: string;
+        isPaused: boolean;
+      };
     }
 
     // If not in cache, fetch from contract
-    const adminAddress = await this.viemPublicClient.client.readContract({
+    const operatorInfo = await this.viemPublicClient.client.readContract({
       address: this.configService.get('FACTORY_ADDRESS') as Address,
       abi: FactoryAbi,
-      functionName: 'admin',
+      functionName: 'operatorsLedger',
+      args: [address as `0x${string}`],
     });
+
+    if (!operatorInfo || operatorInfo[0] === zeroAddress) {
+      throw new NotFoundException('Operator not found');
+    }
 
     // Store in Redis with 30 minutes TTL
     await this.redis.client.setEx(
-      StoreKeys.FACTORY_ADMIN_ADDRESS,
+      getOperatorStoreKey(address),
       1800, // 1800 seconds = 30 minutes
-      adminAddress,
+      JSON.stringify(operatorInfo),
     );
 
-    return adminAddress;
+    return { address: operatorInfo[0], isPaused: operatorInfo[1] };
   }
 }
