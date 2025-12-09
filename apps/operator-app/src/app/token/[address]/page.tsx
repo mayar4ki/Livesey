@@ -17,6 +17,7 @@ import { useTokensLedger } from '@acme/client/services/factory/useTokensLedger';
 import { TokenContractDetailsCard } from '@acme/ui/bootstrapped/token/token-contract-details-card';
 import { TokenMetadataCard } from '@acme/ui/bootstrapped/token/token-metadata-card';
 import { ProfitsTab } from './_components/ProfitsTab';
+import { VotingTab } from './_components/VotingTab';
 
 export default function Page() {
   const params = useParams();
@@ -65,6 +66,7 @@ export default function Page() {
         <Tabs defaultValue="contract" className="w-full">
           <TabsList>
             <TabsTrigger value="contract">Contract Details</TabsTrigger>
+            <TabsTrigger value="voting">Voting</TabsTrigger>
             <TabsTrigger value="profits">
               <Coins className="h-3.5 w-3.5" />
               Profits
@@ -77,6 +79,9 @@ export default function Page() {
             </div>
           </TabsContent>
 
+          <TabsContent value="voting">
+            <VotingTab token={token.data} />
+          </TabsContent>
           {/* Profits Tab */}
           <TabsContent value="profits">
             <ProfitsTab token={token.data} />

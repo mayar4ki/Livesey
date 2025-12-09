@@ -1,6 +1,6 @@
 'use client';
 
-import { useCreateProposalWithVotingPower } from '@acme/client/services/proposal/useCreateProposalWithVotingPower';
+import { useCreateProposal } from '@acme/client/services/proposal/useCreateProposal';
 import { proposalDurationToSeconds } from '@acme/client/services/proposal/utils';
 import { Button } from '@acme/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@acme/ui/form';
@@ -15,7 +15,7 @@ interface CreateProposalFormProps {
 }
 
 export function CreateProposalForm({ deployedTokenId: tokenId, onSuccess }: CreateProposalFormProps) {
-  const createProposalMutation = useCreateProposalWithVotingPower();
+  const createProposalMutation = useCreateProposal();
 
   const form = useForm<CreateProposalFormSchema>({
     resolver: yupResolver(createProposalFormSchema),

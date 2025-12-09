@@ -5,13 +5,7 @@ import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { CreateProposalForm } from './CreateProposalForm/CreateProposalForm';
 
-interface CreateProposalDrawerProps {
-  tokenId: string;
-  onSuccess: () => void;
-  disabled?: boolean;
-}
-
-export const CreateProposalDrawer = ({ tokenId, onSuccess, disabled }: CreateProposalDrawerProps) => {
+export const CreateProposalDrawer = ({ tokenId, onSuccess }: { tokenId: string; onSuccess: () => void }) => {
   const [open, setOpen] = useState(false);
   const isMobile = useIsMobile();
   const direction = isMobile ? 'bottom' : 'right';
@@ -19,7 +13,7 @@ export const CreateProposalDrawer = ({ tokenId, onSuccess, disabled }: CreatePro
   return (
     <Drawer open={open} onOpenChange={setOpen} direction={direction}>
       <DrawerTrigger asChild>
-        <Button size="default" disabled={disabled}>
+        <Button size="default">
           <Plus className="h-4 w-4 mr-2" />
           Create Proposal
         </Button>

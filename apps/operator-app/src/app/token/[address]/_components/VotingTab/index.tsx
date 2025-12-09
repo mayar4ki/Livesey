@@ -71,7 +71,7 @@ export function VotingTab({ token }: VotingTabProps) {
 
   return (
     <div className="space-y-6">
-      <CreateProposalCard token={token} />
+      <CreateProposalCard deployedTokenId={token.id} />
       <Card>
         <CardHeader>
           <CardTitle>Proposals</CardTitle>

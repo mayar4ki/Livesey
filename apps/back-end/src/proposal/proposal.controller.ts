@@ -18,6 +18,7 @@ import { CreateProposalDto } from './dto/create-proposal.dto';
 import { CreateVoteDto } from './dto/create-vote.dto';
 import { ProposalListQueryDto } from './dto/list-query.dto';
 import { ProposalEntity } from './entities/proposal.entity';
+import { VotePowerGuard } from './guards/vote-power.guard';
 import { ProposalService } from './proposal.service';
 
 @Controller('proposal')
@@ -26,12 +27,12 @@ export class ProposalController {
 
   @Post('with-voting-power')
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(SignatureGuard)
+  @UseGuards(SignatureGuard, VotePowerGuard)
   async createWithVotingPower(
     @Headers('x-signer') signer: string,
     @Body() dto: CreateProposalDto,
   ) {
-    return this.proposalService.createWithVotingPower(dto, signer);
+    return this.proposalService.create(dto, signer);
   }
 
   @Post()

@@ -1,8 +1,5 @@
 'use client';
 
-import { useVotingPower } from '@acme/client/services/proposal/useVotingPower';
-import { Token } from '@acme/client/services/token/types';
-import { Badge } from '@acme/ui/badge';
 import { Button } from '@acme/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
 import { Plus, Vote, X } from 'lucide-react';
@@ -11,17 +8,12 @@ import { CreateProposalDrawer } from './CreateProposalDrawer';
 import { CreateProposalForm } from './CreateProposalForm/CreateProposalForm';
 
 interface CreateProposalFormProps {
-  token: Token;
+  deployedTokenId: string;
   onSuccess?: () => void;
 }
 
-const REQUIRED_PERCENTAGE = 20n;
-
-export function CreateProposalCard({ token, onSuccess }: CreateProposalFormProps) {
+export function CreateProposalCard({ deployedTokenId: tokenId, onSuccess }: CreateProposalFormProps) {
   const [showForm, setShowForm] = useState(false);
-  const { hasRequiredPower, isLoading } = useVotingPower(token.token, REQUIRED_PERCENTAGE);
-
-  const createDisabled = isLoading || !hasRequiredPower;
 
   return (
     <Card>
@@ -39,7 +31,6 @@ export function CreateProposalCard({ token, onSuccess }: CreateProposalFormProps
             className=" hidden xl:flex "
             onClick={() => setShowForm(!showForm)}
             variant={showForm ? 'outline' : 'default'}
-            disabled={createDisabled && !showForm}
           >
             {showForm ? (
               <>
@@ -55,22 +46,14 @@ export function CreateProposalCard({ token, onSuccess }: CreateProposalFormProps
           </Button>
 
           <div className=" xl:hidden ">
-            <CreateProposalDrawer
-              tokenId={token.id}
-              onSuccess={onSuccess ?? (() => {})}
-              disabled={createDisabled}
-            />
+            <CreateProposalDrawer tokenId={tokenId} onSuccess={onSuccess ?? (() => {})} />
           </div>
         </div>
-        <Badge variant="outline" className="mt-2">
-          creating a proposal requires you to hold at least {REQUIRED_PERCENTAGE.toString()}% of the total voting
-          power
-        </Badge>
       </CardHeader>
 
       {showForm && (
         <CardContent className="border-t pt-6 hidden xl:block ">
-          <CreateProposalForm deployedTokenId={token.id} onSuccess={onSuccess} />
+          <CreateProposalForm deployedTokenId={tokenId} onSuccess={onSuccess} />
         </CardContent>
       )}
     </Card>

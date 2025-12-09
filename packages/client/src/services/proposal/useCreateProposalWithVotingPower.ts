@@ -1,6 +1,6 @@
 import { apiClient } from "@acme/client/services/apiClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useOperatorEIP712 } from "../../hooks/useOperatorEIP712";
+import { useUserEIP712 } from "../../hooks/useUserEIP712";
 
 export interface CreateProposalRequest {
   title: string;
@@ -14,23 +14,27 @@ export interface CreateProposalRequest {
  * Authentication is handled via EIP-712 signature in the Authorization header
  * @returns Mutation function to create a proposal
  */
-export function useCreateProposal() {
+export function useCreateProposalWithVotingPower() {
   const queryClient = useQueryClient();
-  const { makeOperatorRequest } = useOperatorEIP712();
+  const { makeSignatureRequest } = useUserEIP712();
 
   return useMutation({
     mutationFn: async (data: CreateProposalRequest) => {
       // Get EIP-712 signature headers for API authentication
-      const { headers } = await makeOperatorRequest(
+      const { headers } = await makeSignatureRequest(
         "POST",
-        "/api/proposal",
+        "/api/proposal/with-voting-power",
         data
       );
 
       // Make the API request
-      const response = await apiClient.post("proposal", data, {
-        headers,
-      });
+      const response = await apiClient.post(
+        "proposal/with-voting-power",
+        data,
+        {
+          headers,
+        }
+      );
 
       return response.data;
     },
