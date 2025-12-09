@@ -1,9 +1,9 @@
 'use client';
 
+import { Vote } from '@acme/client/services/proposal/useProposal';
 import { type ProposalStatus } from '@acme/client/services/proposal/utils';
-import { Calendar, ChevronRight } from 'lucide-react';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { Calendar, CheckCircle2, Clock, XCircle } from 'lucide-react';
+import { useMemo } from 'react';
 
 interface ProposalDisplay {
   id: string;
@@ -11,49 +11,125 @@ interface ProposalDisplay {
   description: string;
   endDate: string;
   status: ProposalStatus;
+  votes: Vote[];
 }
 
 interface ProposalItemProps {
   proposal: ProposalDisplay;
 }
 
-export function ProposalItem({ proposal }: ProposalItemProps) {
-  const params = useParams();
-  const tokenAddress = params.address as string;
+function calculateVoteResults(votes: Vote[]) {
+  const votesFor = votes
+    .filter((v) => v.choice)
+    .reduce((sum, v) => {
+      const power = typeof v.votingPower === 'string' ? BigInt(v.votingPower) : v.votingPower;
+      return sum + Number(power);
+    }, 0);
 
-  const proposalUrl = `/dashboard/token/${tokenAddress}/proposal/${proposal.id}`;
+  const votesAgainst = votes
+    .filter((v) => !v.choice)
+    .reduce((sum, v) => {
+      const power = typeof v.votingPower === 'string' ? BigInt(v.votingPower) : v.votingPower;
+      return sum + Number(power);
+    }, 0);
+
+  const totalVotes = votesFor + votesAgainst;
+  const forPercentage = totalVotes > 0 ? (votesFor / totalVotes) * 100 : 0;
+  const againstPercentage = totalVotes > 0 ? (votesAgainst / totalVotes) * 100 : 0;
+
+  return { votesFor, votesAgainst, totalVotes, forPercentage, againstPercentage };
+}
+
+export function ProposalItem({ proposal }: ProposalItemProps) {
+  const { votesFor, votesAgainst, totalVotes, forPercentage, againstPercentage } = useMemo(
+    () => calculateVoteResults(proposal.votes),
+    [proposal.votes]
+  );
+
+  const isWinning = forPercentage > againstPercentage;
+  const isTied = forPercentage === againstPercentage && totalVotes > 0;
 
   return (
-    <Link href={proposalUrl} className="block group">
-      <div className="border rounded-lg p-4 space-y-4 hover:border-primary/50 hover:shadow-sm transition-all cursor-pointer">
-        <div className="space-y-2">
-          <div className="flex items-start justify-between gap-4">
-            <h3 className="font-semibold group-hover:text-primary transition-colors flex-1">{proposal.title}</h3>
-            <div className="flex items-center gap-2 shrink-0">
-              <span
-                className={`text-xs px-2 py-1 rounded ${
-                  proposal.status === 'active'
-                    ? 'bg-blue-500/10 text-blue-500'
-                    : proposal.status === 'closed'
-                      ? 'bg-gray-500/10 text-gray-500'
-                      : 'bg-yellow-500/10 text-yellow-500'
-                }`}
-              >
-                {proposal.status === 'active' ? 'Active' : proposal.status === 'closed' ? 'Closed' : 'Pending'}
-              </span>
-              <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
-            </div>
-          </div>
-          <p className="text-sm text-muted-foreground line-clamp-3">{proposal.description}</p>
+    <div className="border rounded-lg p-5 space-y-4 bg-card">
+      {/* Header */}
+      <div className="space-y-2">
+        <div className="flex items-start justify-between gap-4">
+          <h3 className="font-semibold text-base flex-1">{proposal.title}</h3>
+          <span
+            className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+              proposal.status === 'active'
+                ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+                : proposal.status === 'closed'
+                  ? 'bg-zinc-500/15 text-zinc-600 dark:text-zinc-400'
+                  : 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
+            }`}
+          >
+            {proposal.status === 'active' ? 'Active' : proposal.status === 'closed' ? 'Closed' : 'Pending'}
+          </span>
+        </div>
+        <p className="text-sm text-muted-foreground line-clamp-2">{proposal.description}</p>
+      </div>
+
+      {/* Voting Results */}
+      <div className="space-y-3 pt-2">
+        {/* Combined Progress Bar */}
+        <div className="relative h-2.5 bg-muted rounded-full overflow-hidden">
+          {totalVotes > 0 ? (
+            <>
+              <div className="absolute left-0 top-0 h-full bg-emerald-500 transition-all duration-300" style={{ width: `${forPercentage}%` }} />
+              <div className="absolute right-0 top-0 h-full bg-rose-500 transition-all duration-300" style={{ width: `${againstPercentage}%` }} />
+            </>
+          ) : (
+            <div className="absolute inset-0 bg-muted" />
+          )}
         </div>
 
-        <div className="flex items-center justify-between pt-2 border-t">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Calendar className="h-3 w-3" />
-            <span>Ends: {proposal.endDate}</span>
+        {/* Vote Stats */}
+        <div className="flex items-center justify-between text-xs">
+          <div className="flex items-center gap-1.5">
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+            <span className="text-muted-foreground">For</span>
+            <span className="font-medium ml-1">{forPercentage.toFixed(0)}%</span>
+          </div>
+
+          {totalVotes > 0 && (
+            <div className="flex items-center gap-1 text-muted-foreground">
+              {proposal.status === 'closed' ? (
+                isTied ? (
+                  <span className="text-amber-500 font-medium">Tied</span>
+                ) : isWinning ? (
+                  <span className="text-emerald-500 font-medium">Passed</span>
+                ) : (
+                  <span className="text-rose-500 font-medium">Rejected</span>
+                )
+              ) : (
+                <span>{totalVotes.toLocaleString()} votes</span>
+              )}
+            </div>
+          )}
+
+          <div className="flex items-center gap-1.5">
+            <span className="font-medium mr-1">{againstPercentage.toFixed(0)}%</span>
+            <span className="text-muted-foreground">Against</span>
+            <XCircle className="h-3.5 w-3.5 text-rose-500" />
           </div>
         </div>
       </div>
-    </Link>
+
+      {/* Footer with Date */}
+      <div className="flex items-center gap-2 text-xs text-muted-foreground pt-2 border-t">
+        {proposal.status === 'active' ? (
+          <>
+            <Clock className="h-3.5 w-3.5" />
+            <span>{proposal.endDate}</span>
+          </>
+        ) : (
+          <>
+            <Calendar className="h-3.5 w-3.5" />
+            <span>{proposal.endDate}</span>
+          </>
+        )}
+      </div>
+    </div>
   );
 }

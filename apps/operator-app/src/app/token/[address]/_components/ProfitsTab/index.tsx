@@ -17,7 +17,7 @@ export const ProfitsTab = ({ token }: ProfitsTabProps) => {
   const { symbol: rewardTokenSymbol } = useRewardTokenInfo();
 
   return (
-    <div className="space-y-6 mt-4">
+    <div className="space-y-6 ">
       <Card className="overflow-hidden pt-0">
         <CardHeader className="bg-linear-to-r from-primary/10 via-primary/5 to-transparent pt-4 pb-2">
           <div className="flex items-start justify-between gap-3">

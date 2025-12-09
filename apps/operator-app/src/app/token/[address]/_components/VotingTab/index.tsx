@@ -1,7 +1,7 @@
 'use client';
 
 import { useQueryParams } from '@acme/client/hooks';
-import { Proposal } from '@acme/client/services/proposal/useProposal';
+import { Proposal, Vote } from '@acme/client/services/proposal/useProposal';
 import { useProposals } from '@acme/client/services/proposal/useProposals';
 import { getProposalStatus, type ProposalStatus } from '@acme/client/services/proposal/utils';
 import { Token } from '@acme/client/services/token/types';
@@ -17,6 +17,7 @@ interface ProposalDisplay {
   description: string;
   endDate: string;
   status: ProposalStatus;
+  votes: Vote[];
 }
 
 function formatTimeRemaining(expiresAt: Date | string): string {
@@ -48,6 +49,7 @@ function transformProposal(proposal: Proposal): ProposalDisplay {
     description: proposal.description,
     endDate: formatTimeRemaining(proposal.expiresAt),
     status: getProposalStatus(proposal.expiresAt),
+    votes: proposal.votes ?? [],
   };
 }
 

@@ -64,7 +64,7 @@ export default function Page() {
       <TokenHeaderCard token={token.data} isPaused={tokenInfo?.isPaused} />
       <div className="mt-6">
         <Tabs defaultValue="contract" className="w-full">
-          <TabsList>
+          <TabsList className=" mb-4">
             <TabsTrigger value="contract">Contract Details</TabsTrigger>
             <TabsTrigger value="voting">Voting</TabsTrigger>
             <TabsTrigger value="profits">
@@ -73,7 +73,7 @@ export default function Page() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="contract" className="mt-5">
-            <div className="md:space-y-6 grid grid-cols-1 md:grid-cols-2 gap-4 items-start ">
+            <div className="md:space-y-6 grid grid-cols-1 md:grid-cols-2 gap-4 items-start -mt-4 ">
               <TokenMetadataCard token={token.data} />
               <TokenContractDetailsCard token={token.data} decimals={decimals} />
             </div>

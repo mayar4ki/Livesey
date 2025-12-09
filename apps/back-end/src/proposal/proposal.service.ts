@@ -14,6 +14,7 @@ import { CreateVoteDto } from './dto/create-vote.dto';
 import { ProposalListQueryDto } from './dto/list-query.dto';
 import { ProposalEntity } from './entities/proposal.entity';
 
+// TODO: redo the votes things it's stupid
 @Injectable()
 export class ProposalService {
   constructor(
@@ -22,56 +23,6 @@ export class ProposalService {
   ) {}
 
   private readonly REQUIRED_VOTING_POWER_PERCENTAGE = 20;
-
-  async createWithVotingPower(dto: CreateProposalDto, creatorAddress: string) {
-    const blockNumber = await this.viemPublicClient.client.getBlockNumber();
-
-    const token = await this.prisma.client.token.findUnique({
-      where: {
-        id: dto.tokenId,
-      },
-    });
-
-    if (!token) {
-      throw new NotFoundException('Token not found');
-    }
-
-    // Get creator's voting power
-    const votingPower = await this.calculateVotingPower(
-      token.token,
-      creatorAddress as Address,
-      BigInt(blockNumber),
-    );
-
-    if (votingPower === 0n) {
-      throw new BadRequestException(
-        'You must hold tokens to create a proposal',
-      );
-    }
-
-    // Get total supply from blockchain
-    const totalSupply = await this.viemPublicClient.client.readContract({
-      address: token.token as Address,
-      abi: ERC20ImplementationAbi,
-      functionName: 'totalSupply',
-      blockNumber: BigInt(blockNumber),
-    });
-
-    // Creator must hold at least 20% of total voting power
-    const requiredVotingPower =
-      (BigInt(totalSupply) * BigInt(this.REQUIRED_VOTING_POWER_PERCENTAGE)) /
-      BigInt(100);
-
-    if (votingPower < requiredVotingPower) {
-      throw new BadRequestException(
-        `You must hold at least 20% of total voting power (${requiredVotingPower.toString()} tokens) to create a proposal`,
-      );
-    }
-
-    await this.create(dto, creatorAddress);
-
-    return {};
-  }
 
   async create(dto: CreateProposalDto, creatorAddress: string) {
     const blockNumber = await this.viemPublicClient.client.getBlockNumber();
@@ -115,6 +66,9 @@ export class ProposalService {
         },
         skip,
         take,
+        include: {
+          votes: true,
+        },
       }),
       this.prisma.client.proposal.count({
         where,
