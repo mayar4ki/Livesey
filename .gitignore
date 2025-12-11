@@ -57,3 +57,4 @@ yarn-error.log*
 packages/db/prisma/migrations/*
 
 tsup.config.bundled_*.mjs
+packages/smart-contract/.env.sepolia
