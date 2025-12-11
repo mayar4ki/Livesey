@@ -45,7 +45,22 @@ export class StoreDeployedTokenService {
 
     // Store tokens with seed data in database transaction
 
-    const chainId = this.configService.get('CHAIN_ID', { infer: true }) ?? 11155111;
+    const chainId = this.configService.get<number>('CHAIN_ID', { infer: true }) ?? 11155111;
+
+    const operator = await this.prismaService.client.operator.upsert({
+      where: {
+        address_chainId: {
+          address: token.operator,
+          chainId: chainId,
+        },
+      },
+      update: {},
+      create: {
+        address: token.operator,
+        chainId: chainId,
+        name: '',
+      },
+    });
 
     await this.prismaService.client.token.upsert({
       where: {
@@ -64,7 +79,7 @@ export class StoreDeployedTokenService {
 
         assetRefHash: token.assetRefHash,
         createdBy: token.createdBy,
-        operator: token.operator,
+        operatorId: operator.id,
 
         chainId: chainId,
         transactionHash: log.transactionHash,
@@ -86,7 +101,7 @@ export class StoreDeployedTokenService {
 
         assetRefHash: token.assetRefHash,
         createdBy: token.createdBy,
-        operator: token.operator,
+        operatorId: operator.id,
 
         chainId: chainId,
         transactionHash: log.transactionHash,

@@ -10,6 +10,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Operator {
+  id      String @id @default(cuid())
+  address String @db.VarChar(42) // Ethereum address (0x + 40 hex chars)
+  chainId Int
+  name    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tokens Token[]
+
+  @@unique([address, chainId])
+  @@index([chainId])
+  @@map("operators")
+}
+
 model Token {
   id String @id @default(cuid())
 
@@ -20,7 +36,7 @@ model Token {
   totalSupply String // Store as string to handle large numbers (uint256)
 
   assetRefHash String @db.VarChar(66) // Asset reference hash (0x + 64 hex chars)
-  operator     String @db.VarChar(42) // Ethereum address (0x + 40 hex chars)
+  operatorId   String
   createdBy    String @db.VarChar(42) // Ethereum wallet address (0x + 40 hex chars)
 
   chainId         Int
@@ -30,6 +46,7 @@ model Token {
   verifiedAt DateTime?
   createdAt  DateTime  @default(now())
 
+  operator    Operator     @relation(fields: [operatorId], references: [id])
   seedData    SeedData?
   proposals   Proposal[]
   limitOrders LimitOrder[]
@@ -41,6 +58,7 @@ model Token {
   @@index([verifiedAt])
   @@index([createdBy])
   @@index([blockNumber])
+  @@index([operatorId])
   @@map("tokens")
 }
 

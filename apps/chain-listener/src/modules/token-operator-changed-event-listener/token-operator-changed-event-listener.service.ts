@@ -75,6 +75,22 @@ export class TokenOperatorChangedEventListenerService implements OnModuleInit, O
     );
 
     try {
+      // Find the operator by address and chainId to get the operatorId
+      const operator = await this.prismaService.client.operator.upsert({
+        where: {
+          address_chainId: {
+            address: newOperatorAddress as string,
+            chainId,
+          },
+        },
+        update: {},
+        create: {
+          address: newOperatorAddress as string,
+          chainId,
+          name: '',
+        },
+      });
+
       await this.prismaService.client.token.update({
         where: {
           token_chainId: {
@@ -83,7 +99,7 @@ export class TokenOperatorChangedEventListenerService implements OnModuleInit, O
           },
         },
         data: {
-          operator: newOperatorAddress,
+          operatorId: operator.id,
         },
       });
 
