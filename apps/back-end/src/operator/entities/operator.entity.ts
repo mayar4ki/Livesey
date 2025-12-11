@@ -3,6 +3,7 @@ export class OperatorEntity {
   address: string;
   chainId: number;
   name: string;
+  isPaused: boolean;
   createdAt: Date | string;
   updatedAt: Date | string;
 

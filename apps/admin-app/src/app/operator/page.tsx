@@ -80,6 +80,7 @@ export default function Page() {
                     <TableHead>Name</TableHead>
                     <TableHead>Address</TableHead>
                     <TableHead>Chain</TableHead>
+                    <TableHead>Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -95,6 +96,9 @@ export default function Page() {
                       </TableCell>
                       <TableCell>
                         <Badge variant="secondary">{getChainUIName(operator.chainId)}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={operator.isPaused ? 'destructive' : 'default'}>{operator.isPaused ? 'Paused' : 'Active'}</Badge>
                       </TableCell>
                     </TableRow>
                   ))}

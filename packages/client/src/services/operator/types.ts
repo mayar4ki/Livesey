@@ -3,6 +3,7 @@ export interface Operator {
   address: string;
   chainId: number;
   name: string;
+  isPaused: boolean;
   createdAt: string;
   updatedAt: string;
 }
