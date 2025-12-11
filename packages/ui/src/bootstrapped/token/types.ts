@@ -1,3 +1,12 @@
+export interface Operator {
+  id: string;
+  address: string;
+  chainId: number;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Token {
   id: string;
   token: string;
@@ -7,7 +16,7 @@ export interface Token {
   seedData?: TokenSeedData | null;
   symbol: string;
   totalSupply: string;
-  operator: string;
+  operator?: Operator;
   transactionHash: string;
   blockNumber: bigint | string;
   createdBy: string;

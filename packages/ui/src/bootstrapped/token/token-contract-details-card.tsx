@@ -73,21 +73,23 @@ export function TokenContractDetailsCard({ token, decimals }: TokenContractDetai
                   <ExplorerLink hash={token.token} chainId={token.chainId} showFull />
                 </div>
               </div>
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Operator</label>
-                  <CopyButton
-                    textToCopy={token.operator}
-                    successMessage="Operator address copied"
-                    errorMessage="Failed to copy"
-                    title="Copy address"
-                    className="h-7 w-7 p-0"
-                  />
+              {token.operator && (
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Operator</label>
+                    <CopyButton
+                      textToCopy={token.operator.address}
+                      successMessage="Operator address copied"
+                      errorMessage="Failed to copy"
+                      title="Copy address"
+                      className="h-7 w-7 p-0"
+                    />
+                  </div>
+                  <div className="mt-1">
+                    <ExplorerLink hash={token.operator.address} chainId={token.chainId} showFull />
+                  </div>
                 </div>
-                <div className="mt-1">
-                  <ExplorerLink hash={token.operator} chainId={token.chainId} showFull />
-                </div>
-              </div>
+              )}
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Created By</label>

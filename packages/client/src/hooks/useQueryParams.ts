@@ -79,10 +79,7 @@ export function useQueryParams<
       const value = searchParams.get(key);
       if (value !== null) {
         // Try to parse as number or boolean, otherwise keep as string
-        const numValue = Number(value);
-        if (!isNaN(numValue) && value.trim() !== "") {
-          result[key] = numValue as T[typeof key];
-        } else if (value === "true" || value === "false") {
+        if (value === "true" || value === "false") {
           result[key] = (value === "true") as T[typeof key];
         } else {
           result[key] = value as T[typeof key];

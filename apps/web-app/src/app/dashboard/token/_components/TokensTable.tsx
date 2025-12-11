@@ -187,7 +187,7 @@ export function TokensTable({ tokens }: TokensTableProps) {
     },
     {
       id: 'operator',
-      accessorFn: (row) => row.operator,
+      accessorFn: (row) => row.operator?.address,
       header: ({ column }) => {
         return (
           <Button variant="ghost" onClick={() => column.toggleSorting()} className="h-8">
@@ -204,7 +204,7 @@ export function TokensTable({ tokens }: TokensTableProps) {
       },
       cell: ({ row }) => {
         const token = row.original;
-        return <ExplorerLink hash={token.operator} chainId={token.chainId} />;
+        return token.operator ? <ExplorerLink hash={token.operator.address} chainId={token.chainId} /> : null;
       },
     },
     {

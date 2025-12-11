@@ -16,7 +16,7 @@ export const useAdminEIP712 = () => {
   const { signTypedDataAsync } = useSignTypedData();
 
   const makeAdminRequest = async (
-    method: "POST" | "GET" | "PUT" | "DELETE",
+    method: "POST" | "GET" | "PUT" | "DELETE" | "PATCH",
     path: string,
     body: any
   ) => {

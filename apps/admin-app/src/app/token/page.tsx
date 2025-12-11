@@ -93,9 +93,7 @@ export default function Page() {
                     <TableCell>
                       <Badge variant="secondary">{getChainUIName(token.chainId)}</Badge>
                     </TableCell>
-                    <TableCell>
-                      <ExplorerLink hash={token.operator} chainId={token.chainId} />
-                    </TableCell>
+                    <TableCell>{token.operator && <ExplorerLink hash={token.operator.address} chainId={token.chainId} />}</TableCell>
                     <TableCell>
                       <ExplorerLink hash={token.createdBy} chainId={token.chainId} />
                     </TableCell>

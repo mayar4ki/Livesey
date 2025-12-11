@@ -1,4 +1,5 @@
 import { Address } from "viem";
+import { Operator } from "../operator/types";
 
 export interface Token {
   id: string;
@@ -9,7 +10,7 @@ export interface Token {
   seedData?: TokenSeedData | null;
   symbol: string;
   totalSupply: string;
-  operator: string;
+  operator?: Operator;
   transactionHash: string;
   blockNumber: bigint | string;
   createdBy: string;
