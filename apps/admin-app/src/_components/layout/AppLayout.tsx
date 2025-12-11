@@ -1,6 +1,7 @@
 'use client';
 
 import { SidebarInset, SidebarProvider } from '@acme/ui/sidebar';
+import { RequireAdmin } from '~/_guards/RequireAdmin';
 import { RequireWallet } from '../../_guards/RequireWallet';
 import { AppFooter } from './AppFooter';
 import { AppHeader } from './AppHeader';
@@ -13,14 +14,16 @@ export default function AppLayout({
 }>) {
   return (
     <RequireWallet message="Please connect your wallet to access the application.">
-      <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset>
-          <AppHeader />
-          {children}
-          <AppFooter />
-        </SidebarInset>
-      </SidebarProvider>
+      <RequireAdmin>
+        <SidebarProvider>
+          <AppSidebar />
+          <SidebarInset>
+            <AppHeader />
+            {children}
+            <AppFooter />
+          </SidebarInset>
+        </SidebarProvider>
+      </RequireAdmin>
     </RequireWallet>
   );
 }
