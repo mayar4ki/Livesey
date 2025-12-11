@@ -30,6 +30,15 @@ export class OperatorController {
     return this.operatorService.list(query);
   }
 
+  @Get(':address/:chainId')
+  @SerializeOptions({ type: BaseResponseDTO(OperatorEntity) })
+  async findOne(
+    @Param('address') address: string,
+    @Param('chainId', ParseIntPipe) chainId: number,
+  ): Promise<BaseResponse<OperatorEntity>> {
+    return this.operatorService.findOne(address, chainId);
+  }
+
   @Patch(':address/:chainId/name')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AdminSignatureGuard)

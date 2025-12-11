@@ -55,6 +55,22 @@ export class OperatorService {
     };
   }
 
+  async findOne(
+    address: string,
+    chainId: number,
+  ): Promise<BaseResponse<OperatorEntity>> {
+    const operator = await this.prisma.client.operator.findUniqueOrThrow({
+      where: {
+        address_chainId: {
+          address,
+          chainId,
+        },
+      },
+    });
+
+    return { data: operator };
+  }
+
   async updateName(
     address: string,
     chainId: number,
