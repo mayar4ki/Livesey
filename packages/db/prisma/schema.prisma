@@ -11,10 +11,11 @@ datasource db {
 }
 
 model Operator {
-  id      String @id @default(cuid())
-  address String @db.VarChar(42) // Ethereum address (0x + 40 hex chars)
-  chainId Int
-  name    String
+  id       String  @id @default(cuid())
+  address  String  @db.VarChar(42) // Ethereum address (0x + 40 hex chars)
+  chainId  Int
+  name     String
+  isPaused Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

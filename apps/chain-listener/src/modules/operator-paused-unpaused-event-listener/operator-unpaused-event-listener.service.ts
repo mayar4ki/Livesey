@@ -5,26 +5,28 @@ import { Address, WatchContractEventOnLogsParameter } from 'viem';
 
 import { getOperatorStoreKey } from 'node_modules/@acme/queue/src/keys.js';
 import { RedisService } from 'src/lib/redis/redis.service.js';
+import { PrismaService } from '../../lib/prisma/prisma.service.js';
 import { ViemPublicClientService } from '../../lib/viem/viem.service.js';
 import type { Env } from '../../schemas/env-validation-schema.js';
 
-type EventsLog = WatchContractEventOnLogsParameter<typeof FactoryAbi, 'OperatorPaused'>[number];
+type EventsLog = WatchContractEventOnLogsParameter<typeof FactoryAbi, 'OperatorUnpaused'>[number];
 
 type Unwatch = () => void;
 
 @Injectable()
-export class OperatorPausedEventListenerService implements OnModuleInit, OnModuleDestroy {
+export class OperatorUnpausedEventListenerService implements OnModuleInit, OnModuleDestroy {
   private unwatch?: Unwatch;
-  private readonly logger = new Logger(OperatorPausedEventListenerService.name);
+  private readonly logger = new Logger(OperatorUnpausedEventListenerService.name);
 
   constructor(
     private readonly viemPublicClient: ViemPublicClientService,
     private readonly configService: ConfigService<Env>,
     private readonly redisService: RedisService,
+    private readonly prismaService: PrismaService,
   ) {}
 
   onModuleInit() {
-    this.logger.log('Starting OperatorPaused listener');
+    this.logger.log('Starting OperatorUnpaused listener');
 
     const factoryAddress = this.configService.get<string>('FACTORY_ADDRESS', {
       infer: true,
@@ -33,9 +35,9 @@ export class OperatorPausedEventListenerService implements OnModuleInit, OnModul
     this.unwatch = this.viemPublicClient.client.watchContractEvent({
       address: factoryAddress as Address,
       abi: FactoryAbi,
-      eventName: 'OperatorPaused',
+      eventName: 'OperatorUnpaused',
       onError: (error) => {
-        this.logger.error('OperatorPaused watcher error', error instanceof Error ? error.stack : String(error));
+        this.logger.error('OperatorUnpaused watcher error', error instanceof Error ? error.stack : String(error));
       },
       onLogs: async (logs) => {
         for (const log of logs) {
@@ -43,7 +45,7 @@ export class OperatorPausedEventListenerService implements OnModuleInit, OnModul
             await this.handle(log);
           } catch (error) {
             this.logger.error(
-              'OperatorPaused handler failed',
+              'OperatorUnpaused handler failed',
               error instanceof Error ? error.stack : String(error),
             );
           }
@@ -51,36 +53,57 @@ export class OperatorPausedEventListenerService implements OnModuleInit, OnModul
       },
     });
 
-    this.logger.log('OperatorPaused listener ready');
+    this.logger.log('OperatorUnpaused listener ready');
   }
 
   /**
-   * Handle OperatorPaused events
-   * Updates the cached operator address in Redis when the operator address changes
+   * Handle OperatorUnpaused events
+   * Updates the operator isPaused status in the database and clears Redis cache
    */
   private async handle(log: EventsLog) {
     const operatorAddress = log.args.operator;
     console.log(
-      `📢 OperatorPaused event detected:\n` +
+      `📢 OperatorUnpaused event detected:\n` +
         `  Operator Address: ${operatorAddress}\n` +
         `  Transaction: ${log?.transactionHash}\n` +
         `  Block: ${log?.blockNumber}`,
     );
 
+    if (!operatorAddress) {
+      this.logger.error('OperatorUnpaused event missing operator address');
+      return;
+    }
+
+    const chainId = this.configService.get('CHAIN_ID', { infer: true }) ?? 11155111;
+
     try {
+      // Update operator isPaused status in the database (create if doesn't exist)
+      await this.prismaService.client.operator.upsert({
+        where: {
+          address_chainId: {
+            address: operatorAddress,
+            chainId: chainId,
+          },
+        },
+        update: {
+          isPaused: false,
+        },
+        create: {
+          address: operatorAddress,
+          chainId: chainId,
+          name: '',
+          isPaused: false,
+        },
+      });
+
+      console.log(`✅ Operator ${operatorAddress} marked as unpaused in database`);
+
       // Delete the cached operator address in Redis
-      if (operatorAddress) {
-        await this.redisService.ensureConnected();
-        await this.redisService.client.del(getOperatorStoreKey(operatorAddress));
-      } else {
-        throw Error('operator address not found');
-      }
+      await this.redisService.ensureConnected();
+      await this.redisService.client.del(getOperatorStoreKey(operatorAddress));
     } catch (error) {
       // Don't throw - continue listening to other events
-      console.error(
-        `❌ Error deleting operator address cache in Redis:`,
-        error instanceof Error ? error.message : error,
-      );
+      console.error(`❌ Error updating operator unpaused status:`, error instanceof Error ? error.message : error);
     }
   }
 
