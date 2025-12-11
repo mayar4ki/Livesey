@@ -1,3 +1,4 @@
+import { Prisma } from '@acme/db';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { getSeedDataKey } from '@acme/queue';
@@ -19,6 +20,7 @@ export class TokenService {
       where: { id },
       include: {
         seedData: true,
+        operator: true,
       },
     });
 
@@ -43,6 +45,7 @@ export class TokenService {
       },
       include: {
         seedData: true,
+        operator: true,
       },
     });
 
@@ -58,7 +61,7 @@ export class TokenService {
   async list(query: ListQueryDto): Promise<BaseResponse<TokenEntity[]>> {
     const { skip = 0, take = 10, search, operator } = query;
 
-    const where = {
+    const where: Prisma.TokenWhereInput = {
       ...(search
         ? {
             OR: [
@@ -80,8 +83,10 @@ export class TokenService {
       ...(operator
         ? {
             operator: {
-              equals: operator,
-              mode: 'insensitive' as const,
+              address: {
+                equals: operator,
+                mode: 'insensitive',
+              },
             },
           }
         : {}),
@@ -95,6 +100,10 @@ export class TokenService {
         },
         skip,
         take,
+        include: {
+          seedData: true,
+          operator: true,
+        },
       }),
       this.prisma.client.token.count({
         where,

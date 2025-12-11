@@ -95,6 +95,7 @@ export class LimitOrderService {
           token: {
             include: {
               seedData: true,
+              operator: true,
             },
           },
         },
@@ -149,6 +150,14 @@ export class LimitOrderService {
         },
         skip,
         take,
+        include: {
+          token: {
+            include: {
+              seedData: true,
+              operator: true,
+            },
+          },
+        },
       }),
       this.prisma.client.limitOrder.count({
         where,
@@ -191,6 +200,7 @@ export class LimitOrderService {
           token: {
             include: {
               seedData: true,
+              operator: true,
             },
           },
         },
@@ -225,6 +235,7 @@ export class LimitOrderService {
         token: {
           include: {
             seedData: true,
+            operator: true,
           },
         },
       },

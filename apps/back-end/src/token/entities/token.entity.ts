@@ -1,4 +1,5 @@
 import { Transform } from 'class-transformer';
+import { OperatorEntity } from '../../operator/entities/operator.entity';
 
 export class TokenSeedDataEntity {
   id: string;
@@ -16,7 +17,7 @@ export class TokenEntity {
   assetRefHash: string;
   symbol: string;
   totalSupply: string;
-  operator: string;
+
   createdBy: string;
   transactionHash: string;
 
@@ -25,7 +26,9 @@ export class TokenEntity {
 
   verifiedAt: Date | string | null;
   createdAt: Date | string;
+
   seedData?: TokenSeedDataEntity | null;
+  operator?: OperatorEntity;
 
   constructor(partial: Partial<TokenEntity>) {
     Object.assign(this, partial);
