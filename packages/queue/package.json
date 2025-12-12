@@ -19,6 +19,7 @@
     "clean": "git clean -xdf .cache .turbo dist node_modules"
   },
   "dependencies": {
+    "bullmq": "^5.23.0",
     "redis": "^5.9.0",
     "viem": "catalog:",
     "@acme/smart-contract": "workspace:*"

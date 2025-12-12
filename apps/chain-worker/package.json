@@ -1,5 +1,5 @@
 {
-  "name": "chain-listener",
+  "name": "chain-worker",
   "version": "1.0.0",
   "private": true,
   "scripts": {

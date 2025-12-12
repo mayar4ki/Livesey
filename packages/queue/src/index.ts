@@ -4,6 +4,12 @@ export {
   getVerificationTaskKey,
   StoreKeys,
 } from "./keys.js";
+export {
+  createOperatorAddedQueue,
+  operatorAddedQueueName,
+  type OperatorAddedJob,
+  type OperatorAddedEventsLog,
+} from "./operator-added.js";
 export { consumeVerificationTask } from "./verification-task/consumeVerificationTask.js";
 export { createVerificationTask } from "./verification-task/createVerificationTask.js";
 export { getVerificationTask } from "./verification-task/getVerificationTask.js";
