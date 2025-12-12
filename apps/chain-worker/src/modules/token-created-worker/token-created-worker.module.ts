@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
+import { QueueVerificationTaskService } from './queue-verification-task.service.js';
 import { TokenCreatedWorkerService } from './token-created-worker.service.js';
-import { QueueVerificationTaskService } from '../verification/queue-verification-task.service.js';
 
 @Module({
   providers: [TokenCreatedWorkerService, QueueVerificationTaskService],

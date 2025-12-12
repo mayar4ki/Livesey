@@ -8,7 +8,7 @@ import { PrismaService } from '../../lib/prisma/prisma.service.js';
 import { RedisService } from '../../lib/redis/redis.service.js';
 import type { Env } from '../../schemas/env-validation-schema.js';
 import { validateLog } from '../../schemas/token-created-validation.js';
-import { QueueVerificationTaskService } from '../verification/queue-verification-task.service.js';
+import { QueueVerificationTaskService } from './queue-verification-task.service.js';
 import type { TokenCreatedEventsLog } from './types.js';
 
 @Injectable()

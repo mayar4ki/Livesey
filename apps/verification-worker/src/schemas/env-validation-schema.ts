@@ -1,11 +1,11 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // Redis URL validation (optional, has default in queue package)
 const redisUrl = z.string().url().optional();
 
 export const envValidationSchema = z.object({
   // Database Configuration (required)
-  DATABASE_URL: z.url("Invalid DATABASE_URL format"),
+  DATABASE_URL: z.url('Invalid DATABASE_URL format'),
 
   // Redis Configuration (optional, has default in queue package)
   REDIS_URL: redisUrl,
@@ -21,10 +21,10 @@ export function validateEnv(env: any): Env {
   try {
     return envValidationSchema.parse(env);
   } catch (error) {
-    console.error("❌ Environment validation failed:");
+    console.error('❌ Environment validation failed:');
     if (error instanceof z.ZodError) {
       error.issues.forEach((issue) => {
-        console.error(`  - ${issue.path.join(".")}: ${issue.message}`);
+        console.error(`  - ${issue.path.join('.')}: ${issue.message}`);
       });
     } else {
       console.error(error);
