@@ -45,16 +45,13 @@ export class OperatorAddedBackfillService implements OnModuleDestroy {
       return;
     }
 
-    const filter = await this.viemPublicClient.client.createContractEventFilter({
+    const operatorAddedEvent = FactoryAbi.find((item) => item.type === 'event' && item.name === 'OperatorAdded')!;
+
+    const logs = await this.viemPublicClient.client.getLogs({
       address: factoryAddress as Address,
-      abi: FactoryAbi,
-      eventName: 'OperatorAdded',
+      events: [operatorAddedEvent] as const,
       fromBlock,
       toBlock,
-    });
-
-    const logs = await this.viemPublicClient.client.getFilterLogs({
-      filter,
     });
 
     const filteredLogs = watermark
@@ -70,8 +67,6 @@ export class OperatorAddedBackfillService implements OnModuleDestroy {
     for (const log of filteredLogs) {
       await this.enqueueLog(log, 'backfill');
     }
-
-    await this.viemPublicClient.client.uninstallFilter({ filter });
   }
 
   /**
