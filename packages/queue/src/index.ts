@@ -10,6 +10,12 @@ export {
   type OperatorAddedJob,
   type OperatorAddedEventsLog,
 } from "./operator-added.js";
+export {
+  createOrderCancelledQueue,
+  orderCancelledQueueName,
+  type OrderCancelledJob,
+  type OrderCancelledEventsLog,
+} from "./order-cancelled.js";
 export { consumeVerificationTask } from "./verification-task/consumeVerificationTask.js";
 export { createVerificationTask } from "./verification-task/createVerificationTask.js";
 export { getVerificationTask } from "./verification-task/getVerificationTask.js";

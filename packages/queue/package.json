@@ -19,6 +19,7 @@
     "clean": "git clean -xdf .cache .turbo dist node_modules"
   },
   "dependencies": {
+    "@acme/shared": "workspace:*",
     "bullmq": "^5.23.0",
     "redis": "^5.9.0",
     "viem": "catalog:",

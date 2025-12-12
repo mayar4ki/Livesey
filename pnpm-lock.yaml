@@ -753,6 +753,9 @@ importers:
 
   packages/queue:
     dependencies:
+      '@acme/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@acme/smart-contract':
         specifier: workspace:*
         version: link:../smart-contract
