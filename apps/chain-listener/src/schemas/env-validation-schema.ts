@@ -20,6 +20,12 @@ const chainId = z
 // Redis URL validation (optional, has default in queue package)
 const redisUrl = z.url().optional();
 
+const optionalPositiveInt = z
+  .string()
+  .regex(/^\d+$/, 'Must be a positive integer')
+  .transform((val) => parseInt(val, 10))
+  .optional();
+
 export const envValidationSchema = z.object({
   // Blockchain Configuration
   CHAIN_RPC_URL: z.url('Invalid RPC URL format'),
@@ -31,6 +37,10 @@ export const envValidationSchema = z.object({
 
   // Backend API URL (required for Snapshot space creation)
   BACKEND_URL: z.url('Invalid backend URL format'),
+
+  // Backfill tuning (optional)
+  OPERATOR_ADDED_BACKFILL_CHUNK_SIZE: optionalPositiveInt,
+  OPERATOR_ADDED_BACKFILL_INTERVAL_MS: optionalPositiveInt,
 });
 
 export type Env = z.infer<typeof envValidationSchema>;

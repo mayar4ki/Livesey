@@ -1,17 +1,16 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { Address } from 'viem';
 
-import { createOperatorAddedQueue, type OperatorAddedEventsLog } from '@acme/queue';
 import { FactoryAbi } from '@acme/smart-contract';
 import { ConfigService } from '@nestjs/config';
 import { ViemPublicClientService } from '../../lib/viem/viem.service.js';
 import { WatermarkService } from '../../lib/watermark/watermark.service.js';
 import { Env } from '../../schemas/env-validation-schema.js';
+import { OperatorAddedQueueService } from './operator-added-queue.service.js';
 
 @Injectable()
 export class OperatorAddedBackfillService implements OnModuleDestroy {
   private readonly logger = new Logger(OperatorAddedBackfillService.name);
-  private readonly operatorAddedQueue = createOperatorAddedQueue();
 
   private reconcileTimer?: NodeJS.Timeout;
   private isReconciling = false;
@@ -20,66 +19,55 @@ export class OperatorAddedBackfillService implements OnModuleDestroy {
     private readonly configService: ConfigService<Env>,
     private readonly viemPublicClient: ViemPublicClientService,
     private readonly watermarkService: WatermarkService,
+    private readonly queueService: OperatorAddedQueueService,
   ) {}
 
   private getConfig() {
+    const chunkSizeEnv = this.configService.get<number>('OPERATOR_ADDED_BACKFILL_CHUNK_SIZE', { infer: true });
+    const intervalEnv = this.configService.get<number>('OPERATOR_ADDED_BACKFILL_INTERVAL_MS', { infer: true });
+
     return {
       chainId: this.configService.get<string>('CHAIN_ID', { infer: true })!,
       factoryAddress: this.configService.get<string>('FACTORY_ADDRESS', { infer: true })!,
+      chunkSize: chunkSizeEnv ? BigInt(chunkSizeEnv) : 2_000n,
+      intervalMs: intervalEnv ?? 15 * 60 * 1000,
     };
   }
 
-  private async getWatermark(chainId: string, factoryAddress: string) {
-    return this.watermarkService.getWatermark({
+  private async calculateBlockRange(watermark: Awaited<ReturnType<typeof this.watermarkService.getWatermark>>) {
+    const latestBlock = await this.viemPublicClient.client.getBlockNumber();
+    const reorgSafety = 2n;
+    const toBlock = latestBlock > reorgSafety ? latestBlock - reorgSafety : latestBlock;
+    const fromBlock = watermark?.block ?? toBlock;
+    return { fromBlock, toBlock };
+  }
+
+  /**
+   * Reconcile the event logs.
+   */
+  async reconcile() {
+    const { chainId, factoryAddress, chunkSize } = this.getConfig();
+    const operatorAddedEvent = FactoryAbi.find((item) => item.type === 'event' && item.name === 'OperatorAdded');
+
+    if (!operatorAddedEvent) {
+      this.logger.error('OperatorAdded event ABI not found; skipping backfill');
+      return;
+    }
+
+    const watermark = await this.watermarkService.getWatermark({
       chainId,
       address: factoryAddress,
       eventName: 'OperatorAdded',
     });
-  }
 
-  private filterLogsByWatermark(
-    logs: OperatorAddedEventsLog[],
-    watermark: Awaited<ReturnType<typeof this.getWatermark>>,
-    isFirstChunk: boolean,
-  ) {
-    if (!watermark || !isFirstChunk) {
-      return logs;
+    const { fromBlock, toBlock } = await this.calculateBlockRange(watermark);
+
+    if (toBlock < fromBlock) {
+      return;
     }
 
-    return logs.filter((log) => {
-      if (log.blockNumber === watermark.block) {
-        const logIndex = Number(log.logIndex ?? -1);
-        return logIndex > (watermark.logIndex ?? -1);
-      }
-      return log.blockNumber > watermark.block;
-    });
-  }
-
-  private async calculateBlockRange(watermark: Awaited<ReturnType<typeof this.getWatermark>>) {
-    const latestBlock = await this.viemPublicClient.client.getBlockNumber();
-    const reorgSafety = 2n;
-    const toBlock = latestBlock > reorgSafety ? latestBlock - reorgSafety : latestBlock;
-    const fromBlock = watermark ? watermark.block : toBlock;
-    return { fromBlock, toBlock };
-  }
-
-  private getOperatorAddedEvent() {
-    const event = FactoryAbi.find((item) => item.type === 'event' && item.name === 'OperatorAdded');
-    if (!event) {
-      this.logger.error('OperatorAdded event ABI not found; skipping backfill');
-    }
-    return event;
-  }
-
-  private async processLogsInChunks(
-    factoryAddress: string,
-    operatorAddedEvent: NonNullable<ReturnType<typeof this.getOperatorAddedEvent>>,
-    fromBlock: bigint,
-    toBlock: bigint,
-    watermark: Awaited<ReturnType<typeof this.getWatermark>>,
-  ) {
-    const chunkSize = 2_000n;
     let cursor = fromBlock;
+    let isFirstChunk = true;
 
     while (cursor <= toBlock) {
       const chunkEnd = cursor + chunkSize - 1n > toBlock ? toBlock : cursor + chunkSize - 1n;
@@ -90,38 +78,36 @@ export class OperatorAddedBackfillService implements OnModuleDestroy {
         fromBlock: cursor,
         toBlock: chunkEnd,
       });
-      const filteredLogs = this.filterLogsByWatermark(logs, watermark, cursor === fromBlock);
-      await this.enqueueLogs(filteredLogs);
+
+      const filteredLogs =
+        watermark && isFirstChunk
+          ? logs.filter((log) => {
+              if (log.blockNumber === watermark.block) {
+                return BigInt(log.logIndex ?? -1) > BigInt(watermark.logIndex ?? -1);
+              }
+              return log.blockNumber > watermark.block;
+            })
+          : logs;
+
+      this.logger.debug(
+        `OperatorAdded backfill chunk ${cursor}→${chunkEnd} fetched=${logs.length} filtered=${filteredLogs.length}`,
+      );
+      if (filteredLogs.length > 0) {
+        await this.queueService.enqueueLogs(filteredLogs, 'backfill');
+      }
+
       cursor = chunkEnd + 1n;
+      isFirstChunk = false;
     }
-  }
-
-  /**
-   * Reconcile the event logs.
-   */
-  async reconcile() {
-    const { chainId, factoryAddress } = this.getConfig();
-    const watermark = await this.getWatermark(chainId, factoryAddress);
-    const { fromBlock, toBlock } = await this.calculateBlockRange(watermark);
-
-    if (toBlock < fromBlock) {
-      return;
-    }
-
-    const operatorAddedEvent = this.getOperatorAddedEvent();
-    if (!operatorAddedEvent) {
-      return;
-    }
-
-    await this.processLogsInChunks(factoryAddress, operatorAddedEvent, fromBlock, toBlock, watermark);
   }
 
   /**
    * Start the continuous reconciliation of the event logs.
-   * @param intervalMs - The interval in milliseconds to reconcile the event events.
+   * @param intervalMs - The interval in milliseconds to reconcile the event logs.
    * @default 15 minutes
    */
-  initiateContinuousReconciliation(intervalMs: number = 15 * 60 * 1000) {
+  initiateContinuousReconciliation(intervalMs?: number) {
+    const interval = intervalMs ?? this.getConfig().intervalMs;
     this.reconcileTimer = setInterval(() => {
       if (this.isReconciling) return;
 
@@ -136,35 +122,13 @@ export class OperatorAddedBackfillService implements OnModuleDestroy {
         .finally(() => {
           this.isReconciling = false;
         });
-    }, intervalMs);
+    }, interval);
   }
 
   onModuleDestroy() {
     if (this.reconcileTimer) {
       clearInterval(this.reconcileTimer);
       this.reconcileTimer = undefined;
-    }
-  }
-
-  private async enqueueLogs(logs: OperatorAddedEventsLog[]) {
-    for (const log of logs) {
-      await this.enqueueLog(log, 'backfill');
-    }
-  }
-
-  private async enqueueLog(log: OperatorAddedEventsLog, mode: 'live' | 'backfill') {
-    try {
-      const jobId = `${log.transactionHash}:${log.logIndex ?? 0}`;
-      await this.operatorAddedQueue.add(
-        'operator-added',
-        { log, mode },
-        {
-          removeOnFail: false,
-          jobId,
-        },
-      );
-    } catch (error) {
-      this.logger.error('OperatorAdded handler failed', error instanceof Error ? error.stack : String(error));
     }
   }
 }
