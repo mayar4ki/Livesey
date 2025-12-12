@@ -35,6 +35,12 @@ export {
   type OperatorUnpausedEventsLog,
 } from "./operator-unpaused.js";
 export {
+  createTokenNewOperatorAddressQueue,
+  tokenNewOperatorAddressQueueName,
+  type TokenNewOperatorAddressJob,
+  type TokenNewOperatorAddressEventsLog,
+} from "./token-operator-changed.js";
+export {
   createBitInvalidatorUpdatedQueue,
   bitInvalidatorUpdatedQueueName,
   type BitInvalidatorUpdatedJob,

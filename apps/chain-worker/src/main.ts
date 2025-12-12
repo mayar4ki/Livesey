@@ -9,6 +9,7 @@ import { OrderFilledWorkerService } from './modules/order-filled-worker/order-fi
 import { OperatorAddedWorkerService } from './modules/operator-added-worker/operator-added-worker.service.js';
 import { OperatorPausedWorkerService } from './modules/operator-paused-worker/operator-paused-worker.service.js';
 import { OperatorUnpausedWorkerService } from './modules/operator-unpaused-worker/operator-unpaused-worker.service.js';
+import { TokenOperatorChangedWorkerService } from './modules/token-operator-changed-worker/token-operator-changed-worker.service.js';
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
@@ -19,6 +20,7 @@ async function bootstrap() {
   app.get(OperatorPausedWorkerService); // triggers onModuleInit to start worker
   app.get(OperatorUnpausedWorkerService); // triggers onModuleInit to start worker
   app.get(BitInvalidatorUpdatedWorkerService); // triggers onModuleInit to start worker
+  app.get(TokenOperatorChangedWorkerService); // triggers onModuleInit to start worker
 
   app.enableShutdownHooks();
 }

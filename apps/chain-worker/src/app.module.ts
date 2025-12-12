@@ -11,6 +11,7 @@ import { OperatorAddedWorkerModule } from './modules/operator-added-worker/opera
 import { BitInvalidatorUpdatedWorkerModule } from './modules/bit-invalidator-updated-worker/bit-invalidator-updated-worker.module.js';
 import { OperatorPausedWorkerModule } from './modules/operator-paused-worker/operator-paused-worker.module.js';
 import { OperatorUnpausedWorkerModule } from './modules/operator-unpaused-worker/operator-unpaused-worker.module.js';
+import { TokenOperatorChangedWorkerModule } from './modules/token-operator-changed-worker/token-operator-changed-worker.module.js';
 import { validateEnv } from './schemas/env-validation-schema.js';
 
 @Module({
@@ -24,6 +25,7 @@ import { validateEnv } from './schemas/env-validation-schema.js';
     BitInvalidatorUpdatedWorkerModule,
     OperatorPausedWorkerModule,
     OperatorUnpausedWorkerModule,
+    TokenOperatorChangedWorkerModule,
     ConfigModule.forRoot({
       isGlobal: true,
       validate: validateEnv,
