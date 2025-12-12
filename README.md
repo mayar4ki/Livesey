@@ -21,20 +21,22 @@ _Watch factory deployments • Queue verification tasks • Limit orders via 1in
 ```
 livesey/
 ├── apps/
+│   ├── admin-app/           # Admin Next.js dashboard for operations
 │   ├── back-end/            # NestJS API serving UIs and workers
 │   ├── chain-listener/      # Watches factory contract, enqueues verification jobs
+│   ├── chain-worker/        # Processes queue jobs for blockchain events (operators, orders, tokens)
+│   ├── operator-app/        # Operator Next.js dashboard for token management
 │   ├── verification-worker/ # Consumes queue jobs, verifies deployments
-│   ├── web-app/             # Public Next.js interface for token launches
-│   ├── admin-app/           # Admin Next.js dashboard for operations
-│   └── operator-app/        # Operator Next.js dashboard for token management
+│   └── web-app/             # Public Next.js interface for token launches
 │
 ├── packages/
+│   ├── cache/               # Redis caching utilities and key helpers
+│   ├── client/              # Frontend utilities for viem + API usage
 │   ├── db/                  # Prisma schema, migrations, generated client
 │   ├── queue/               # Shared Redis queue client and helpers
-│   ├── client/              # Frontend utilities for viem + API usage
 │   ├── shared/              # Shared types, constants, 1inch limit order helpers (for both frontend and backend)
-│   ├── ui/                  # Design system components (shadcn-based)
 │   ├── smart-contract/      # Hardhat project: contracts, ABIs, deployments
+│   ├── ui/                  # Design system components (shadcn-based)
 │   └── white-label/         # Branding/config tokens for web and admin apps
 │
 └── tooling/
