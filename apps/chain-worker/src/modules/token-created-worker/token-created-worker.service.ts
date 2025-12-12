@@ -6,6 +6,7 @@ import { Worker } from 'bullmq';
 import { tokenCreatedQueueName, type TokenCreatedJob } from '@acme/queue';
 import { PrismaService } from '../../lib/prisma/prisma.service.js';
 import { RedisService } from '../../lib/redis/redis.service.js';
+import { WatermarkService } from '../../lib/watermark/watermark.service.js';
 import type { Env } from '../../schemas/env-validation-schema.js';
 import { validateLog } from '../../schemas/token-created-validation.js';
 import { QueueVerificationTaskService } from './queue-verification-task.service.js';
@@ -21,6 +22,7 @@ export class TokenCreatedWorkerService implements OnModuleInit, OnModuleDestroy 
     private readonly prismaService: PrismaService,
     private readonly redisService: RedisService,
     private readonly queueVerificationTaskService: QueueVerificationTaskService,
+    private readonly watermarkService: WatermarkService,
   ) {}
 
   async onModuleInit() {
@@ -76,6 +78,23 @@ export class TokenCreatedWorkerService implements OnModuleInit, OnModuleDestroy 
       const validLog = validateLog(log as any);
       await this.storeDeployedToken(validLog);
       await this.queueVerificationTaskService.queueVerificationTask(validLog);
+
+      const chainId = this.configService.get<string>('CHAIN_ID', { infer: true });
+      const logIndex = log.logIndex !== null && log.logIndex !== undefined ? Number(log.logIndex) : undefined;
+      if (log.blockNumber !== null && log.blockNumber !== undefined) {
+        await this.watermarkService.setIfNewer(
+          {
+            chainId: chainId!,
+            address: log.address,
+            eventName: 'TokenCreated',
+          },
+          {
+            block: log.blockNumber,
+            logIndex,
+            txHash: log.transactionHash,
+          },
+        );
+      }
     } catch (error) {
       console.error(
         `❌ Error storing deployed tokens in database:`,

@@ -6,6 +6,7 @@ import { getOperatorStoreKey } from '@acme/cache';
 import { OperatorPausedJob, operatorPausedQueueName } from '@acme/queue';
 import { PrismaService } from '../../lib/prisma/prisma.service.js';
 import { RedisService } from '../../lib/redis/redis.service.js';
+import { WatermarkService } from '../../lib/watermark/watermark.service.js';
 import type { Env } from '../../schemas/env-validation-schema.js';
 import type { OperatorPausedEventsLog } from './types.js';
 
@@ -18,6 +19,7 @@ export class OperatorPausedWorkerService implements OnModuleInit, OnModuleDestro
     private readonly viemConfig: ConfigService<Env>,
     private readonly redisService: RedisService,
     private readonly prismaService: PrismaService,
+    private readonly watermarkService: WatermarkService,
   ) {}
 
   async onModuleInit() {
@@ -91,6 +93,22 @@ export class OperatorPausedWorkerService implements OnModuleInit, OnModuleDestro
 
       await this.redisService.ensureConnected();
       await this.redisService.client.del(getOperatorStoreKey(operatorAddress));
+
+      const logIndex = log.logIndex !== null && log.logIndex !== undefined ? Number(log.logIndex) : undefined;
+      if (log.blockNumber !== null && log.blockNumber !== undefined) {
+        await this.watermarkService.setIfNewer(
+          {
+            chainId,
+            address: log.address,
+            eventName: 'OperatorPaused',
+          },
+          {
+            block: log.blockNumber,
+            logIndex,
+            txHash: log.transactionHash,
+          },
+        );
+      }
     } catch (error) {
       console.error(`❌ Error updating operator paused status:`, error instanceof Error ? error.message : error);
       throw error;

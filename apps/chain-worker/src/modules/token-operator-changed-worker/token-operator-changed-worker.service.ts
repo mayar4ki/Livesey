@@ -4,6 +4,7 @@ import { Worker } from 'bullmq';
 
 import { tokenNewOperatorAddressQueueName, type TokenNewOperatorAddressJob } from '@acme/queue';
 import { PrismaService } from '../../lib/prisma/prisma.service.js';
+import { WatermarkService } from '../../lib/watermark/watermark.service.js';
 import type { Env } from '../../schemas/env-validation-schema.js';
 import type { TokenNewOperatorAddressEventsLog } from './types.js';
 
@@ -15,6 +16,7 @@ export class TokenOperatorChangedWorkerService implements OnModuleInit, OnModule
   constructor(
     private readonly viemConfig: ConfigService<Env>,
     private readonly prismaService: PrismaService,
+    private readonly watermarkService: WatermarkService,
   ) {}
 
   async onModuleInit() {
@@ -96,6 +98,22 @@ export class TokenOperatorChangedWorkerService implements OnModuleInit, OnModule
       });
 
       console.log(`✅ Token operator updated in database: ${tokenAddress}`);
+
+      const logIndex = log.logIndex !== null && log.logIndex !== undefined ? Number(log.logIndex) : undefined;
+      if (log.blockNumber !== null && log.blockNumber !== undefined) {
+        await this.watermarkService.setIfNewer(
+          {
+            chainId,
+            address: log.address,
+            eventName: 'TokenNewOperatorAddress',
+          },
+          {
+            block: log.blockNumber,
+            logIndex,
+            txHash: log.transactionHash,
+          },
+        );
+      }
     } catch (error) {
       console.error(`❌ Error updating token operator in database:`, error);
       throw error;

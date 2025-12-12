@@ -1,28 +1,26 @@
 import { ONEINCH_LIMIT_ORDER_PROTOCOL_ABI, oneInchLimitOrderProtocolAddresses } from '@acme/shared';
-import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { Address } from 'viem';
 
-import { createOrderCancelledQueue } from '@acme/queue';
+import { ConfigService } from '@nestjs/config';
 import { ViemPublicClientService } from '../../lib/viem/viem.service.js';
 import { Env } from '../../schemas/env-validation-schema.js';
+import { OrderCancelledQueueService } from './order-cancelled-queue.service.js';
 
 type Unwatch = () => void;
 
 @Injectable()
-export class OrderCanceledEventListenerService implements OnModuleInit, OnModuleDestroy {
+export class OrderCancelledWatcherService implements OnModuleDestroy {
+  private readonly logger = new Logger(OrderCancelledWatcherService.name);
   private unwatch?: Unwatch;
-  private readonly logger = new Logger(OrderCanceledEventListenerService.name);
-  private readonly orderCancelledQueue = createOrderCancelledQueue();
 
   constructor(
     private readonly configService: ConfigService<Env>,
     private readonly viemPublicClient: ViemPublicClientService,
+    private readonly queueService: OrderCancelledQueueService,
   ) {}
 
-  onModuleInit() {
-    this.logger.log('Starting OrderCancelled listener');
-
+  init() {
     const chainId = this.configService.get<string>('CHAIN_ID', {
       infer: true,
     });
@@ -38,23 +36,10 @@ export class OrderCanceledEventListenerService implements OnModuleInit, OnModule
       },
       onLogs: async (logs) => {
         for (const log of logs) {
-          try {
-            await this.orderCancelledQueue.add(
-              'order-cancelled',
-              { log, mode: 'live' },
-              { removeOnFail: false },
-            );
-          } catch (error) {
-            this.logger.error(
-              'OrderCancelled handler failed',
-              error instanceof Error ? error.stack : String(error),
-            );
-          }
+          await this.queueService.enqueueLog(log, 'live');
         }
       },
     });
-
-    this.logger.log('OrderCancelled listener ready');
   }
 
   onModuleDestroy() {
@@ -62,3 +47,4 @@ export class OrderCanceledEventListenerService implements OnModuleInit, OnModule
     this.unwatch = undefined;
   }
 }
+

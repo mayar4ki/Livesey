@@ -5,6 +5,7 @@ import { Worker } from 'bullmq';
 
 import { orderFilledQueueName, type OrderFilledJob } from '@acme/queue';
 import { PrismaService } from '../../lib/prisma/prisma.service.js';
+import { WatermarkService } from '../../lib/watermark/watermark.service.js';
 import type { Env } from '../../schemas/env-validation-schema.js';
 import type { OrderFilledEventsLog } from './types.js';
 
@@ -16,6 +17,7 @@ export class OrderFilledWorkerService implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly configService: ConfigService<Env>,
     private readonly prismaService: PrismaService,
+    private readonly watermarkService: WatermarkService,
   ) {}
 
   async onModuleInit() {
@@ -84,6 +86,22 @@ export class OrderFilledWorkerService implements OnModuleInit, OnModuleDestroy {
       });
 
       console.log(`✅ Limit Order operator updated in database: ${orderHash}`);
+
+      const logIndex = log.logIndex !== null && log.logIndex !== undefined ? Number(log.logIndex) : undefined;
+      if (log.blockNumber !== null && log.blockNumber !== undefined) {
+        await this.watermarkService.setIfNewer(
+          {
+            chainId: chainId!,
+            address: log.address,
+            eventName: 'OrderFilled',
+          },
+          {
+            block: log.blockNumber,
+            logIndex,
+            txHash: log.transactionHash,
+          },
+        );
+      }
     } catch (error) {
       console.error(`❌ Error updating token operator in database:`, error);
       throw error;

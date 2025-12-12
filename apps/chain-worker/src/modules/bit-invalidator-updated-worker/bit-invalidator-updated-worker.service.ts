@@ -5,6 +5,7 @@ import { Worker } from 'bullmq';
 
 import { bitInvalidatorUpdatedQueueName, type BitInvalidatorUpdatedJob } from '@acme/queue';
 import { PrismaService } from '../../lib/prisma/prisma.service.js';
+import { WatermarkService } from '../../lib/watermark/watermark.service.js';
 import type { Env } from '../../schemas/env-validation-schema.js';
 import type { BitInvalidatorUpdatedEventsLog } from './types.js';
 
@@ -16,6 +17,7 @@ export class BitInvalidatorUpdatedWorkerService implements OnModuleInit, OnModul
   constructor(
     private readonly configService: ConfigService<Env>,
     private readonly prismaService: PrismaService,
+    private readonly watermarkService: WatermarkService,
   ) {}
 
   async onModuleInit() {
@@ -124,6 +126,22 @@ export class BitInvalidatorUpdatedWorkerService implements OnModuleInit, OnModul
         console.log(`✅ Cancelled ${result.count} orders`);
       } else {
         console.log(`ℹ️ No matching orders found to cancel`);
+      }
+
+      const logIndex = log.logIndex !== null && log.logIndex !== undefined ? Number(log.logIndex) : undefined;
+      if (log.blockNumber !== null && log.blockNumber !== undefined) {
+        await this.watermarkService.setIfNewer(
+          {
+            chainId: chainId!,
+            address: log.address,
+            eventName: 'BitInvalidatorUpdated',
+          },
+          {
+            block: log.blockNumber,
+            logIndex,
+            txHash: log.transactionHash,
+          },
+        );
       }
     } catch (error) {
       console.error(`❌ Error updating cancelled orders:`, error);

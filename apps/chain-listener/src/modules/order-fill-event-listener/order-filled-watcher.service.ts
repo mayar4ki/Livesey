@@ -1,28 +1,26 @@
 import { ONEINCH_LIMIT_ORDER_PROTOCOL_ABI, oneInchLimitOrderProtocolAddresses } from '@acme/shared';
-import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { Address } from 'viem';
 
-import { createOrderFilledQueue } from '@acme/queue';
+import { ConfigService } from '@nestjs/config';
 import { ViemPublicClientService } from '../../lib/viem/viem.service.js';
 import { Env } from '../../schemas/env-validation-schema.js';
+import { OrderFilledQueueService } from './order-filled-queue.service.js';
 
 type Unwatch = () => void;
 
 @Injectable()
-export class OrderFillEventListenerService implements OnModuleInit, OnModuleDestroy {
+export class OrderFilledWatcherService implements OnModuleDestroy {
+  private readonly logger = new Logger(OrderFilledWatcherService.name);
   private unwatch?: Unwatch;
-  private readonly logger = new Logger(OrderFillEventListenerService.name);
-  private readonly orderFilledQueue = createOrderFilledQueue();
 
   constructor(
     private readonly configService: ConfigService<Env>,
     private readonly viemPublicClient: ViemPublicClientService,
+    private readonly queueService: OrderFilledQueueService,
   ) {}
 
-  onModuleInit() {
-    this.logger.log('Starting OrderFilled listener');
-
+  init() {
     const chainId = this.configService.get<string>('CHAIN_ID', {
       infer: true,
     });
@@ -38,27 +36,15 @@ export class OrderFillEventListenerService implements OnModuleInit, OnModuleDest
       },
       onLogs: async (logs) => {
         for (const log of logs) {
-          try {
-            await this.orderFilledQueue.add(
-              'order-filled',
-              { log, mode: 'live' },
-              { removeOnFail: false },
-            );
-          } catch (error) {
-            this.logger.error('OrderFilled handler failed', error instanceof Error ? error.stack : String(error));
-          }
+          await this.queueService.enqueueLog(log, 'live');
         }
       },
     });
-
-    this.logger.log('OrderFilled listener ready');
   }
 
-  /**
-   * Handle OrderFilled events
-   */
   onModuleDestroy() {
     this.unwatch?.();
     this.unwatch = undefined;
   }
 }
+
