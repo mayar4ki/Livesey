@@ -1,4 +1,4 @@
-import { VerificationTask, updateVerificationTask } from "@acme/queue";
+import { VerificationTask } from "@acme/queue";
 import { verifyProxy } from "src/helpers/verify-proxy.js";
 import { Address } from "viem";
 import { storeVerifiedContract } from "../helpers/store-verified-contract.js";
@@ -17,11 +17,6 @@ export async function handleContractVerification(
   console.log(`✅ processing: task:${chainId}:${token}`);
 
   try {
-    // Update status to processing
-    await updateVerificationTask(+chainId, token, {
-      status: "processing",
-    });
-
     // Verify contract
 
     await verifyProxy(token, chainId.toString());
@@ -29,21 +24,11 @@ export async function handleContractVerification(
     // Store contract address in PostgreSQL after successful verification
     await storeVerifiedContract(token, chainId);
 
-    // Update status to completed
-    await updateVerificationTask(chainId, token, {
-      status: "completed",
-    });
-
     console.log(`✅ successfully verified: task:${chainId}:${token}`);
   } catch (error) {
     console.error(
       `✗ Failed to verify contract ${token} on chain ${chainId}:`,
       error
     );
-
-    // Update status to failed
-    await updateVerificationTask(chainId, token, {
-      status: "failed",
-    });
   }
 }

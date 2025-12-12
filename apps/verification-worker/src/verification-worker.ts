@@ -1,6 +1,7 @@
 import { prisma } from "@acme/db";
-import { consumeVerificationTask } from "@acme/queue";
+import { verificationQueueName, type VerificationTaskJob } from "@acme/queue";
 import { closeRedisConnection } from "@acme/queue/client";
+import { Worker } from "bullmq";
 import { handleContractVerification } from "./handlers/contract-verification-handler.js";
 import { validateEnv } from "./schemas/env-validation-schema.js";
 
@@ -16,26 +17,23 @@ async function startWorker() {
   console.log("👂 Waiting for tasks in queue...");
   console.log("Press CTRL+C to exit");
 
-  try {
-    // Main worker loop
-    while (true) {
-      try {
-        // Consume task from Redis queue (blocks until task available)
-        const result = await consumeVerificationTask(0); // 0 = wait forever
-
-        if (result) {
-          await handleContractVerification(result.task, result.chainId);
-        }
-      } catch (error) {
-        console.error("Error processing task:", error);
-        // Continue processing other tasks
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait before retrying
-      }
+  const worker = new Worker<VerificationTaskJob>(
+    verificationQueueName,
+    async (job) => {
+      await handleContractVerification(job.data.token, job.data.chainId.toString());
+    },
+    {
+      connection: { url: process.env.REDIS_URL },
+      concurrency: 3,
     }
-  } catch (error) {
-    console.error("Worker error:", error);
-    process.exit(1);
-  }
+  );
+
+  worker.on("failed", (job, err) => {
+    console.error(
+      `Verification job failed token=${job?.data?.token?.token ?? "unknown"}`,
+      err
+    );
+  });
 }
 
 // Handle graceful shutdown

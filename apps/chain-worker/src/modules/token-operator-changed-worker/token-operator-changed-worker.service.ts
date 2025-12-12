@@ -2,7 +2,7 @@ import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/commo
 import { ConfigService } from '@nestjs/config';
 import { Worker } from 'bullmq';
 
-import { createTokenNewOperatorAddressQueue, tokenNewOperatorAddressQueueName, type TokenNewOperatorAddressJob } from '@acme/queue';
+import { tokenNewOperatorAddressQueueName, type TokenNewOperatorAddressJob } from '@acme/queue';
 import { PrismaService } from '../../lib/prisma/prisma.service.js';
 import type { Env } from '../../schemas/env-validation-schema.js';
 import type { TokenNewOperatorAddressEventsLog } from './types.js';
@@ -11,7 +11,6 @@ import type { TokenNewOperatorAddressEventsLog } from './types.js';
 export class TokenOperatorChangedWorkerService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(TokenOperatorChangedWorkerService.name);
   private worker?: Worker<TokenNewOperatorAddressJob>;
-  private readonly queue = createTokenNewOperatorAddressQueue();
 
   constructor(
     private readonly viemConfig: ConfigService<Env>,
