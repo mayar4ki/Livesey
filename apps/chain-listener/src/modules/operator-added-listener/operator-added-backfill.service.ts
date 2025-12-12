@@ -22,59 +22,106 @@ export class OperatorAddedBackfillService implements OnModuleDestroy {
     private readonly watermarkService: WatermarkService,
   ) {}
 
-  async reconcile() {
-    const chainId = this.configService.get<string>('CHAIN_ID', {
-      infer: true,
-    })!;
-    const factoryAddress = this.configService.get<string>('FACTORY_ADDRESS', {
-      infer: true,
-    })!;
+  private getConfig() {
+    return {
+      chainId: this.configService.get<string>('CHAIN_ID', { infer: true })!,
+      factoryAddress: this.configService.get<string>('FACTORY_ADDRESS', { infer: true })!,
+    };
+  }
 
-    const watermark = await this.watermarkService.getWatermark({
-      chainId: chainId,
+  private async getWatermark(chainId: string, factoryAddress: string) {
+    return this.watermarkService.getWatermark({
+      chainId,
       address: factoryAddress,
       eventName: 'OperatorAdded',
     });
+  }
 
+  private filterLogsByWatermark(
+    logs: OperatorAddedEventsLog[],
+    watermark: Awaited<ReturnType<typeof this.getWatermark>>,
+    isFirstChunk: boolean,
+  ) {
+    if (!watermark || !isFirstChunk) {
+      return logs;
+    }
+
+    return logs.filter((log) => {
+      if (log.blockNumber === watermark.block) {
+        const logIndex = Number(log.logIndex ?? -1);
+        return logIndex > (watermark.logIndex ?? -1);
+      }
+      return log.blockNumber > watermark.block;
+    });
+  }
+
+  private async calculateBlockRange(watermark: Awaited<ReturnType<typeof this.getWatermark>>) {
     const latestBlock = await this.viemPublicClient.client.getBlockNumber();
     const reorgSafety = 2n;
     const toBlock = latestBlock > reorgSafety ? latestBlock - reorgSafety : latestBlock;
     const fromBlock = watermark ? watermark.block : toBlock;
+    return { fromBlock, toBlock };
+  }
+
+  private getOperatorAddedEvent() {
+    const event = FactoryAbi.find((item) => item.type === 'event' && item.name === 'OperatorAdded');
+    if (!event) {
+      this.logger.error('OperatorAdded event ABI not found; skipping backfill');
+    }
+    return event;
+  }
+
+  private async processLogsInChunks(
+    factoryAddress: string,
+    operatorAddedEvent: NonNullable<ReturnType<typeof this.getOperatorAddedEvent>>,
+    fromBlock: bigint,
+    toBlock: bigint,
+    watermark: Awaited<ReturnType<typeof this.getWatermark>>,
+  ) {
+    const chunkSize = 2_000n;
+    let cursor = fromBlock;
+
+    while (cursor <= toBlock) {
+      const chunkEnd = cursor + chunkSize - 1n > toBlock ? toBlock : cursor + chunkSize - 1n;
+
+      const logs = await this.viemPublicClient.client.getLogs({
+        address: factoryAddress as Address,
+        events: [operatorAddedEvent],
+        fromBlock: cursor,
+        toBlock: chunkEnd,
+      });
+      const filteredLogs = this.filterLogsByWatermark(logs, watermark, cursor === fromBlock);
+      await this.enqueueLogs(filteredLogs);
+      cursor = chunkEnd + 1n;
+    }
+  }
+
+  /**
+   * Reconcile the event logs.
+   */
+  async reconcile() {
+    const { chainId, factoryAddress } = this.getConfig();
+    const watermark = await this.getWatermark(chainId, factoryAddress);
+    const { fromBlock, toBlock } = await this.calculateBlockRange(watermark);
 
     if (toBlock < fromBlock) {
       return;
     }
 
-    const operatorAddedEvent = FactoryAbi.find((item) => item.type === 'event' && item.name === 'OperatorAdded')!;
-
-    const logs = await this.viemPublicClient.client.getLogs({
-      address: factoryAddress as Address,
-      events: [operatorAddedEvent] as const,
-      fromBlock,
-      toBlock,
-    });
-
-    const filteredLogs = watermark
-      ? logs.filter((log) => {
-          if (log.blockNumber === watermark.block) {
-            const logIndex = Number(log.logIndex ?? -1);
-            return logIndex > (watermark.logIndex ?? -1);
-          }
-          return log.blockNumber > watermark.block;
-        })
-      : logs;
-
-    for (const log of filteredLogs) {
-      await this.enqueueLog(log, 'backfill');
+    const operatorAddedEvent = this.getOperatorAddedEvent();
+    if (!operatorAddedEvent) {
+      return;
     }
+
+    await this.processLogsInChunks(factoryAddress, operatorAddedEvent, fromBlock, toBlock, watermark);
   }
 
   /**
-   * Start the operator added backfill service.
-   * @param intervalMs - The interval in milliseconds to reconcile the operator added events.
-   * @default 3 minutes
+   * Start the continuous reconciliation of the event logs.
+   * @param intervalMs - The interval in milliseconds to reconcile the event events.
+   * @default 15 minutes
    */
-  initiateContinuousReconciliation(intervalMs: number = 3 * 60 * 1000) {
+  initiateContinuousReconciliation(intervalMs: number = 15 * 60 * 1000) {
     this.reconcileTimer = setInterval(() => {
       if (this.isReconciling) return;
 
@@ -96,6 +143,12 @@ export class OperatorAddedBackfillService implements OnModuleDestroy {
     if (this.reconcileTimer) {
       clearInterval(this.reconcileTimer);
       this.reconcileTimer = undefined;
+    }
+  }
+
+  private async enqueueLogs(logs: OperatorAddedEventsLog[]) {
+    for (const log of logs) {
+      await this.enqueueLog(log, 'backfill');
     }
   }
 
