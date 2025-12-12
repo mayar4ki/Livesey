@@ -2,7 +2,7 @@ import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/commo
 import { ConfigService } from '@nestjs/config';
 import { Worker } from 'bullmq';
 
-import { operatorUnpausedQueueName, type OperatorUnpausedJob } from '@acme/queue';
+import { getOperatorStoreKey, operatorUnpausedQueueName, type OperatorUnpausedJob } from '@acme/queue';
 import { PrismaService } from '../../lib/prisma/prisma.service.js';
 import { RedisService } from '../../lib/redis/redis.service.js';
 import type { Env } from '../../schemas/env-validation-schema.js';
@@ -89,7 +89,7 @@ export class OperatorUnpausedWorkerService implements OnModuleInit, OnModuleDest
       console.log(`✅ Operator ${operatorAddress} marked as unpaused in database`);
 
       await this.redisService.ensureConnected();
-      await this.redisService.client.del(operatorAddress); // caller should use consistent keying; existing handler deleted cache
+      await this.redisService.client.del(getOperatorStoreKey(operatorAddress));
     } catch (error) {
       console.error(`❌ Error updating operator unpaused status:`, error instanceof Error ? error.message : error);
       throw error;

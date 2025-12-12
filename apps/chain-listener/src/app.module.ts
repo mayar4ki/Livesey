@@ -9,7 +9,9 @@ import { BitInvalidatorUpdatedEventListenerModule } from './modules/bit-invalida
 import { NewAdminAddressEventListenerModule } from './modules/new-admin-address-event-listener/new-admin-address-event-listener.module.js';
 import { NewTokenCreatedEventListenerModule } from './modules/new-token-created-event-listener/new-token-created-event-listener.module.js';
 import { OperatorAddedEventListenerModule } from './modules/operator-added-event-listener/operator-added-event-listener.module.js';
-import { OperatorPausedUnpausedEventListenerModule } from './modules/operator-paused-unpaused-event-listener/operator-paused-unpaused-event-listener.module.js';
+
+import { OperatorPausedEventListenerModule } from './modules/operator-paused-event-listener/operator-paused-event-listener.module.js';
+import { OperatorUnpausedEventListenerModule } from './modules/operator-unpaused-event-listener/operator-unpaused-event-listener.module.js';
 import { OrderCanceledEventListenerModule } from './modules/order-canceled-event-listener/order-canceled-event-listener.module.js';
 import { OrderFilledEventListenerModule } from './modules/order-fill-event-listener/order-fill-event-listener.module.js';
 import { TokenOperatorChangedEventListenerModule } from './modules/token-operator-changed-event-listener/token-operator-changed-listener.module.js';
@@ -23,7 +25,8 @@ import { validateEnv } from './schemas/env-validation-schema.js';
     NewAdminAddressEventListenerModule,
     NewTokenCreatedEventListenerModule,
     OperatorAddedEventListenerModule,
-    OperatorPausedUnpausedEventListenerModule,
+    OperatorPausedEventListenerModule,
+    OperatorUnpausedEventListenerModule,
     TokenOperatorChangedEventListenerModule,
     OrderFilledEventListenerModule,
     OrderCanceledEventListenerModule,
