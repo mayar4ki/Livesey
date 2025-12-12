@@ -43,7 +43,7 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:react19",
     "@types/react-dom": "catalog:react19",
-    "baseline-browser-mapping": "^2.9.5",
+    "baseline-browser-mapping": "^2.9.7",
     "dotenv-cli": "catalog:",
     "tailwindcss": "catalog:",
     "tsx": "^4.20.6",
