@@ -22,6 +22,18 @@ export {
   type OrderFilledJob,
   type OrderFilledEventsLog,
 } from "./order-filled.js";
+export {
+  createOperatorPausedQueue,
+  operatorPausedQueueName,
+  type OperatorPausedJob,
+  type OperatorPausedEventsLog,
+} from "./operator-paused.js";
+export {
+  createOperatorUnpausedQueue,
+  operatorUnpausedQueueName,
+  type OperatorUnpausedJob,
+  type OperatorUnpausedEventsLog,
+} from "./operator-unpaused.js";
 export { consumeVerificationTask } from "./verification-task/consumeVerificationTask.js";
 export { createVerificationTask } from "./verification-task/createVerificationTask.js";
 export { getVerificationTask } from "./verification-task/getVerificationTask.js";
