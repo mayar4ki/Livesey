@@ -1,7 +1,6 @@
 import { Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import { PrismaModule } from './lib/prisma/prisma.module.js';
 import { RedisModule } from './lib/redis/redis.module.js';
 import { ViemModule } from './lib/viem/viem.module.js';
 
@@ -19,7 +18,6 @@ import { validateEnv } from './schemas/env-validation-schema.js';
 
 @Module({
   imports: [
-    PrismaModule,
     RedisModule,
     ViemModule,
     NewAdminAddressEventListenerModule,

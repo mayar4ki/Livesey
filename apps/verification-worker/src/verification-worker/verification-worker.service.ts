@@ -1,4 +1,5 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Worker } from 'bullmq';
 import { Address } from 'viem';
 
@@ -11,17 +12,16 @@ export class VerificationWorkerService implements OnModuleInit, OnModuleDestroy 
   private readonly logger = new Logger(VerificationWorkerService.name);
   private worker?: Worker<VerificationTaskJob>;
 
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly configService: ConfigService,
+  ) {}
 
   async onModuleInit() {
-    this.worker = new Worker<VerificationTaskJob>(
-      verificationQueueName,
-      async (job) => this.process(job.data),
-      {
-        connection: { url: process.env.REDIS_URL },
-        concurrency: 3,
-      },
-    );
+    this.worker = new Worker<VerificationTaskJob>(verificationQueueName, async (job) => this.process(job.data), {
+      connection: { url: this.configService.get<string>('REDIS_URL') },
+      concurrency: 3,
+    });
 
     this.worker.on('failed', (job, err) => {
       this.logger.error(

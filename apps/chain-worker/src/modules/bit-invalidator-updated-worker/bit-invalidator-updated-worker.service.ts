@@ -23,7 +23,7 @@ export class BitInvalidatorUpdatedWorkerService implements OnModuleInit, OnModul
       bitInvalidatorUpdatedQueueName,
       async (job) => this.process(job.data.log, job.data.mode),
       {
-        connection: { url: process.env.REDIS_URL },
+        connection: { url: this.configService.get<string>('REDIS_URL') },
         concurrency: 3,
       },
     );

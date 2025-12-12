@@ -11,15 +11,12 @@
     "clean": "git clean -xdf .cache .turbo dist node_modules"
   },
   "dependencies": {
-    "@acme/db": "workspace:*",
     "@acme/queue": "workspace:*",
     "@acme/smart-contract": "workspace:*",
     "@acme/shared": "workspace:*",
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
     "@nestjs/config": "^4.0.2",
-    "axios": "^1.13.2",
-    "bullmq": "^5.23.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "viem": "catalog:",

@@ -24,7 +24,7 @@ export class OperatorPausedWorkerService implements OnModuleInit, OnModuleDestro
       operatorPausedQueueName,
       async (job) => this.process(job.data.log, job.data.mode),
       {
-        connection: { url: process.env.REDIS_URL },
+        connection: { url: this.viemConfig.get<string>('REDIS_URL') },
         concurrency: 3,
       },
     );
