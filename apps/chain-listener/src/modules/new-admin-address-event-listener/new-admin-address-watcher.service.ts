@@ -1,29 +1,33 @@
 import { FactoryAbi } from '@acme/smart-contract';
-import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
-import { Address } from 'viem';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { Address, WatchContractEventOnLogsParameter } from 'viem';
 
+import { StoreKeys } from '@acme/cache';
 import { ConfigService } from '@nestjs/config';
+import { RedisService } from 'src/lib/redis/redis.service.js';
 import { ViemPublicClientService } from '../../lib/viem/viem.service.js';
 import { Env } from '../../schemas/env-validation-schema.js';
-import { NewAdminAddressEventListenerService } from './new-admin-address-event-listener.service.js';
 
 type Unwatch = () => void;
+type NewAdminAddressEventsLog = WatchContractEventOnLogsParameter<typeof FactoryAbi, 'NewAdminAddress'>[number];
 
 @Injectable()
-export class NewAdminAddressWatcherService implements OnModuleDestroy {
+export class NewAdminAddressWatcherService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(NewAdminAddressWatcherService.name);
   private unwatch?: Unwatch;
 
   constructor(
     private readonly configService: ConfigService<Env>,
     private readonly viemPublicClient: ViemPublicClientService,
-    private readonly listenerService: NewAdminAddressEventListenerService,
+    private readonly redisService: RedisService,
   ) {}
 
-  init() {
+  async onModuleInit() {
     const factoryAddress = this.configService.get<string>('FACTORY_ADDRESS', {
       infer: true,
     });
+
+    await this.deleteAdminAddressCache();
 
     this.unwatch = this.viemPublicClient.client.watchContractEvent({
       address: factoryAddress as Address,
@@ -34,7 +38,7 @@ export class NewAdminAddressWatcherService implements OnModuleDestroy {
       },
       onLogs: async (logs) => {
         for (const log of logs) {
-          await this.listenerService.handleLog(log, 'live');
+          await this.handleLog(log, 'live');
         }
       },
     });
@@ -43,5 +47,35 @@ export class NewAdminAddressWatcherService implements OnModuleDestroy {
   onModuleDestroy() {
     this.unwatch?.();
     this.unwatch = undefined;
+  }
+
+  private async deleteAdminAddressCache() {
+    try {
+      // Delete the cached admin address in Redis
+      await this.redisService.ensureConnected();
+      await this.redisService.client.del(StoreKeys.FACTORY_ADMIN_ADDRESS);
+      this.logger.log(`Admin address cache deleted in Redis`);
+    } catch (error) {
+      this.logger.error(
+        'Error deleting admin address cache in Redis',
+        error instanceof Error ? error.stack : String(error),
+      );
+    }
+  }
+  /**
+   * Handle NewAdminAddress events
+   * Updates the cached admin address in Redis when the admin address changes
+   */
+  async handleLog(log: NewAdminAddressEventsLog, mode: 'live' | 'backfill' = 'live') {
+    const newAdminAddress = log?.args?.admin;
+
+    console.log(
+      `📢 NewAdminAddress event detected (${mode}):\n` +
+        `  New Admin Address: ${newAdminAddress}\n` +
+        `  Transaction: ${log?.transactionHash}\n` +
+        `  Block: ${log?.blockNumber}`,
+    );
+
+    await this.deleteAdminAddressCache();
   }
 }
