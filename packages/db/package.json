@@ -4,8 +4,11 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "default": "./dist/index.js"
+    },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "default": "./dist/client.js"
     }
   },
   "scripts": {
@@ -14,8 +17,8 @@
     "db:migrate": "prisma migrate dev --schema=./prisma/schema.prisma",
     "db:migrate:deploy": "prisma migrate deploy --schema=./prisma/schema.prisma",
     "db:studio": "prisma studio --schema=./prisma/schema.prisma",
-    "build": "pnpm db:generate && tsup",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "build": "pnpm db:generate && tsc",
+    "typecheck": "tsc --noEmit",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "with-env": "dotenv -e ../../.env --"
   },
@@ -26,8 +29,7 @@
     "@acme/tsconfig": "workspace:*",
     "@types/node": "catalog:",
     "prisma": "^5.22.0",
-    "typescript": "catalog:",
-    "tsup": "catalog:"
+    "typescript": "catalog:"
   },
   "license": "MIT"
 }

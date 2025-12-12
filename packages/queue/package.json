@@ -3,19 +3,13 @@
   "private": true,
   "exports": {
     ".": {
-      "types": "./src/index.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    },
-    "./client": {
-      "types": "./src/client.ts",
-      "import": "./dist/client.mjs",
-      "require": "./dist/client.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     }
   },
   "scripts": {
-    "build": "tsup",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
     "clean": "git clean -xdf .cache .turbo dist node_modules"
   },
   "dependencies": {
@@ -28,8 +22,7 @@
   "devDependencies": {
     "@acme/tsconfig": "workspace:*",
     "@types/node": "catalog:",
-    "typescript": "catalog:",
-    "tsup": "catalog:"
+    "typescript": "catalog:"
   },
   "license": "MIT"
 }
