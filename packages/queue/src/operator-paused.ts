@@ -25,7 +25,7 @@ export function createOperatorPausedQueue(
     defaultJobOptions: {
       attempts: 5,
       backoff: {
-        type: "exponential",
+        type: "fixed",
         delay: 5_000,
       },
       removeOnComplete: true,
