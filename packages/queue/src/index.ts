@@ -10,12 +10,7 @@ export {
   type BitInvalidatorUpdatedEventsLog,
   type BitInvalidatorUpdatedJob,
 } from "./bit-invalidator-updated.js";
-export {
-  getOperatorStoreKey,
-  getSeedDataKey,
-  getVerificationTaskKey,
-  StoreKeys,
-} from "./keys.js";
+
 export {
   createOperatorAddedQueue,
   operatorAddedQueueName,

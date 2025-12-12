@@ -1,6 +1,4 @@
-import type { CreateProposalFormSchema } from '~/app/dashboard/token/[address]/_components/VotingTab/CreateProposalForm/createProposalFormSchema';
-
-export type ProposalStatus = 'active' | 'closed' | 'pending';
+export type ProposalStatus = "active" | "closed" | "pending";
 
 /**
  * Converts days, hours, and minutes to total seconds
@@ -14,7 +12,9 @@ export function calculateDurationInSeconds(
   durationHours: number,
   durationMinutes: number
 ): number {
-  return durationDays * 24 * 60 * 60 + durationHours * 60 * 60 + durationMinutes * 60;
+  return (
+    durationDays * 24 * 60 * 60 + durationHours * 60 * 60 + durationMinutes * 60
+  );
 }
 
 /**
@@ -22,8 +22,16 @@ export function calculateDurationInSeconds(
  * @param data - Proposal form schema data
  * @returns Total duration in seconds
  */
-export function proposalDurationToSeconds(data: CreateProposalFormSchema): number {
-  return calculateDurationInSeconds(data.durationDays, data.durationHours, data.durationMinutes);
+export function proposalDurationToSeconds(data: {
+  durationDays: number;
+  durationHours: number;
+  durationMinutes: number;
+}): number {
+  return calculateDurationInSeconds(
+    data.durationDays,
+    data.durationHours,
+    data.durationMinutes
+  );
 }
 
 /**
@@ -32,7 +40,8 @@ export function proposalDurationToSeconds(data: CreateProposalFormSchema): numbe
  * @returns 'active' if the proposal hasn't expired, 'closed' otherwise
  */
 export function getProposalStatus(expiresAt: Date | string): ProposalStatus {
-  const expiry = typeof expiresAt === 'string' ? new Date(expiresAt) : expiresAt;
+  const expiry =
+    typeof expiresAt === "string" ? new Date(expiresAt) : expiresAt;
   const now = new Date();
-  return expiry.getTime() > now.getTime() ? 'active' : 'closed';
+  return expiry.getTime() > now.getTime() ? "active" : "closed";
 }

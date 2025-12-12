@@ -1,7 +1,7 @@
 import { Prisma } from '@acme/db';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { getSeedDataKey } from '@acme/queue';
+import { getSeedDataKey } from '@acme/cache';
 import { BaseResponse } from 'src/lib/base.dto';
 import { PrismaService } from '../lib/prisma/prisma.service';
 import { RedisService } from '../lib/redis/redis.service';

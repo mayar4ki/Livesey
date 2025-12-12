@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@acme/queue": "workspace:*",
+    "@acme/cache": "workspace:*",
     "@acme/smart-contract": "workspace:*",
     "@acme/shared": "workspace:*",
     "@nestjs/common": "^11.0.1",

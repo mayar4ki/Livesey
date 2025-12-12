@@ -187,6 +187,9 @@ importers:
       '@1inch/limit-order-sdk':
         specifier: ^5.2.3
         version: 5.2.3(axios@1.13.2)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@acme/cache':
+        specifier: workspace:*
+        version: link:../../packages/cache
       '@acme/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -314,9 +317,9 @@ importers:
 
   apps/chain-listener:
     dependencies:
-      '@acme/db':
+      '@acme/cache':
         specifier: workspace:*
-        version: link:../../packages/db
+        version: link:../../packages/cache
       '@acme/queue':
         specifier: workspace:*
         version: link:../../packages/queue
@@ -335,12 +338,6 @@ importers:
       '@nestjs/core':
         specifier: ^11.0.1
         version: 11.1.8(@nestjs/common@11.1.8(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.8)(reflect-metadata@0.2.2)(rxjs@7.8.2)
-      axios:
-        specifier: ^1.13.2
-        version: 1.13.2
-      bullmq:
-        specifier: ^5.23.0
-        version: 5.66.0
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -378,6 +375,9 @@ importers:
 
   apps/chain-worker:
     dependencies:
+      '@acme/cache':
+        specifier: workspace:*
+        version: link:../../packages/cache
       '@acme/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -399,9 +399,6 @@ importers:
       '@nestjs/core':
         specifier: ^11.0.1
         version: 11.1.8(@nestjs/common@11.1.8(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.8)(reflect-metadata@0.2.2)(rxjs@7.8.2)
-      axios:
-        specifier: ^1.13.2
-        version: 1.13.2
       bullmq:
         specifier: ^5.23.0
         version: 5.66.0
@@ -545,6 +542,9 @@ importers:
 
   apps/verification-worker:
     dependencies:
+      '@acme/cache':
+        specifier: workspace:*
+        version: link:../../packages/cache
       '@acme/db':
         specifier: workspace:*
         version: link:../../packages/db

@@ -23,6 +23,7 @@
     "@1inch/limit-order-sdk": "^5.2.3",
     "@acme/db": "workspace:*",
     "@acme/queue": "workspace:*",
+    "@acme/cache": "workspace:*",
     "@acme/shared": "workspace:*",
     "@acme/smart-contract": "workspace:*",
     "@nestjs/common": "^11.0.1",

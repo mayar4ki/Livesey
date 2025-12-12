@@ -1,4 +1,4 @@
-import { StoreKeys } from '@acme/queue';
+import { StoreKeys } from '@acme/cache';
 import {
   ADMIN_REQUEST_DOMAIN,
   ADMIN_REQUEST_TYPES,

@@ -1,4 +1,4 @@
-import { getOperatorStoreKey } from '@acme/queue';
+import { getOperatorStoreKey } from '@acme/cache';
 import {
   createOperatorRequestMessage,
   getOperatorNonceKey,

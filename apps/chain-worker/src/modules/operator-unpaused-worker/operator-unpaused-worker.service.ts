@@ -2,7 +2,8 @@ import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/commo
 import { ConfigService } from '@nestjs/config';
 import { Worker } from 'bullmq';
 
-import { getOperatorStoreKey, operatorUnpausedQueueName, type OperatorUnpausedJob } from '@acme/queue';
+import { getOperatorStoreKey } from '@acme/cache';
+import { OperatorUnpausedJob, operatorUnpausedQueueName } from '@acme/queue';
 import { PrismaService } from '../../lib/prisma/prisma.service.js';
 import { RedisService } from '../../lib/redis/redis.service.js';
 import type { Env } from '../../schemas/env-validation-schema.js';

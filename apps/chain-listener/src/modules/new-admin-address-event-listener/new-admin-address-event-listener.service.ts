@@ -1,4 +1,4 @@
-import { StoreKeys } from '@acme/queue';
+import { StoreKeys } from '@acme/cache';
 import { FactoryAbi } from '@acme/smart-contract';
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';

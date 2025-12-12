@@ -1,4 +1,4 @@
-import { getSeedDataKey } from '@acme/queue';
+import { getSeedDataKey } from '@acme/cache';
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Worker } from 'bullmq';
