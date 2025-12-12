@@ -686,6 +686,37 @@ importers:
         specifier: 'catalog:'
         version: 5.9.2
 
+  packages/cache:
+    dependencies:
+      '@acme/shared':
+        specifier: workspace:*
+        version: link:../shared
+      '@acme/smart-contract':
+        specifier: workspace:*
+        version: link:../smart-contract
+      bullmq:
+        specifier: ^5.23.0
+        version: 5.66.0
+      redis:
+        specifier: ^5.9.0
+        version: 5.9.0
+      viem:
+        specifier: 'catalog:'
+        version: 2.38.6(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.12)
+    devDependencies:
+      '@acme/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/tsconfig
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.19.0
+      tsup:
+        specifier: 'catalog:'
+        version: 8.5.0(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+
   packages/client:
     dependencies:
       '@1inch/limit-order-sdk':

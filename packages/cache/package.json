@@ -1,0 +1,35 @@
+{
+  "name": "@acme/cache",
+  "private": true,
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./client": {
+      "types": "./src/client.ts",
+      "import": "./dist/client.mjs",
+      "require": "./dist/client.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "clean": "git clean -xdf .cache .turbo dist node_modules"
+  },
+  "dependencies": {
+    "@acme/shared": "workspace:*",
+    "bullmq": "^5.23.0",
+    "redis": "^5.9.0",
+    "viem": "catalog:",
+    "@acme/smart-contract": "workspace:*"
+  },
+  "devDependencies": {
+    "@acme/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "tsup": "catalog:"
+  },
+  "license": "MIT"
+}
