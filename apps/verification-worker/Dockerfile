@@ -25,21 +25,13 @@ FROM deps AS builder
 
 ARG DATABASE_URL
 ARG REDIS_URL
-ARG CHAIN_RPC_URL
-ARG FACTORY_ADDRESS
-ARG BACKEND_URL
-ARG CHAIN_ID
 
 ENV NODE_ENV=production
 ENV DATABASE_URL=$DATABASE_URL
 ENV REDIS_URL=$REDIS_URL
-ENV CHAIN_RPC_URL=$CHAIN_RPC_URL
-ENV FACTORY_ADDRESS=$FACTORY_ADDRESS
-ENV BACKEND_URL=$BACKEND_URL
-ENV CHAIN_ID=$CHAIN_ID
 
-RUN pnpm turbo run build --filter chain-listener...
-RUN pnpm deploy --filter chain-listener --prod /app/.output/chain-listener
+RUN pnpm turbo run build --filter verification-worker...
+RUN pnpm deploy --filter verification-worker --prod /app/.output/verification-worker
 
 FROM node:22-alpine AS runner
 
@@ -47,6 +39,6 @@ WORKDIR /app
 RUN apk add --no-cache openssl
 ENV NODE_ENV=production
 
-COPY --from=builder /app/.output/chain-listener/ .
+COPY --from=builder /app/.output/verification-worker/ .
 
 CMD ["node", "dist/main.js"]

@@ -38,8 +38,8 @@ ENV FACTORY_ADDRESS=$FACTORY_ADDRESS
 ENV BACKEND_URL=$BACKEND_URL
 ENV CHAIN_ID=$CHAIN_ID
 
-RUN pnpm turbo run build --filter chain-listener...
-RUN pnpm deploy --filter chain-listener --prod /app/.output/chain-listener
+RUN pnpm turbo run build --filter chain-worker...
+RUN pnpm deploy --filter chain-worker --prod /app/.output/chain-worker
 
 FROM node:22-alpine AS runner
 
@@ -47,6 +47,6 @@ WORKDIR /app
 RUN apk add --no-cache openssl
 ENV NODE_ENV=production
 
-COPY --from=builder /app/.output/chain-listener/ .
+COPY --from=builder /app/.output/chain-worker/ .
 
 CMD ["node", "dist/main.js"]
