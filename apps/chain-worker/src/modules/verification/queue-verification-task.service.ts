@@ -1,8 +1,9 @@
 import { createVerificationTask } from '@acme/queue';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Env } from 'src/schemas/env-validation-schema.js';
-import { ValidatedLog } from 'src/schemas/token-created-validation.js';
+
+import type { Env } from '../../schemas/env-validation-schema.js';
+import type { ValidatedLog } from '../../schemas/token-created-validation.js';
 
 @Injectable()
 export class QueueVerificationTaskService {
@@ -39,6 +40,7 @@ export class QueueVerificationTaskService {
         `❌ Error queuing verification task for ${token?.token}:`,
         error instanceof Error ? error.message : error,
       );
+      throw error;
     }
   }
 }
