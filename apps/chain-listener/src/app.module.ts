@@ -7,7 +7,7 @@ import { ViemModule } from './lib/viem/viem.module.js';
 import { BitInvalidatorUpdatedEventListenerModule } from './modules/bit-invalidator-updated-event-listener/bit-invalidator-updated-event-listener.module.js';
 import { NewAdminAddressEventListenerModule } from './modules/new-admin-address-event-listener/new-admin-address-event-listener.module.js';
 import { NewTokenCreatedEventListenerModule } from './modules/new-token-created-event-listener/new-token-created-event-listener.module.js';
-import { OperatorAddedEventListenerModule } from './modules/operator-added-event-listener/operator-added-event-listener.module.js';
+import { OperatorAddedListenerModule } from './modules/operator-added-listener/operator-added-listener.module.js';
 
 import { OperatorPausedEventListenerModule } from './modules/operator-paused-event-listener/operator-paused-event-listener.module.js';
 import { OperatorUnpausedEventListenerModule } from './modules/operator-unpaused-event-listener/operator-unpaused-event-listener.module.js';
@@ -22,7 +22,7 @@ import { validateEnv } from './schemas/env-validation-schema.js';
     ViemModule,
     NewAdminAddressEventListenerModule,
     NewTokenCreatedEventListenerModule,
-    OperatorAddedEventListenerModule,
+    OperatorAddedListenerModule,
     OperatorPausedEventListenerModule,
     OperatorUnpausedEventListenerModule,
     TokenOperatorChangedEventListenerModule,

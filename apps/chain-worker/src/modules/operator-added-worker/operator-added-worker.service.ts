@@ -4,6 +4,7 @@ import { Worker } from 'bullmq';
 
 import { operatorAddedQueueName, type OperatorAddedJob } from '@acme/queue';
 import { PrismaService } from '../../lib/prisma/prisma.service.js';
+import { WatermarkService } from '../../lib/watermark/watermark.service.js';
 import type { Env } from '../../schemas/env-validation-schema.js';
 import type { OperatorAddedEventsLog } from './types.js';
 
@@ -15,6 +16,7 @@ export class OperatorAddedWorkerService implements OnModuleInit, OnModuleDestroy
   constructor(
     private readonly configService: ConfigService<Env>,
     private readonly prismaService: PrismaService,
+    private readonly watermarkService: WatermarkService,
   ) {}
 
   async onModuleInit() {
@@ -79,6 +81,22 @@ export class OperatorAddedWorkerService implements OnModuleInit, OnModuleDestroy
       });
 
       console.log(`✅ Operator ${operatorAddress} stored in database for chain ${chainId}`);
+
+      const logIndex = log.logIndex !== null && log.logIndex !== undefined ? Number(log.logIndex) : undefined;
+      if (log.blockNumber !== null && log.blockNumber !== undefined) {
+        await this.watermarkService.setIfNewer(
+          {
+            chainId,
+            address: log.address,
+            eventName: 'OperatorAdded',
+          },
+          {
+            block: log.blockNumber,
+            logIndex,
+            txHash: log.transactionHash,
+          },
+        );
+      }
     } catch (error) {
       console.error(`❌ Error storing operator in database:`, error instanceof Error ? error.message : error);
       throw error;

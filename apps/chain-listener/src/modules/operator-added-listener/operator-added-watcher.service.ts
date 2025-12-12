@@ -1,18 +1,18 @@
 import { FactoryAbi } from '@acme/smart-contract';
-import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { Address } from 'viem';
 
-import { createOperatorAddedQueue } from '@acme/queue';
+import { createOperatorAddedQueue, type OperatorAddedEventsLog } from '@acme/queue';
+import { ConfigService } from '@nestjs/config';
 import { ViemPublicClientService } from '../../lib/viem/viem.service.js';
 import { Env } from '../../schemas/env-validation-schema.js';
 
 type Unwatch = () => void;
 
 @Injectable()
-export class OperatorAddedEventListenerService implements OnModuleInit, OnModuleDestroy {
+export class OperatorAddedWatcherService implements OnModuleDestroy {
+  private readonly logger = new Logger(OperatorAddedWatcherService.name);
   private unwatch?: Unwatch;
-  private readonly logger = new Logger(OperatorAddedEventListenerService.name);
   private readonly operatorAddedQueue = createOperatorAddedQueue();
 
   constructor(
@@ -20,9 +20,7 @@ export class OperatorAddedEventListenerService implements OnModuleInit, OnModule
     private readonly viemPublicClient: ViemPublicClientService,
   ) {}
 
-  onModuleInit() {
-    this.logger.log('Starting OperatorAdded listener');
-
+  init() {
     const factoryAddress = this.configService.get<string>('FACTORY_ADDRESS', {
       infer: true,
     });
@@ -36,33 +34,30 @@ export class OperatorAddedEventListenerService implements OnModuleInit, OnModule
       },
       onLogs: async (logs) => {
         for (const log of logs) {
-          try {
-            await this.operatorAddedQueue.add(
-              'operator-added',
-              { log, mode: 'live' },
-              {
-                removeOnFail: false,
-              },
-            );
-          } catch (error) {
-            this.logger.error(
-              'OperatorAdded handler failed',
-              error instanceof Error ? error.stack : String(error),
-            );
-          }
+          await this.enqueueLog(log, 'live');
         }
       },
     });
-
-    this.logger.log('OperatorAdded listener ready');
   }
 
-  /**
-   * Handle OperatorAdded events
-   * Creates a new Operator record in the database
-   */
   onModuleDestroy() {
     this.unwatch?.();
     this.unwatch = undefined;
+  }
+
+  private async enqueueLog(log: OperatorAddedEventsLog, mode: 'live' | 'backfill') {
+    try {
+      const jobId = `${log.transactionHash}:${log.logIndex ?? 0}`;
+      await this.operatorAddedQueue.add(
+        'operator-added',
+        { log, mode },
+        {
+          removeOnFail: false,
+          jobId,
+        },
+      );
+    } catch (error) {
+      this.logger.error('OperatorAdded handler failed', error instanceof Error ? error.stack : String(error));
+    }
   }
 }
