@@ -19,12 +19,13 @@ export interface UseLimitOrderColumnsProps {
     toggleRowExpansion: (rowId: string) => void;
   };
   filter?: Array<'pair' | 'type' | (string & {})>;
+  enableSorting?: boolean;
 }
 
 export const useLimitOrderColumns = (props: UseLimitOrderColumnsProps) => {
   const getOrderTokensInfo = useGetOrderTokensInfo();
 
-  const { expandable } = props;
+  const { expandable, enableSorting = true } = props;
 
   const columns: ColumnDef<LimitOrder>[] = [
     ...(expandable
@@ -85,7 +86,9 @@ export const useLimitOrderColumns = (props: UseLimitOrderColumnsProps) => {
     },
     {
       id: 'type',
+      accessorFn: (row) => row.type,
       header: 'Type',
+      enableSorting: false,
       cell: ({ row }) => {
         const isSell = row.original.type === LimitOrderType.SELL;
         return (
@@ -97,7 +100,9 @@ export const useLimitOrderColumns = (props: UseLimitOrderColumnsProps) => {
     },
     {
       id: 'offer',
+      accessorFn: (row) => BigInt(row.makeAmount),
       header: 'Offer',
+      enableSorting: false,
       cell: ({ row }) => {
         const order = row.original;
         const { makeTokenInfo } = getOrderTokensInfo(order);
@@ -114,7 +119,9 @@ export const useLimitOrderColumns = (props: UseLimitOrderColumnsProps) => {
     },
     {
       id: 'ask',
+      accessorFn: (row) => BigInt(row.takeAmount),
       header: 'Ask',
+      enableSorting: false,
       cell: ({ row }) => {
         const order = row.original;
         const { takeTokenInfo } = getOrderTokensInfo(order);
@@ -131,7 +138,9 @@ export const useLimitOrderColumns = (props: UseLimitOrderColumnsProps) => {
     },
     {
       id: 'price',
-      header: ({ column }) => <DataTableColumnSortHeader column={column}>Price</DataTableColumnSortHeader>,
+      header: enableSorting
+        ? ({ column }) => <DataTableColumnSortHeader column={column}>Price</DataTableColumnSortHeader>
+        : 'Price',
       cell: ({ row }) => {
         const order = row.original;
         const { _price } = getOrderTokensInfo(order);
@@ -146,7 +155,9 @@ export const useLimitOrderColumns = (props: UseLimitOrderColumnsProps) => {
     {
       id: 'status',
       accessorFn: (row) => row.status,
-      header: ({ column }) => <DataTableColumnSortHeader column={column}>Status</DataTableColumnSortHeader>,
+      header: enableSorting
+        ? ({ column }) => <DataTableColumnSortHeader column={column}>Status</DataTableColumnSortHeader>
+        : 'Status',
       cell: ({ row }) => {
         const order = row.original;
         return (
@@ -158,7 +169,7 @@ export const useLimitOrderColumns = (props: UseLimitOrderColumnsProps) => {
     },
     {
       id: 'createdAt',
-      header: ({ column }) => <DataTableColumnSortHeader column={column}>Created At</DataTableColumnSortHeader>,
+      header: 'Created At',
       cell: ({ row }) => {
         const order = row.original;
         return (
@@ -167,10 +178,11 @@ export const useLimitOrderColumns = (props: UseLimitOrderColumnsProps) => {
           </div>
         );
       },
+      enableSorting: false,
     },
     {
       id: 'expiration',
-      header: ({ column }) => <DataTableColumnSortHeader column={column}>expire At</DataTableColumnSortHeader>,
+      header: 'Expire At',
       cell: ({ row }) => {
         const order = row.original;
         const expirationDate = new Date(Number(order.expiration) * 1000);
@@ -180,6 +192,7 @@ export const useLimitOrderColumns = (props: UseLimitOrderColumnsProps) => {
           </div>
         );
       },
+      enableSorting: false,
     },
     {
       id: 'actions',

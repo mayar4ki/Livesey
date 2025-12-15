@@ -69,11 +69,14 @@ export class LimitOrderService {
       skip = 0,
       take = 10,
       status,
+      type,
       makeToken,
       takeToken,
       chainId,
       maker,
       search,
+      sortBy,
+      sortOrder = 'desc',
     } = query;
 
     // TODO this is not efficient, we should use a better way to search for tokens
@@ -107,6 +110,7 @@ export class LimitOrderService {
 
     const where: Prisma.LimitOrderWhereInput = {
       ...(status && { status }),
+      ...(type && { type }),
       ...(makeToken && { makeToken }),
       ...(takeToken && { takeToken }),
       ...(chainId && { chainId }),
@@ -175,12 +179,19 @@ export class LimitOrderService {
         : {}),
     };
 
+    // Build orderBy clause based on sortBy and sortOrder
+    const orderBy: Prisma.LimitOrderOrderByWithRelationInput = sortBy
+      ? {
+          [sortBy]: sortOrder,
+        }
+      : {
+          createdAt: 'desc',
+        };
+
     const [orders, total] = await Promise.all([
       this.prisma.client.limitOrder.findMany({
         where,
-        orderBy: {
-          createdAt: 'desc',
-        },
+        orderBy,
         skip,
         take,
         include: {

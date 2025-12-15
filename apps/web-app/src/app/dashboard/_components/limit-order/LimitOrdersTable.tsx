@@ -4,7 +4,7 @@ import { LimitOrderType, type LimitOrder } from '@acme/client/services/limit-ord
 import { cn } from '@acme/ui';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@acme/ui/table';
 import {
-  ColumnFiltersState,
+  OnChangeFn,
   SortingState,
   flexRender,
   getCoreRowModel,
@@ -18,11 +18,17 @@ import { LimitOrderExpandedRow } from './LimitOrderExpandedRow';
 
 interface LimitOrdersTableProps {
   orders: LimitOrder[];
+  defaultSorting?: SortingState;
+  onSortingChange?: OnChangeFn<SortingState>;
+  enableSorting?: boolean;
 }
 
-export function LimitOrdersTable({ orders }: LimitOrdersTableProps) {
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'createdAt', desc: true }]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+export function LimitOrdersTable({
+  orders,
+  defaultSorting = [],
+  onSortingChange,
+  enableSorting = true,
+}: LimitOrdersTableProps) {
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
 
   const toggleRowExpansion = (rowId: string) => {
@@ -37,21 +43,22 @@ export function LimitOrdersTable({ orders }: LimitOrdersTableProps) {
       expandedRows,
       toggleRowExpansion,
     },
+    enableSorting,
   });
 
   const table = useReactTable<LimitOrder>({
     data: orders || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
-    manualPagination: true, // Use server-side pagination
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
+    ...(enableSorting && {
+      onSortingChange: onSortingChange,
+      getSortedRowModel: getSortedRowModel(),
+      manualSorting: true, // Enable server-side sorting
+      state: {
+        sorting: defaultSorting,
+      },
+    }),
     getFilteredRowModel: getFilteredRowModel(),
-    state: {
-      sorting,
-      columnFilters,
-    },
   });
 
   return (

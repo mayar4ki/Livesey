@@ -6,15 +6,9 @@ import { cn } from '@acme/ui';
 import { DataTablePagination } from '@acme/ui/bootstrapped/data-table-pagination';
 import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@acme/ui/table';
-import {
-  SortingState,
-  flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
+import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { Loader2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useLimitOrderColumns } from '~/app/dashboard/_hooks/useLimitOrderColumns';
 
 import { LimitOrder, LimitOrderType } from '@acme/client/services/limit-order/useCreateLimitOrder';
@@ -28,7 +22,6 @@ export interface OrderBookCardProps {
 
 export function OrderBookCard({ token }: OrderBookCardProps) {
   const { params, setParams } = useQueryParams({ take: 10, skip: 0 });
-  const [sorting, setSorting] = useState<SortingState>([]);
 
   const { data, isLoading, isError } = useLimitOrdersByToken(token.token, token.chainId, {
     skip: params.skip,
@@ -37,18 +30,13 @@ export function OrderBookCard({ token }: OrderBookCardProps) {
 
   const columns = useLimitOrderColumns({
     filter: ['pair', 'type'],
+    enableSorting: false,
   });
 
   const table = useReactTable<LimitOrder>({
     data: (data?.data ?? []).map((el) => ({ ...el, token })),
     columns,
     getCoreRowModel: getCoreRowModel(),
-    manualPagination: true, // Use server-side pagination
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    state: {
-      sorting,
-    },
   });
 
   const totalPages = useMemo(() => {

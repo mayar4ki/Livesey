@@ -1,3 +1,4 @@
+import { LimitOrderType } from '@acme/db';
 import { Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 
@@ -6,6 +7,20 @@ export enum LimitOrderStatus {
   FILLED = 'filled',
   CANCELLED = 'cancelled',
   EXPIRED = 'expired',
+}
+
+export enum LimitOrderSortBy {
+  TYPE = 'type',
+  OFFER = 'makeAmount',
+  ASK = 'takeAmount',
+  PRICE = 'makeAmount', // Price is calculated, so we'll sort by makeAmount as proxy
+  STATUS = 'status',
+  CREATED_AT = 'createdAt',
+}
+
+export enum SortOrder {
+  ASC = 'asc',
+  DESC = 'desc',
 }
 
 export class LimitOrderListQueryDto {
@@ -27,6 +42,10 @@ export class LimitOrderListQueryDto {
   status?: LimitOrderStatus;
 
   @IsOptional()
+  @IsEnum(LimitOrderType)
+  type?: LimitOrderType; // Filter by order type (BUY or SELL)
+
+  @IsOptional()
   @IsString()
   makeToken?: string; // Filter by make token address
 
@@ -46,4 +65,12 @@ export class LimitOrderListQueryDto {
   @IsOptional()
   @IsString()
   search?: string; // Search by orderHash, maker, makeToken, or takeToken
+
+  @IsOptional()
+  @IsEnum(LimitOrderSortBy)
+  sortBy?: LimitOrderSortBy;
+
+  @IsOptional()
+  @IsEnum(SortOrder)
+  sortOrder?: SortOrder;
 }
