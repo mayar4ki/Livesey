@@ -1,7 +1,8 @@
 'use client';
 
 import { computeHashFromPairs } from '@acme/client/helpers';
-import { useOperators } from '@acme/client/services/factory/useOperators';
+import { useOperatorList } from '@acme/client/services/operator/useOperatorList';
+import { Badge } from '@acme/ui/badge';
 import { Button } from '@acme/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@acme/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@acme/ui/form';
@@ -20,7 +21,8 @@ type TokenCreateFormProps = {
 };
 
 export function TokenCreateForm({ onSubmit, isPending = false, form }: TokenCreateFormProps) {
-  const { operators, isLoading: isLoadingOperators } = useOperators();
+  const { data: operatorData, isLoading: isLoadingOperators } = useOperatorList({ take: 100 });
+  const operators = operatorData?.data ?? [];
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: 'assetRefPairs',
@@ -120,9 +122,12 @@ export function TokenCreateForm({ onSubmit, isPending = false, form }: TokenCrea
                           operators
                             .filter((op) => !op.isPaused)
                             .map((operator) => (
-                              <SelectItem key={operator.operator} value={operator.operator}>
-                                <div className="flex items-center min-w-0">
-                                  <span className="font-mono truncate">{operator.operator}</span>
+                              <SelectItem key={operator.address} value={operator.address}>
+                                <div className="flex items-center gap-2 min-w-0">
+                                  <span className="font-mono truncate">{operator.name || operator.address}</span>
+                                  <Badge variant={operator.isPaused ? 'destructive' : 'default'} className="shrink-0">
+                                    {operator.isPaused ? 'Paused' : 'Active'}
+                                  </Badge>
                                 </div>
                               </SelectItem>
                             ))
