@@ -4,7 +4,7 @@ import { Address, WatchContractEventOnLogsParameter } from 'viem';
 
 import { StoreKeys } from '@acme/cache';
 import { ConfigService } from '@nestjs/config';
-import { RedisService } from 'src/lib/redis/redis.service.js';
+import { RedisService } from '../../lib/redis/redis.service.js';
 import { ViemPublicClientService } from '../../lib/viem/viem.service.js';
 import { Env } from '../../schemas/env-validation-schema.js';
 
