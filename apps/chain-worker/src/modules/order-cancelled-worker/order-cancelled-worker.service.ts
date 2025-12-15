@@ -94,7 +94,7 @@ export class OrderCancelledWorkerService implements OnModuleInit, OnModuleDestro
             eventName: 'OrderCancelled',
           },
           {
-            block: log.blockNumber,
+            block: BigInt(log.blockNumber?.toString() ?? '0'),
             logIndex,
             txHash: log.transactionHash,
           },

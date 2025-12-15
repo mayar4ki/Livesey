@@ -7,7 +7,7 @@ export class OrderFilledQueueService {
   private readonly queue = createOrderFilledQueue();
 
   async enqueueLog(log: OrderFilledEventsLog, mode: 'live' | 'backfill') {
-    const jobId = `${log.transactionHash}:${log.logIndex ?? 0}`;
+    const jobId = `${log.transactionHash}+${log.logIndex ?? 0}`;
     await this.queue.add(
       'order-filled',
       { log, mode },

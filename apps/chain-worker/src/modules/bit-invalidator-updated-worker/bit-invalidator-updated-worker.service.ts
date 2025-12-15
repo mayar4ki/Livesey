@@ -137,7 +137,7 @@ export class BitInvalidatorUpdatedWorkerService implements OnModuleInit, OnModul
             eventName: 'BitInvalidatorUpdated',
           },
           {
-            block: log.blockNumber,
+            block: BigInt(log.blockNumber?.toString() ?? '0'),
             logIndex,
             txHash: log.transactionHash,
           },

@@ -7,7 +7,7 @@ export class BitInvalidatorUpdatedQueueService {
   private readonly queue = createBitInvalidatorUpdatedQueue();
 
   async enqueueLog(log: BitInvalidatorUpdatedEventsLog, mode: 'live' | 'backfill') {
-    const jobId = `${log.transactionHash}:${log.logIndex ?? 0}`;
+    const jobId = `${log.transactionHash}+${log.logIndex ?? 0}`;
     await this.queue.add(
       'bit-invalidator-updated',
       { log, mode },

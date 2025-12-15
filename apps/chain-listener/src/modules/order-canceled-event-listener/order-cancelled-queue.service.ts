@@ -7,7 +7,7 @@ export class OrderCancelledQueueService {
   private readonly queue = createOrderCancelledQueue();
 
   async enqueueLog(log: OrderCancelledEventsLog, mode: 'live' | 'backfill') {
-    const jobId = `${log.transactionHash}:${log.logIndex ?? 0}`;
+    const jobId = `${log.transactionHash}+${log.logIndex ?? 0}`;
     await this.queue.add(
       'order-cancelled',
       { log, mode },

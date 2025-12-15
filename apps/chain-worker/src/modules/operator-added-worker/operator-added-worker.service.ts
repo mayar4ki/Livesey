@@ -91,7 +91,7 @@ export class OperatorAddedWorkerService implements OnModuleInit, OnModuleDestroy
             eventName: 'OperatorAdded',
           },
           {
-            block: log.blockNumber,
+            block: BigInt(log.blockNumber?.toString() ?? '0'),
             logIndex,
             txHash: log.transactionHash,
           },

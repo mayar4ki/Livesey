@@ -96,7 +96,7 @@ export class OrderFilledWorkerService implements OnModuleInit, OnModuleDestroy {
             eventName: 'OrderFilled',
           },
           {
-            block: log.blockNumber,
+            block: BigInt(log.blockNumber?.toString() ?? '0'),
             logIndex,
             txHash: log.transactionHash,
           },

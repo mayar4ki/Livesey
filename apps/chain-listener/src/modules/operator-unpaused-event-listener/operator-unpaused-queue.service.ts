@@ -7,7 +7,7 @@ export class OperatorUnpausedQueueService {
   private readonly queue = createOperatorUnpausedQueue();
 
   async enqueueLog(log: OperatorUnpausedEventsLog, mode: 'live' | 'backfill') {
-    const jobId = `${log.transactionHash}:${log.logIndex ?? 0}`;
+    const jobId = `${log.transactionHash}+${log.logIndex ?? 0}`;
     await this.queue.add(
       'operator-unpaused',
       { log, mode },

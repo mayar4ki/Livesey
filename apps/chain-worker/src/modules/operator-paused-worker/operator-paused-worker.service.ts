@@ -103,7 +103,7 @@ export class OperatorPausedWorkerService implements OnModuleInit, OnModuleDestro
             eventName: 'OperatorPaused',
           },
           {
-            block: log.blockNumber,
+            block: BigInt(log.blockNumber?.toString() ?? '0'),
             logIndex,
             txHash: log.transactionHash,
           },

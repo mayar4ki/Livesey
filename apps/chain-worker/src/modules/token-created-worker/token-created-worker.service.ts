@@ -89,7 +89,7 @@ export class TokenCreatedWorkerService implements OnModuleInit, OnModuleDestroy 
             eventName: 'TokenCreated',
           },
           {
-            block: log.blockNumber,
+            block: BigInt(log.blockNumber?.toString() ?? '0'),
             logIndex,
             txHash: log.transactionHash,
           },

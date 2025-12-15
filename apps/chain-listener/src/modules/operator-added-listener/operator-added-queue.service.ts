@@ -7,7 +7,7 @@ export class OperatorAddedQueueService {
   private readonly queue = createOperatorAddedQueue();
 
   async enqueueLog(log: OperatorAddedEventsLog, mode: 'live' | 'backfill') {
-    const jobId = `${log.transactionHash}:${log.logIndex ?? 0}`;
+    const jobId = `${log.transactionHash}+${log.logIndex ?? 0}`;
     await this.queue.add(
       'operator-added',
       { log, mode },

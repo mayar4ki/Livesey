@@ -25,6 +25,9 @@ export class OrderCancelledBackfillService implements OnModuleDestroy {
   private getConfig() {
     const chunkSizeEnv = this.configService.get<number>('ORDER_CANCELLED_BACKFILL_CHUNK_SIZE', { infer: true });
     const intervalEnv = this.configService.get<number>('ORDER_CANCELLED_BACKFILL_INTERVAL_MS', { infer: true });
+    const defaultBlockRangeEnv = this.configService.get<number>('ORDER_CANCELLED_BACKFILL_DEFAULT_BLOCK_RANGE', {
+      infer: true,
+    });
     const chainId = this.configService.get<string>('CHAIN_ID', { infer: true })!;
 
     return {
@@ -32,14 +35,17 @@ export class OrderCancelledBackfillService implements OnModuleDestroy {
       lopAddress: oneInchLimitOrderProtocolAddresses[chainId] as Address,
       chunkSize: chunkSizeEnv ? BigInt(chunkSizeEnv) : 2_000n,
       intervalMs: intervalEnv ?? 15 * 60 * 1000,
+      defaultBlockRange: defaultBlockRangeEnv ? BigInt(defaultBlockRangeEnv) : 5n,
     };
   }
 
   private async calculateBlockRange(watermark: Awaited<ReturnType<typeof this.watermarkService.getWatermark>>) {
+    const { defaultBlockRange } = this.getConfig();
     const latestBlock = await this.viemPublicClient.client.getBlockNumber();
     const reorgSafety = 2n;
-    const toBlock = latestBlock > reorgSafety ? latestBlock - reorgSafety : latestBlock;
-    const fromBlock = watermark?.block ?? toBlock;
+    const toBlock = latestBlock - reorgSafety;
+    const fromBlock = watermark?.block ?? toBlock - defaultBlockRange;
+
     return { fromBlock, toBlock };
   }
 
@@ -135,4 +141,3 @@ export class OrderCancelledBackfillService implements OnModuleDestroy {
     }
   }
 }
-

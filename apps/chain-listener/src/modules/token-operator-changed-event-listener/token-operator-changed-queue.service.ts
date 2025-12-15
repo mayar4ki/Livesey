@@ -7,7 +7,7 @@ export class TokenOperatorChangedQueueService {
   private readonly queue = createTokenNewOperatorAddressQueue();
 
   async enqueueLog(log: TokenNewOperatorAddressEventsLog, mode: 'live' | 'backfill') {
-    const jobId = `${log.transactionHash}:${log.logIndex ?? 0}`;
+    const jobId = `${log.transactionHash}+${log.logIndex ?? 0}`;
     await this.queue.add(
       'token-new-operator-address',
       { log, mode },

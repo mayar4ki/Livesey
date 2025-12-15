@@ -7,7 +7,7 @@ export class TokenCreatedQueueService {
   private readonly queue = createTokenCreatedQueue();
 
   async enqueueLog(log: TokenCreatedEventsLog, mode: 'live' | 'backfill') {
-    const jobId = `${log.transactionHash}:${log.logIndex ?? 0}`;
+    const jobId = `${log.transactionHash}+${log.logIndex ?? 0}`;
     await this.queue.add(
       'token-created',
       { log, mode },

@@ -108,7 +108,7 @@ export class TokenOperatorChangedWorkerService implements OnModuleInit, OnModule
             eventName: 'TokenNewOperatorAddress',
           },
           {
-            block: log.blockNumber,
+            block: BigInt(log.blockNumber?.toString() ?? '0'),
             logIndex,
             txHash: log.transactionHash,
           },
