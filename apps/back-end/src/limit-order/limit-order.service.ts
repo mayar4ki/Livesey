@@ -1,4 +1,4 @@
-import { LimitOrderType } from '@acme/db';
+import { LimitOrderType, Prisma } from '@acme/db';
 import {
   BadRequestException,
   Injectable,
@@ -73,14 +73,106 @@ export class LimitOrderService {
       takeToken,
       chainId,
       maker,
+      search,
     } = query;
 
-    const where: any = {
+    // TODO this is not efficient, we should use a better way to search for tokens
+
+    // If searching, find tokens that match the search term by name or symbol
+    let matchingTokenAddresses: string[] = [];
+    if (search) {
+      const matchingTokens = await this.prisma.client.token.findMany({
+        where: {
+          OR: [
+            {
+              name: {
+                contains: search,
+                mode: 'insensitive' as const,
+              },
+            },
+            {
+              symbol: {
+                contains: search,
+                mode: 'insensitive' as const,
+              },
+            },
+          ],
+        },
+        select: {
+          token: true,
+        },
+      });
+      matchingTokenAddresses = matchingTokens.map((t) => t.token);
+    }
+
+    const where: Prisma.LimitOrderWhereInput = {
       ...(status && { status }),
       ...(makeToken && { makeToken }),
       ...(takeToken && { takeToken }),
       ...(chainId && { chainId }),
       ...(maker && { maker }),
+      ...(search
+        ? {
+            OR: [
+              {
+                orderHash: {
+                  contains: search,
+                  mode: 'insensitive' as const,
+                },
+              },
+              {
+                maker: {
+                  contains: search,
+                  mode: 'insensitive' as const,
+                },
+              },
+              {
+                makeToken: {
+                  contains: search,
+                  mode: 'insensitive' as const,
+                },
+              },
+              {
+                takeToken: {
+                  contains: search,
+                  mode: 'insensitive' as const,
+                },
+              },
+              {
+                token: {
+                  OR: [
+                    {
+                      name: {
+                        contains: search,
+                        mode: 'insensitive' as const,
+                      },
+                    },
+                    {
+                      symbol: {
+                        contains: search,
+                        mode: 'insensitive' as const,
+                      },
+                    },
+                  ],
+                },
+              },
+              ...(matchingTokenAddresses.length > 0
+                ? [
+                    {
+                      makeToken: {
+                        in: matchingTokenAddresses,
+                      },
+                    },
+                    {
+                      takeToken: {
+                        in: matchingTokenAddresses,
+                      },
+                    },
+                  ]
+                : []),
+            ],
+          }
+        : {}),
     };
 
     const [orders, total] = await Promise.all([
@@ -137,7 +229,7 @@ export class LimitOrderService {
       throw new NotFoundException('Token not found');
     }
 
-    const where: any = {
+    const where: Prisma.LimitOrderWhereInput = {
       tokenId: token.id,
       ...(status && { status }),
     };
@@ -180,7 +272,7 @@ export class LimitOrderService {
   ): Promise<BaseResponse<LimitOrderEntity[]>> {
     const { skip = 0, take = 10, status } = query;
 
-    const where: any = {
+    const where: Prisma.LimitOrderWhereInput = {
       maker: makerAddress.toLowerCase(),
     };
 

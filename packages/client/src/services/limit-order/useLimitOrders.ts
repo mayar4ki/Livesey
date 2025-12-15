@@ -12,6 +12,7 @@ export interface LimitOrderListQuery {
   takeToken?: string;
   chainId?: number;
   maker?: Address;
+  search?: string;
 }
 
 export const LIMIT_ORDERS_QUERY_KEY = "limit-orders";
@@ -30,6 +31,7 @@ export function useLimitOrders(query: LimitOrderListQuery = {}) {
     takeToken,
     chainId,
     maker,
+    search,
   } = query;
 
   return useQuery({
@@ -42,6 +44,7 @@ export function useLimitOrders(query: LimitOrderListQuery = {}) {
       takeToken,
       chainId,
       maker,
+      search,
     ],
     queryFn: async ({ signal }) => {
       const response = await apiClient.get<ListBaseResponse<LimitOrder>>(
@@ -55,6 +58,7 @@ export function useLimitOrders(query: LimitOrderListQuery = {}) {
             ...(takeToken && { takeToken }),
             ...(chainId && { chainId }),
             ...(maker && { maker }),
+            ...(search && { search }),
           },
           signal,
         }

@@ -42,4 +42,8 @@ export class LimitOrderListQueryDto {
   @IsOptional()
   @IsString()
   maker?: string; // Filter by maker address
+
+  @IsOptional()
+  @IsString()
+  search?: string; // Search by orderHash, maker, makeToken, or takeToken
 }

@@ -1,27 +1,31 @@
 'use client';
 
-import { useQueryParams } from '@acme/client/hooks';
+import { useDebouncedCallback, useQueryParams } from '@acme/client/hooks';
 import { useLimitOrders } from '@acme/client/services/limit-order/useLimitOrders';
 import { DataTablePagination } from '@acme/ui/bootstrapped/data-table-pagination';
 import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
 import { LoadingCard } from '@acme/ui/bootstrapped/loading-card';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
+import { Input } from '@acme/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@acme/ui/select';
-import { ArrowRightLeft, Filter } from 'lucide-react';
+import { ArrowRightLeft, Filter, Search } from 'lucide-react';
 import { useState } from 'react';
 import { useChainId } from 'wagmi';
 import { LimitOrdersTable } from '../_components/limit-order/LimitOrdersTable';
 
 export default function LimitOrderPage() {
   const chainId = useChainId();
-  const { params, setParams } = useQueryParams({ take: 10, skip: 0 });
+  const { params, setParams } = useQueryParams({ take: 10, skip: 0, search: '' });
   const [statusFilter, setStatusFilter] = useState<'pending' | 'filled' | 'cancelled' | 'expired' | 'all'>('all');
+
+  const debouncedSetParams = useDebouncedCallback(setParams);
 
   const { data, isLoading, error } = useLimitOrders({
     skip: params.skip,
     take: params.take,
     status: statusFilter === 'all' ? undefined : statusFilter,
     chainId,
+    search: params.search,
   });
 
   const orders = data?.data || [];
@@ -35,14 +39,6 @@ export default function LimitOrderPage() {
           title="Error Loading Limit Orders"
           message={error instanceof Error ? error.message : 'Failed to load limit orders'}
         />
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="flex flex-1 flex-col gap-4 p-4 md:p-6">
-        <LoadingCard message="Loading limit orders..." />
       </div>
     );
   }
@@ -81,33 +77,49 @@ export default function LimitOrderPage() {
               </Select>
             </div>
           </div>
+          <div className="relative mt-4">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search by order hash, maker, token address, name, or symbol..."
+              defaultValue={params.search}
+              onChange={(e) => debouncedSetParams({ search: e.target.value, skip: 0 })}
+              className="pl-9"
+            />
+          </div>
         </CardHeader>
-        <CardContent>
-          {orders.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12">
-              <ArrowRightLeft className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No Orders Found</h3>
-              <p className="text-sm text-muted-foreground text-center">
-                {statusFilter === 'all'
-                  ? 'No limit orders available at the moment.'
-                  : `No ${statusFilter} orders found.`}
-              </p>
-            </div>
-          ) : (
-            <>
-              <LimitOrdersTable orders={orders} />
-              <DataTablePagination
-                currentPage={Math.floor(params.skip / params.take) + 1}
-                totalPages={
-                  data?.pagination?.total ? Math.ceil(data?.pagination?.total / data?.pagination?.take) : 0
-                }
-                onPageChange={(page: number) => {
-                  setParams({ skip: (page - 1) * params.take, take: params.take });
-                }}
-              />
-            </>
-          )}
-        </CardContent>
+
+        {isLoading ? (
+          <LoadingCard message="Loading limit orders..." />
+        ) : (
+          <CardContent>
+            {orders.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <ArrowRightLeft className="h-12 w-12 text-muted-foreground mb-4" />
+                <h3 className="text-lg font-semibold mb-2">No Orders Found</h3>
+                <p className="text-sm text-muted-foreground text-center">
+                  {params.search
+                    ? 'No orders match your search criteria.'
+                    : statusFilter === 'all'
+                      ? 'No limit orders available at the moment.'
+                      : `No ${statusFilter} orders found.`}
+                </p>
+              </div>
+            ) : (
+              <>
+                <LimitOrdersTable orders={orders} />
+                <DataTablePagination
+                  currentPage={Math.floor(params.skip / params.take) + 1}
+                  totalPages={
+                    data?.pagination?.total ? Math.ceil(data?.pagination?.total / data?.pagination?.take) : 0
+                  }
+                  onPageChange={(page: number) => {
+                    setParams({ skip: (page - 1) * params.take, take: params.take });
+                  }}
+                />
+              </>
+            )}
+          </CardContent>
+        )}
       </Card>
     </div>
   );
