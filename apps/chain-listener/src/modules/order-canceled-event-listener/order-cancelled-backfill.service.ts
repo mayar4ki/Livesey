@@ -33,7 +33,7 @@ export class OrderCancelledBackfillService implements OnModuleDestroy {
     return {
       chainId,
       lopAddress: oneInchLimitOrderProtocolAddresses[chainId] as Address,
-      chunkSize: chunkSizeEnv ? BigInt(chunkSizeEnv) : 2_000n,
+      chunkSize: chunkSizeEnv ? BigInt(chunkSizeEnv) : 5n,
       intervalMs: intervalEnv ?? 15 * 60 * 1000,
       defaultBlockRange: defaultBlockRangeEnv ? BigInt(defaultBlockRangeEnv) : 5n,
     };

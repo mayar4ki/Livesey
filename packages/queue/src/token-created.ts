@@ -1,11 +1,11 @@
+import { BigIntToString } from "@acme/shared";
 import { FactoryAbi } from "@acme/smart-contract";
 import { Queue, type QueueOptions } from "bullmq";
 import { WatchContractEventOnLogsParameter } from "viem";
 
-export type TokenCreatedEventsLog = WatchContractEventOnLogsParameter<
-  typeof FactoryAbi,
-  "TokenCreated"
->[number];
+export type TokenCreatedEventsLog = BigIntToString<
+  WatchContractEventOnLogsParameter<typeof FactoryAbi, "TokenCreated">[number]
+>;
 
 export type TokenCreatedJob = {
   log: TokenCreatedEventsLog;

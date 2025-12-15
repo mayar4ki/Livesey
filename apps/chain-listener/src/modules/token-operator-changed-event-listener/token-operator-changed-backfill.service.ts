@@ -39,7 +39,7 @@ export class TokenOperatorChangedBackfillService implements OnModuleDestroy {
     return {
       chainId: this.configService.get<string>('CHAIN_ID', { infer: true })!,
       factoryAddress: this.configService.get<string>('FACTORY_ADDRESS', { infer: true })!,
-      chunkSize: chunkSizeEnv ? BigInt(chunkSizeEnv) : 2_000n,
+      chunkSize: chunkSizeEnv ? BigInt(chunkSizeEnv) : 5n,
       intervalMs: intervalEnv ?? 15 * 60 * 1000,
       defaultBlockRange: defaultBlockRangeEnv ? BigInt(defaultBlockRangeEnv) : 5n,
     };

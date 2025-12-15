@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { createTokenNewOperatorAddressQueue, type TokenNewOperatorAddressEventsLog } from '@acme/queue';
+import { serializeBigInt } from '@acme/shared';
 
 @Injectable()
 export class TokenOperatorChangedQueueService {
@@ -8,9 +9,10 @@ export class TokenOperatorChangedQueueService {
 
   async enqueueLog(log: TokenNewOperatorAddressEventsLog, mode: 'live' | 'backfill') {
     const jobId = `${log.transactionHash}+${log.logIndex ?? 0}`;
+    const serializedLog = serializeBigInt(log) as TokenNewOperatorAddressEventsLog;
     await this.queue.add(
       'token-new-operator-address',
-      { log, mode },
+      { log: serializedLog, mode },
       {
         removeOnFail: false,
         jobId,

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { createOrderFilledQueue, type OrderFilledEventsLog } from '@acme/queue';
+import { serializeBigInt } from '@acme/shared';
 
 @Injectable()
 export class OrderFilledQueueService {
@@ -8,9 +9,10 @@ export class OrderFilledQueueService {
 
   async enqueueLog(log: OrderFilledEventsLog, mode: 'live' | 'backfill') {
     const jobId = `${log.transactionHash}+${log.logIndex ?? 0}`;
+    const serializedLog = serializeBigInt(log) as OrderFilledEventsLog;
     await this.queue.add(
       'order-filled',
-      { log, mode },
+      { log: serializedLog, mode },
       {
         removeOnFail: false,
         jobId,

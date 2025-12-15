@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { createOperatorUnpausedQueue, type OperatorUnpausedEventsLog } from '@acme/queue';
+import { serializeBigInt } from '@acme/shared';
 
 @Injectable()
 export class OperatorUnpausedQueueService {
@@ -8,9 +9,10 @@ export class OperatorUnpausedQueueService {
 
   async enqueueLog(log: OperatorUnpausedEventsLog, mode: 'live' | 'backfill') {
     const jobId = `${log.transactionHash}+${log.logIndex ?? 0}`;
+    const serializedLog = serializeBigInt(log) as OperatorUnpausedEventsLog;
     await this.queue.add(
       'operator-unpaused',
-      { log, mode },
+      { log: serializedLog, mode },
       {
         removeOnFail: false,
         jobId,
