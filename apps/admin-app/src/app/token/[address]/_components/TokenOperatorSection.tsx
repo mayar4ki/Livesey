@@ -1,7 +1,7 @@
 'use client';
 
-import { useOperators } from '@acme/client/services/factory/useOperators';
 import { useSetTokenOperator } from '@acme/client/services/factory/useSetTokenOperator';
+import { useOperatorList } from '@acme/client/services/operator/useOperatorList';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,6 +12,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@acme/ui/alert-dialog';
+import { Badge } from '@acme/ui/badge';
 import { CopyButton } from '@acme/ui/bootstrapped/copy-button';
 import { ExplorerLink } from '@acme/ui/bootstrapped/explorer-address-link';
 import { Button } from '@acme/ui/button';
@@ -37,12 +38,19 @@ export function TokenOperatorSection({ tokenAddress, currentOperator, chainId }:
   const tokenId = params.id as string;
 
   const { setTokenOperator, isPending, transactionReceipt } = useSetTokenOperator(tokenId);
-  const { operators, isLoading: isLoadingOperators } = useOperators();
+  const { data: operatorData, isLoading: isLoadingOperators } = useOperatorList({ chainId, take: 100 });
+  const operators = operatorData?.data ?? [];
 
   const isPendingTransaction = isPending || transactionReceipt.isLoading;
 
   // Filter out paused operators and the current operator
-  const availableOperators = operators.filter((op) => !op.isPaused && op.operator.toLowerCase() !== currentOperator.toLowerCase());
+  const availableOperators = operators.filter((op) => !op.isPaused && op.address.toLowerCase() !== currentOperator.toLowerCase());
+
+  // Find the current operator to display its name
+  const currentOperatorData = operators.find((op) => op.address.toLowerCase() === currentOperator.toLowerCase());
+
+  // Find the selected operator to display its name
+  const selectedOperatorData = selectedOperator ? operators.find((op) => op.address.toLowerCase() === selectedOperator.toLowerCase()) : undefined;
 
   const handleOperatorChange = () => {
     if (!selectedOperator) {
@@ -89,6 +97,14 @@ export function TokenOperatorSection({ tokenAddress, currentOperator, chainId }:
                 />
               </div>
               <div>
+                {currentOperatorData?.name && (
+                  <div className="flex items-center gap-2 mb-1">
+                    <p className="text-base font-semibold">{currentOperatorData.name}</p>
+                    <Badge variant={currentOperatorData.isPaused ? 'destructive' : 'default'}>
+                      {currentOperatorData.isPaused ? 'Paused' : 'Active'}
+                    </Badge>
+                  </div>
+                )}
                 <ExplorerLink hash={currentOperator} chainId={chainId} showFull />
               </div>
             </div>
@@ -115,9 +131,15 @@ export function TokenOperatorSection({ tokenAddress, currentOperator, chainId }:
                       <div className="px-2 py-1.5 text-sm text-muted-foreground">No available operators</div>
                     ) : (
                       availableOperators.map((operator) => (
-                        <SelectItem key={operator.operator} value={operator.operator}>
-                          <div className="flex items-center min-w-0">
-                            <span className="font-mono truncate">{operator.operator}</span>
+                        <SelectItem key={operator.address} value={operator.address}>
+                          <div className="flex flex-col min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">{operator.name}</span>
+                              <Badge variant={operator.isPaused ? 'destructive' : 'default'} className="text-[10px] px-1.5 py-0.5 h-4">
+                                {operator.isPaused ? 'Paused' : 'Active'}
+                              </Badge>
+                            </div>
+                            <span className="text-xs text-muted-foreground font-mono truncate">{operator.address}</span>
                           </div>
                         </SelectItem>
                       ))
@@ -162,10 +184,26 @@ export function TokenOperatorSection({ tokenAddress, currentOperator, chainId }:
                 <div className="space-y-2 text-sm">
                   <div>
                     <p className="font-medium mb-1">Current Operator:</p>
+                    {currentOperatorData?.name && (
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="text-sm font-semibold">{currentOperatorData.name}</p>
+                        <Badge variant={currentOperatorData.isPaused ? 'destructive' : 'default'} className="text-xs">
+                          {currentOperatorData.isPaused ? 'Paused' : 'Active'}
+                        </Badge>
+                      </div>
+                    )}
                     <code className="text-xs font-mono bg-muted px-2 py-1 rounded block break-all">{currentOperator}</code>
                   </div>
                   <div>
                     <p className="font-medium mb-1">New Operator:</p>
+                    {selectedOperatorData?.name && (
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="text-sm font-semibold">{selectedOperatorData.name}</p>
+                        <Badge variant={selectedOperatorData.isPaused ? 'destructive' : 'default'} className="text-xs">
+                          {selectedOperatorData.isPaused ? 'Paused' : 'Active'}
+                        </Badge>
+                      </div>
+                    )}
                     <code className="text-xs font-mono bg-muted px-2 py-1 rounded block break-all">{selectedOperator || 'Not selected'}</code>
                   </div>
                   <div className="space-y-2 pt-2">

@@ -85,9 +85,7 @@ export function TokenContractDetailsCard({ token, decimals }: TokenContractDetai
                       className="h-7 w-7 p-0"
                     />
                   </div>
-                  <div className="mt-1">
-                    <ExplorerLink hash={token.operator.address} chainId={token.chainId} showFull />
-                  </div>
+                  <div className="mt-1">{token.operator.name ?? <ExplorerLink hash={token.operator.address} chainId={token.chainId} showFull />}</div>
                 </div>
               )}
               <div>

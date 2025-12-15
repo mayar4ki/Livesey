@@ -1,6 +1,6 @@
 'use client';
 
-import { Coins, Database, FilePlus, HelpCircle, LayoutDashboard, Settings, UserPlus, Users } from 'lucide-react';
+import { Coins, FilePlus, HelpCircle, LayoutDashboard, Settings, UserPlus, Users } from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@acme/ui';
@@ -59,16 +59,6 @@ const navGroups = [
         title: 'New Token',
         url: '/token/create',
         icon: FilePlus,
-      },
-    ],
-  },
-  {
-    label: 'Advance',
-    items: [
-      {
-        title: 'DB Sync',
-        url: '/db-sync',
-        icon: Database,
       },
     ],
   },

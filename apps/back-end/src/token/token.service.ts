@@ -72,7 +72,13 @@ export class TokenService {
                 },
               },
               {
-                createdBy: {
+                name: {
+                  contains: search,
+                  mode: 'insensitive' as const,
+                },
+              },
+              {
+                symbol: {
                   contains: search,
                   mode: 'insensitive' as const,
                 },
