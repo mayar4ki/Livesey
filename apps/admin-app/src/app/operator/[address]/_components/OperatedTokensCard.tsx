@@ -20,22 +20,13 @@ import { Address } from 'viem';
 export const OperatedTokensCard = ({ address }: { address: Address }) => {
   const { params, setParams } = useQueryParams({ take: 10, skip: 0, search: '' });
 
-  const { data, isLoading, error } = useTokenList({
-    skip: params.skip,
-    take: params.take,
-    search: params.search,
-    operator: address,
-  });
+  const { data, isLoading, error } = useTokenList({ skip: params.skip, take: params.take, search: params.search, operator: address });
 
   const debouncedSetParams = useDebouncedCallback(setParams);
 
   if (error) {
     return (
-      <ErrorStateCard
-        icon={Coins}
-        title="Error Loading Tokens"
-        message={error instanceof Error ? error.message : 'Failed to load token list'}
-      />
+      <ErrorStateCard icon={Coins} title="Error Loading Tokens" message={error instanceof Error ? error.message : 'Failed to load token list'} />
     );
   }
 
@@ -61,9 +52,7 @@ export const OperatedTokensCard = ({ address }: { address: Address }) => {
               <Coins className="h-12 w-12 text-muted-foreground mb-4" />
               <h3 className="text-lg font-semibold mb-2">No Tokens Found</h3>
               <p className="text-sm text-muted-foreground text-center mb-4">
-                {params.search
-                  ? 'No tokens match your search criteria.'
-                  : 'No tokens have been deployed yet. Deploy a token to see it here.'}
+                {params.search ? 'No tokens match your search criteria.' : 'No tokens have been deployed yet. Deploy a token to see it here.'}
               </p>
               {!params.search && (
                 <Button asChild>
@@ -92,10 +81,7 @@ export const OperatedTokensCard = ({ address }: { address: Address }) => {
                 {data?.data.map((token) => (
                   <TableRow key={token.id}>
                     <TableCell>
-                      <Link
-                        href={`/dashboard/token/${token.token}`}
-                        className="font-medium hover:underline cursor-pointer"
-                      >
+                      <Link href={`/token/${token.token}`} className="font-medium hover:underline cursor-pointer">
                         {token.name}
                       </Link>
                     </TableCell>
@@ -103,9 +89,7 @@ export const OperatedTokensCard = ({ address }: { address: Address }) => {
                       <Badge variant="outline">{token.symbol}</Badge>
                     </TableCell>
                     <TableCell>
-                      <span className="font-mono text-sm">
-                        {BigInt(token.totalSupply).toLocaleString('en-US')}
-                      </span>
+                      <span className="font-mono text-sm">{BigInt(token.totalSupply).toLocaleString('en-US')}</span>
                     </TableCell>
                     <TableCell>
                       <ExplorerLink hash={token.token} chainId={token.chainId} />
@@ -115,10 +99,7 @@ export const OperatedTokensCard = ({ address }: { address: Address }) => {
                     </TableCell>
                     <TableCell>
                       {token.operator && (
-                        <Link
-                          href={`/dashboard/operator/${token.operator.address}`}
-                          className="font-medium hover:underline cursor-pointer"
-                        >
+                        <Link href={`/operator/${token.operator.address}`} className="font-medium hover:underline cursor-pointer">
                           {token.operator.name}
                         </Link>
                       )}

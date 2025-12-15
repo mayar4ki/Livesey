@@ -1,6 +1,7 @@
 'use client';
 
 import { useOperator } from '@acme/client/services/factory/useOperator';
+import { useOperatorDetails } from '@acme/client/services/operator/useOperatorDetails';
 import { getChainUIName, getExplorerUrl } from '@acme/client/utils';
 import { Badge } from '@acme/ui/badge';
 import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
@@ -21,6 +22,7 @@ export default function Page() {
   const chainId = useChainId();
   const operatorAddress = params.address as Address | undefined;
   const { operator, isLoading } = useOperator(operatorAddress);
+  const { data: operatorDetails, isLoading: isLoadingDetails } = useOperatorDetails(operatorAddress);
 
   if (isLoading) {
     return <LoadingCard message="Loading operator details..." />;
@@ -71,7 +73,9 @@ export default function Page() {
           <CardHeader>
             <div className="flex items-start justify-between">
               <div>
-                <CardTitle className="text-xl mb-2">Operator Details</CardTitle>
+                <CardTitle className="text-2xl mb-2">
+                  {operatorDetails?.data?.name || 'Operator Details'}
+                </CardTitle>
                 <CardDescription>
                   <div className="flex items-center gap-2 mt-2">
                     <ExplorerLink hash={operatorAddress} chainId={chainId} showFull />

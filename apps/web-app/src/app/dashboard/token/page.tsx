@@ -1,87 +1,146 @@
 'use client';
 
-import { useQueryParams } from '@acme/client/hooks';
-import { useTrendingTokens } from '@acme/client/services/token/useTrendingTokens';
+import { useDebouncedCallback, useQueryParams } from '@acme/client/hooks';
+import { useTokenList } from '@acme/client/services/token/useTokenList';
+import { formatDateTime, getChainUIName } from '@acme/client/utils';
+import { Badge } from '@acme/ui/badge';
 import { DataTablePagination } from '@acme/ui/bootstrapped/data-table-pagination';
 import { ErrorStateCard } from '@acme/ui/bootstrapped/error-state-card';
+import { ExplorerLink } from '@acme/ui/bootstrapped/explorer-address-link';
 import { LoadingCard } from '@acme/ui/bootstrapped/loading-card';
-import { Card, CardContent } from '@acme/ui/card';
-import { Coins } from 'lucide-react';
-import { useMemo } from 'react';
-import { TokenViewToggle } from './_components/TokenViewToggle';
-import { TokensTable } from './_components/TokensTable';
-
-type ViewType = 'trending' | 'new';
+import { Card, CardContent, CardHeader, CardTitle } from '@acme/ui/card';
+import { Input } from '@acme/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@acme/ui/table';
+import { Coins, Search } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Page() {
-  const { params, setParams } = useQueryParams({ view: 'trending', take: 10, skip: 0 });
-  const viewType = (params.view as ViewType) || 'trending';
+  const { params, setParams } = useQueryParams({ take: 10, skip: 0, search: '' });
+  const { data, isLoading, error } = useTokenList({ skip: params.skip, take: params.take, search: params.search });
 
-  const { data, isLoading, error } = useTrendingTokens({ skip: params.skip, take: params.take });
-  const allTokens = data?.data || [];
-
-  // Filter tokens based on view type
-  const tokens = useMemo(() => {
-    if (viewType === 'new') {
-      // Sort by createdAt (most recent first)
-      return [...allTokens].sort((a, b) => {
-        const dateA = new Date(a.createdAt).getTime();
-        const dateB = new Date(b.createdAt).getTime();
-        return dateB - dateA;
-      });
-    }
-    // For trending, return as-is (or implement trending logic later)
-    return allTokens;
-  }, [allTokens, viewType]);
+  const debouncedSetParams = useDebouncedCallback(setParams);
 
   if (error) {
     return (
-      <div className="flex flex-1 flex-col gap-4 p-4">
-        <ErrorStateCard
-          icon={Coins}
-          title="Error Loading Tokens"
-          message={error instanceof Error ? error.message : 'Failed to load trending tokens'}
-        />
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="flex flex-1 flex-col gap-4 p-4">
-        <LoadingCard message="Loading trending tokens..." />
-      </div>
+      <ErrorStateCard
+        icon={Coins}
+        title="Error Loading Tokens"
+        message={error instanceof Error ? error.message : 'Failed to load token list'}
+      />
     );
   }
 
   return (
-    <div className="p-4 md:p-6 flex-1">
-      <TokenViewToggle />
-      <Card className=" mt-4 ">
-        <CardContent className=" p-0">
-          {tokens.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12">
-              <Coins className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No Tokens Found</h3>
-              <p className="text-sm text-muted-foreground text-center">
-                No {viewType === 'trending' ? 'trending' : 'new'} tokens available at the moment.
-              </p>
+    <div className="p-4 md:p-6 flex-1 ">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Token List</CardTitle>
             </div>
-          ) : (
-            <>
-              <TokensTable tokens={tokens} />
-              <DataTablePagination
-                currentPage={Math.floor(params.skip / params.take) + 1}
-                totalPages={
-                  data?.pagination?.total ? Math.ceil(data?.pagination?.total / data?.pagination?.take) : 0
-                }
-                onPageChange={(page: number) => {
-                  setParams({ skip: (page - 1) * params.take, take: params.take });
-                }}
-              />
-            </>
-          )}
-        </CardContent>
+          </div>
+          <div className="relative mt-4">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search by name, symbol, or address..."
+              defaultValue={params.search}
+              onChange={(e) => debouncedSetParams({ search: e.target.value, skip: 0 })}
+              className="pl-9"
+            />
+          </div>
+        </CardHeader>
+        {isLoading ? (
+          <LoadingCard message="Loading token list..." />
+        ) : (
+          <CardContent>
+            {data?.data.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <Coins className="h-12 w-12 text-muted-foreground mb-4" />
+                <h3 className="text-lg font-semibold mb-2">No Tokens Found</h3>
+                <p className="text-sm text-muted-foreground text-center mb-4">
+                  {params.search
+                    ? 'No tokens match your search criteria.'
+                    : 'No tokens have been deployed yet. Deploy a token to see it here.'}
+                </p>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Symbol</TableHead>
+                    <TableHead>Total Supply</TableHead>
+                    <TableHead>Contract Address</TableHead>
+                    <TableHead>Chain</TableHead>
+                    <TableHead>Verified</TableHead>
+                    <TableHead>Operator</TableHead>
+                    <TableHead>Created By</TableHead>
+                    <TableHead>Created At</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data?.data.map((token) => (
+                    <TableRow key={token.id}>
+                      <TableCell>
+                        <Link
+                          href={`/dashboard/token/${token.token}`}
+                          className="font-medium hover:underline cursor-pointer"
+                        >
+                          {token.name}
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{token.symbol}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <span className="font-mono text-sm">
+                          {BigInt(token.totalSupply).toLocaleString('en-US')}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <ExplorerLink hash={token.token} chainId={token.chainId} />
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="secondary">{getChainUIName(token.chainId)}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={token.verifiedAt ? 'default' : 'secondary'}>
+                          {token.verifiedAt ? 'Verified' : 'Unverified'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {token.operator && (
+                          <Link
+                            href={`/dashboard/operator/${token.operator.address}`}
+                            className="font-medium hover:underline cursor-pointer"
+                          >
+                            {token.operator.name}
+                          </Link>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <ExplorerLink hash={token.createdBy} chainId={token.chainId} />
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm text-muted-foreground">{formatDateTime(token.createdAt)}</span>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+
+            <DataTablePagination
+              currentPage={Math.floor(params.skip / params.take) + 1}
+              totalPages={
+                data?.pagination?.total ? Math.ceil(data?.pagination?.total / data?.pagination?.take) : 0
+              }
+              onPageChange={(page: number) => {
+                setParams({ skip: (page - 1) * params.take, take: params.take });
+              }}
+            />
+          </CardContent>
+        )}
       </Card>
     </div>
   );

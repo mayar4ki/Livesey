@@ -9,12 +9,14 @@ import { ExplorerLink } from '@acme/ui/bootstrapped/explorer-address-link';
 import { LoadingCard } from '@acme/ui/bootstrapped/loading-card';
 import { Button } from '@acme/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
-import { ArrowLeft, ExternalLink, Users } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Settings, Shield, Users } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Address } from 'viem';
 import { useChainId } from 'wagmi';
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@acme/ui/tabs';
+import { OperatedTokensCard } from './_components/OperatedTokensCard';
 import { OperatorPauseSection } from './_components/OperatorPauseSection';
 import { OperatorSetNameSection } from './_components/OperatorSetNameSection';
 
@@ -101,11 +103,30 @@ export default function Page() {
           )}
         </Card>
 
-        {/* Set Operator Name Section */}
-        <OperatorSetNameSection operatorAddress={operatorAddress} chainId={chainId} currentName={operatorDetails?.data?.name} />
+        <Tabs defaultValue="operatedTokens" className="w-full ">
+          <TabsList className="mb-4">
+            <TabsTrigger value="operatedTokens">
+              <Shield className="h-3.5 w-3.5" />
+              Operated Tokens
+            </TabsTrigger>
+            <TabsTrigger value="operatorManagement">
+              <Settings className="h-3.5 w-3.5" />
+              Operator Management
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Pause/Unpause Section */}
-        <OperatorPauseSection operatorAddress={operatorAddress} isPaused={operator.isPaused} />
+          {/* Voting Tab */}
+          <TabsContent value="operatedTokens">
+            <OperatedTokensCard address={operatorAddress} />
+          </TabsContent>
+          <TabsContent value="operatorManagement" className="space-y-6">
+            {/* Set Operator Name Section */}
+            <OperatorSetNameSection operatorAddress={operatorAddress} chainId={chainId} currentName={operatorDetails?.data?.name} />
+
+            {/* Pause/Unpause Section */}
+            <OperatorPauseSection operatorAddress={operatorAddress} isPaused={operator.isPaused} />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
