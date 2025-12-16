@@ -14,7 +14,7 @@ export const AppHeader = () => {
         <Breadcrumb className="  flex-1">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+              <BreadcrumbPage></BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
