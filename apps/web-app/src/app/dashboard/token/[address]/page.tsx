@@ -61,7 +61,7 @@ export default function TokenPage() {
           isPaused={tokenInfo?.isPaused}
         />
 
-        <Tabs defaultValue="trade" className="w-full ">
+        <Tabs defaultValue="overview" className="w-full ">
           <TabsList className="mb-4">
             <TabsTrigger value="overview">Contract Details</TabsTrigger>
             <TabsTrigger value="trade">Sell / Buy</TabsTrigger>
@@ -91,7 +91,7 @@ export default function TokenPage() {
           </TabsContent>
 
           {/* Trade Tab */}
-          <TabsContent value="trade" forceMount className={cn('space-y-6 data-[state=inactive]:hidden')}>
+          <TabsContent value="trade" className={cn('space-y-6 data-[state=inactive]:hidden')}>
             <TradeTab token={token.data} />
           </TabsContent>
         </Tabs>
