@@ -1,4 +1,4 @@
-FROM node:22-alpine AS base
+FROM node:24-alpine AS base
 
 WORKDIR /app
 ENV PNPM_HOME="/root/.local/share/pnpm"
@@ -39,19 +39,21 @@ ENV FACTORY_ADDRESS=$FACTORY_ADDRESS
 ENV CHAIN_ID=$CHAIN_ID
 
 RUN pnpm turbo run build --filter back-end...
-RUN pnpm deploy --filter back-end --prod /app/.output/back-end
+RUN pnpm deploy --legacy --filter back-end --prod /app/.output/back-end
 
 FROM builder AS migrator
 
 CMD ["pnpm", "--filter", "@acme/db", "db:migrate:deploy"]
 
-FROM node:22-alpine AS runner
+FROM node:24-alpine AS runner
 
 WORKDIR /app
 RUN apk add --no-cache openssl
 ENV NODE_ENV=production
 
-COPY --from=builder /app/.output/back-end/ .
+COPY --from=builder --chown=node:node /app/.output/back-end/ .
+
+USER node
 
 EXPOSE 3002
 

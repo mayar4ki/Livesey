@@ -1,4 +1,4 @@
-FROM node:22-alpine AS base
+FROM node:24-alpine AS base
 
 WORKDIR /app
 ENV PNPM_HOME="/root/.local/share/pnpm"
@@ -39,14 +39,17 @@ ENV BACKEND_URL=$BACKEND_URL
 ENV CHAIN_ID=$CHAIN_ID
 
 RUN pnpm turbo run build --filter chain-worker...
-RUN pnpm deploy --filter chain-worker --prod /app/.output/chain-worker
+RUN pnpm deploy --legacy --filter chain-worker --prod /app/.output/chain-worker
 
-FROM node:22-alpine AS runner
+FROM node:24-alpine AS runner
 
 WORKDIR /app
 RUN apk add --no-cache openssl
 ENV NODE_ENV=production
 
 COPY --from=builder /app/.output/chain-worker/ .
+
+RUN chown -R node:node /app
+USER node
 
 CMD ["node", "dist/main.js"]

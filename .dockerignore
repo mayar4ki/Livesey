@@ -1,61 +1,19 @@
-# Dependencies
+.git
 node_modules
-**/node_modules
-
-# Build outputs
+.turbo
 .next
 dist
-build
+coverage
 .cache
 *.log
-
-# Environment files
-.env
-.env.local
-.env.*.local
-.env.development
-.env.test
-.env.production
-
-# Git
-.git
-.gitignore
-.gitattributes
-
-# IDE
-.vscode
-.idea
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Docker
-Dockerfile*
-docker-compose*.yml
-.dockerignore
-
-# Testing
-coverage
-.nyc_output
-
-# Misc
-*.md
-!README.md
-LICENSE
-
-# Turborepo
-.turbo
-
-# Prisma
-*.db
-*.db-journal
-
-# Hardhat
-cache
-artifacts
-ignition/deployments
-
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+/apps/*/.next
+/apps/*/dist
+/apps/*/coverage
+/packages/*/dist
+/packages/*/coverage
+*.tsbuildinfo
+Dockerfile.dev

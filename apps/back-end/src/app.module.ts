@@ -7,6 +7,7 @@ import { PrismaModule } from './lib/prisma/prisma.module';
 import { RedisModule } from './lib/redis/redis.module';
 import { ViemModule } from './lib/viem/viem.module';
 import { LimitOrderModule } from './limit-order/limit-order.module';
+import { MetricsModule } from './metrics/metrics.module';
 import { OperatorModule } from './operator/operator.module';
 import { ProposalModule } from './proposal/proposal.module';
 import { TokenModule } from './token/token.module';
@@ -22,6 +23,7 @@ import { TokenModule } from './token/token.module';
     OperatorModule,
     LimitOrderModule,
     HealthModule,
+    MetricsModule,
     ConfigModule.forRoot({
       validate: validateEnv,
       isGlobal: true, // Make config available globally

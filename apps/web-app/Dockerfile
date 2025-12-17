@@ -1,4 +1,4 @@
-FROM node:22-alpine AS base
+FROM node:24-alpine AS base
 
 WORKDIR /app
 ENV PNPM_HOME="/root/.local/share/pnpm"
@@ -40,7 +40,7 @@ ENV PORT=$PORT
 
 RUN pnpm turbo run build --filter web-app...
 
-FROM node:22-alpine AS runner
+FROM node:24-alpine AS runner
 
 WORKDIR /app
 RUN apk add --no-cache libc6-compat
@@ -49,6 +49,9 @@ ENV NODE_ENV=production
 COPY --from=builder /app/apps/web-app/public ./apps/web-app/public
 COPY --from=builder /app/apps/web-app/.next/static ./apps/web-app/.next/static
 COPY --from=builder /app/apps/web-app/.next/standalone ./
+
+RUN chown -R node:node /app
+USER node
 
 EXPOSE 3000
 
