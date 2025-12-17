@@ -575,6 +575,9 @@ importers:
       bullmq:
         specifier: ^5.23.0
         version: 5.66.0
+      prisma:
+        specifier: ^5.22.0
+        version: 5.22.0
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -795,6 +798,9 @@ importers:
       '@prisma/client':
         specifier: ^5.22.0
         version: 5.22.0(prisma@5.22.0)
+      prisma:
+        specifier: ^5.22.0
+        version: 5.22.0
     devDependencies:
       '@acme/tsconfig':
         specifier: workspace:*
@@ -802,9 +808,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 22.19.0
-      prisma:
-        specifier: ^5.22.0
-        version: 5.22.0
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
