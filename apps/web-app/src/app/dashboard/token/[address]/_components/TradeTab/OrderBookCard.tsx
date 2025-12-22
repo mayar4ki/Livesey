@@ -29,7 +29,7 @@ export function OrderBookCard({ token }: OrderBookCardProps) {
   });
 
   const columns = useLimitOrderColumns({
-    filter: ['pair', 'type'],
+    filter: ['pair'],
     enableSorting: false,
   });
 
