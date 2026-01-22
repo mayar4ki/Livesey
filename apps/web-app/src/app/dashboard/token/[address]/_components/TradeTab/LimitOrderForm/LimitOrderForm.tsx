@@ -66,21 +66,23 @@ export function LimitOrderForm({ token, onClose }: LimitOrderFormProps) {
         createLimitOrderOptions: {
           onSuccess: () => {
             toast.success('Limit order created successfully');
+
+            form.reset({
+              fromToken: data.fromToken,
+              toToken: data.toToken,
+              fromAmount: '',
+              toAmount: '',
+              limitPrice: '',
+              expiredAt: nowWithExtraHour,
+            });
+
+            onClose?.();
           },
         },
       }
     );
 
-    form.reset({
-      fromToken: data.fromToken,
-      toToken: data.toToken,
-      fromAmount: '',
-      toAmount: '',
-      limitPrice: '',
-      expiredAt: nowWithExtraHour,
-    });
 
-    onClose?.();
   };
 
   const handleSwap = () => {
