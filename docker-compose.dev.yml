@@ -4,12 +4,12 @@ services:
     container_name: web-app-redis
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "16379:6379"
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes --requirepass redis
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "redis", "ping"]
+      test: [ "CMD", "redis-cli", "-a", "redis", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -29,7 +29,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -40,7 +40,7 @@ volumes:
   redis_data:
   postgres_data:
 
+
 networks:
   web-app-network:
     driver: bridge
-
