@@ -43,6 +43,19 @@ livesey/
     └── tsconfig/            # Base TypeScript configs
 ```
 
+## 🧠 Smart Contracts Location
+
+All smart contracts are in:
+
+`packages/smart-contract/`
+
+Inside that package:
+
+- `contracts/` - Solidity source files
+- `deployments/` - Deployment artifacts
+- `abis/` - Exported contract ABIs
+- `scripts/` - Hardhat scripts (deploy/utility)
+
 ---
 
 ## 🚀 Quick Start
